@@ -177,14 +177,32 @@ def test_budget_and_version_guard(config):
 
 def test_cluster_dry_run(tmp_path, config):
     import sys
+    import os
     path=tmp_path/'config.json'
     path.write_text(json.dumps(config))
     root=tmp_path/'prepared'
     subprocess.run([sys.executable,'-m','workflow.additive.cluster','--repo',str(Path.cwd()),
-                    '--config',str(path),'--output',str(root),'--python',sys.executable],check=True,capture_output=True)
+                    '--config',str(path),'--output',str(root),'--python',sys.executable,
+                    '--workers','1','--shards','2'],check=True,capture_output=True)
     assert not (root/'jobs.json').exists()
     subprocess.run(['bash','-n',str(root/'array.sh')],check=True)
     subprocess.run(['bash','-n',str(root/'merge.sh')],check=True)
+    subprocess.run(['bash',str(root/'array.sh')],env=dict(os.environ,SLURM_ARRAY_TASK_ID='0',SLURM_TMPDIR=str(tmp_path)),
+                   check=True,capture_output=True)
+    assert json.loads((root/'shard-0'/'summary.json').read_text())['complete']
+
+
+def test_metadata_copy_is_narrow_and_atomic(tmp_path):
+    from workflow.additive.checkpoint import copy_metadata
+    source=tmp_path/'source'
+    source.mkdir()
+    (source/'records.jsonl').write_text('{"record":1}\n')
+    (source/'expanded-table.bin').write_bytes(b'do not copy')
+    (source/'records.jsonl.tmp').write_text('partial')
+    target=tmp_path/'target'
+    copy_metadata(source,target)
+    assert [p.name for p in target.iterdir()]==['records.jsonl']
+    assert (target/'records.jsonl').read_bytes()==(source/'records.jsonl').read_bytes()
 
 
 def test_eligible_nodes_are_not_requested_all_at_once(monkeypatch):

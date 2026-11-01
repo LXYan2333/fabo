@@ -50,14 +50,14 @@ def main():
     script='''#!/bin/bash
 set -euo pipefail
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
-'''+f'cd {repo}\n'+f'run_root={q(str(root))}\n'+'''destination="$run_root/shard-$SLURM_ARRAY_TASK_ID"
+'''+f'cd {repo}\n'+f'run_root={q(str(root))}\n'+f'producer_python={python}\n'+'''destination="$run_root/shard-$SLURM_ARRAY_TASK_ID"
 mkdir -p "$destination"
 # Expanded coefficient arrays are only bounded in-process caches. Journals and
 # metadata use node-local scratch and are published on normal/error termination.
 scratch=$(mktemp -d "${SLURM_TMPDIR:-/tmp}/fabo-additive.XXXXXXXX")
-publish() { rsync -a "$scratch/" "$destination/"; }
+publish() { "$producer_python" -m workflow.additive.checkpoint "$scratch" "$destination"; }
 trap publish EXIT
-rsync -a "$destination/" "$scratch/"
+"$producer_python" -m workflow.additive.checkpoint "$destination" "$scratch"
 '''+command+f' --workers {a.workers} --shards {a.shards} --shard "$SLURM_ARRAY_TASK_ID" --output "$scratch"\n'
     # Source identity is recomputed on the remote producer; use one frozen checkout.
     (root/'array.sh').write_text(script)
