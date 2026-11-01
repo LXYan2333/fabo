@@ -7,7 +7,7 @@ import sys
 def copy_metadata(source, destination):
     source, destination = Path(source), Path(destination)
     destination.mkdir(parents=True, exist_ok=True)
-    for name in ('identity.json', 'records.jsonl', 'summary.json'):
+    for name in ('identity.json', 'state.json', 'records.jsonl', 'summary.json'):
         path = source/name
         if not path.is_file():
             continue

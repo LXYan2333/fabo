@@ -1,47 +1,50 @@
-# Fully materialized additive-grid construction
+# Additive-grid numerical construction
 
-This is a new numerical method, not a continuation of the exponential-aligned catalog. It stores correctly rounded Boys coefficients and one unsigned next-up output-correction byte per requested order. There are no recurrence patches, materialization choices, exponential dictionary, or runtime exponential evaluation. The mathematical MPFR reference generator still uses exponentials offline.
+## Numerical contract
 
-## Contract and selection
+Runtime uses y=RN64(x+B), unsigned half-up rounded-right-shift quantization with s=52-b, x_ref=RN64(Y-B), and h=RN64(x_ref-x). All Boys coefficients are materialized; there are no recurrence patches or runtime exponentials. The one-byte next-up output correction and strict factorial-Horner DAG are unchanged.
 
-For Q=2^b and B=(2Q-m)2^e, compute y=RN64(x+B), round its unsigned encoding right by s=52-b with ties toward the larger key, reconstruct Y, then x_ref=RN64(Y-B) and h=RN64(x_ref-x). The first node is zero. Table rows include every selected endpoint node, even one beyond the domain. Actual cell boundaries are binary-searched using rounded addition, not ideal midpoint assumptions.
+Offsets are represented directly by offset_code: B=from_bits64(offset_code<<s). All nonnegative finite aligned offsets are considered geometrically, including zero and subnormal offsets. There is no spacing-exponent window. Metadata stores the exact hexadecimal offset, code, key range, degrees and storage layout. Legacy (b,e,m) metadata remains readable and produces the same coefficient payload.
 
-The default family enumerates b=4…12, e=-16…4, every m=1…2^b, requested ranges [0,N] for N=0…24, and degrees 1…12. Each output gets its own minimum qualified degree. Candidates are ordered by maximum degree, actual eight-byte-aligned row storage, degree vector, then (b,e,m). Storage includes all coefficients through max(n+p_n), output corrections, and row padding. The budget is 1 MiB per requested range. No maximum-degree monotonicity assumption is made; every lower degree has a failure witness. An unresolved degree prevents a minimum claim for that grid. Any unresolved grid prevents an unconditional minimum claim for the family.
+Qualification uses exact-rational binary64 arithmetic and directed MPFR references. The 1-ULP gate measures distance to the true Boys value, scaled by the spacing at its correctly rounded value. Cell endpoints, neighbors, reference points, interior samples and refined maxima are checked. This is sampled qualification, not a continuous-domain proof. Fast-math checks are separate diagnostics.
 
-The target is distance to the true Boys value divided by the binary64 spacing at its correctly rounded value, not integer distance to a rounded-only reference. Absolute and relative targets are also supported. Explicit binary64 rounding and FMA are modeled with exact rational arithmetic. MPFR directed intervals enclose mathematical references; qualification samples cell boundaries, reference points, interior points and neighboring binary64 values, then refines near maxima. This is not a continuous-domain error certificate. Fast-math checks are diagnostic and do not replace strict qualification.
+## Budget-guided search
 
-The next-up constant is bits(F_n(x_ref))+1. The byte represents a positive correction: codes 0…128 encode (1/2+code/256) ULP, and codes 129…192 encode (1+(code-128)/128) ULP. Factorial Horner evaluates the nonconstant terms; the final operations are next_up + FMA(h,tail,-correction). The lowest stored order is prebiased in the serialized payload; other coefficient words remain ordinary rounded values because lower outputs consume them. The scalar oracle starts with ordinary coefficients and performs the equivalent bit increment at output assembly. Unsupported correction exponent ranges are reported as unresolved, not accepted.
+The default profile searches [0,N] for N=0…24 on [0,10^7], b=4…12, under 1 MiB per range. maximum_degree defaults to12 and is a hard Taylor-degree cap, not a cap on coefficient order N+P. No automatic degree expansion is permitted.
 
-## Local development
+For each (range,b), try common degree P in ascending order. Its row size is round_up_8(8*(N+P-L+1)+(N-L+1)). Find the smallest budget-fitting offset by bisection over offset codes. Row-count monotonicity is checked in bounded NumPy chunks, with endpoint comparisons to the exact arithmetic oracle. If that check fails, use exact geometry-only scanning instead.
 
-Use pytest, not unittest. No new package was needed in the existing local environment. The production environment specification pins Python 3.12.15, gmpy2 2.3.2, MPFR 4.2.2 and GMP 6.3.0; the default profile rejects other producer versions. The smoke profile deliberately permits the existing local environment and records it in the identity. Before freezing an installed environment, save its exact package resolution with `conda list --explicit`; the YAML is not an explicit binary-package lock. Plotting and pytest versions do not determine rounded mathematical data.
+Screen every required output before any full qualification, testing high orders first. The first qualified common degree starts offset shrinking: exponential index steps, bisection of the passing/nonpassing bracket, then one neighborhood sweep (default radius4). Failures do not prove all larger offsets fail. Retain only fully qualified offsets and keep the largest passing one encountered.
+
+Freeze the resulting grid and minimize each output degree independently by ascending tests through P. Freed storage is not refilled. Compare candidates across b by maximum actual degree, actual table bytes, degree vector and stable grid key. Unresolved probes remain explicit; they cannot establish degree minimality. Results are the best qualified selections found by this staged search, not global optima. Explicit exhaustive mode remains available for bounded fixtures.
+
+## Storage and reproduction
+
+Rows contain little-endian binary64 coefficient words, unsigned output-correction bytes, and zero padding to eight bytes. The lowest stored coefficient is prebiased to next-up; others remain ordinary rounded coefficients because lower outputs consume them. The coefficient range ends at max(n+p_n), not N+max(p_n).
+
+Expanded data stay in bounded memory. summary.json stores selected recipes, witnesses and payload checksums. state.json records completed probes and resumable decisions; records.jsonl contains final task results. None contains expanded tables. Node-local metadata is published after completed probes and on exit. A lost node can require repeating its current unfinished probe, not completed published probes.
+
+The exact Python/gmpy2/MPFR/GMP producer versions are checked by the production profile. NumPy is also recorded in the numerical run identity; the environment file pins a wheel compatible with the cluster OS. Geometry verification uses only binary64 addition and integer operations, not NumPy transcendental routines.
 
 ```sh
-conda env create -f workflow/additive/environment.yml
-conda activate fabo-additive
-conda list --explicit > environment-explicit.txt
 python -m pytest -q
 python -m workflow.additive.search --config workflow/additive/profiles/smoke.json --output .work/additive-smoke --workers 2
 python -m workflow.additive.artifacts .work/additive-smoke/summary.json --output .work/additive-smoke/figures --tables
 ```
 
-The last command regenerates selected binary tables, checks their SHA-256 hashes, and plots degree vectors, storage, sampled error margins and reference spacing. It does not repeat the search. The payload format is little-endian coefficient words followed by correction bytes and zero padding to eight bytes. Metadata gives exact hex domain and offset, key range, degrees, highest reference order, layout and minimum-order prebias. Coefficients are regenerated at exact binary64 reference coordinates.
+The existing smoke profile is an explicitly bounded exhaustive regression fixture. Tests also exercise the guided job script and resume/merge path. The artifacts command regenerates selected tables and verifies checksums without repeating the search. It also creates degree, storage, error and grid-spacing plots. Omit --tables to avoid retaining expanded binary tables.
 
 ## Cluster execution
 
-Copy this source directory and the profile to a frozen checkout on Heitler. Run the following on the login node, using the actual installed producer Python and shared output paths. This prepares scripts only unless `--submit` is supplied.
+Run the launcher from a frozen checkout on Heitler, using the pinned producer:
 
 ```sh
-python -m workflow.additive.cluster --repo "$PWD" --config workflow/additive/profiles/default.json --output /absolute/shared/additive-run --python /absolute/path/to/fabo-additive/bin/python
-# Add --submit after inspecting the prepared commands.
+python -m workflow.additive.cluster --repo "$PWD" --config workflow/additive/profiles/default.json --output /absolute/shared/run --python /absolute/producer/bin/python
+# Inspect prepared scripts, then repeat with --submit.
 ```
 
-Defaults request partition 6526Y, c021–c028, 128 grid shards, at most 32 concurrent eight-worker allocations, 32 GiB per allocation and 24 hours per job. These are configurable. A dependent merge runs after all array tasks succeed; no laptop controller is required. Within each grid the QUICK ranges 4/8/12 are evaluated first and per-order results are reused across larger ranges. This is not a promise of publishing globally optimal GPU selections before every grid shard finishes. There is no hardware training or timing in this workflow.
+Guided mode creates one single-CPU, 2-GiB task per (range,b):225 tasks by default on c021–c028. The default concurrency cap is256; an explicit --concurrency is honored. QUICK ranges ending at4/8/12 are ordered first. Tasks request one node; eligible hosts are enforced by excluding other partition nodes, not by requesting all hosts.
 
-Expanded reference data are bounded in-process caches. Journals are written in node-local scratch and published on job exit; sudden node loss can lose that shard's unpublished progress. Resubmitting the same identity resumes published complete records and discards only an interrupted final append. Retry failed/time-limited tasks explicitly; the dependent merge will not accept incomplete coverage. Do not run two writers for the same shard. No previous expanded-cache data are required.
+Each allocation has a24-hour limit. An afterany finalizer retries incomplete tasks at most twice, preserving completed probes, then merges only complete matching identities and coverage. An exhausted retry limit creates incomplete.json and reports failure. Numerical no-candidate outcomes are completed results, not infrastructure failures to retry. The controller does not require the laptop to stay connected. Do not submit concurrent writers to the same run.
 
-## Portable results and provenance
-
-Keep `summary.json`, the exact configuration, producer versions, source snapshot and payload hashes for publication; these are compact regeneration recipes, not compressed expanded tables. `records.jsonl` is a resumable run-local attempt ledger and need not enter Git. The summary preserves winner witnesses, lower-degree failures, rejection counts, coverage status and window-edge warnings. Aggregation streams journals rather than loading the entire history.
-
-The directed Boys and exact-rounding helpers were selectively extracted from branch fresh-start, commit c3c5788. The new grid, degree search and fully materialized row layout have their own identity. CPU/GPU compilation and hardware conformance remain separate consumers; this workflow does not certify arbitrary compiler reassociation. The prior exponential-free large-argument model is not retuned or emitted here, and the main-domain metadata does not claim qualification beyond its endpoint. No previous main-grid acceptance results are imported.
+The older exhaustive source/results remain archival; their metadata are not silently relabeled as guided-search results. The large-argument method is not retuned here. Nothing in the bounded-domain summary qualifies inputs beyond its endpoint.

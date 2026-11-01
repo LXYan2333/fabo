@@ -1,5 +1,10 @@
 {
-  "producer": {"python": "3.12.15", "gmpy2": "2.3.2", "mpfr": "MPFR 4.2.2", "gmp": "GMP 6.3.0"},
+  "producer": {
+    "python": "3.12.15",
+    "gmpy2": "2.3.2",
+    "mpfr": "MPFR 4.2.2",
+    "gmp": "GMP 6.3.0"
+  },
   "requested_ranges": [
     [
       0,
@@ -121,29 +126,6 @@
     11,
     12
   ],
-  "spacing_exponents": [
-    -16,
-    -15,
-    -14,
-    -13,
-    -12,
-    -11,
-    -10,
-    -9,
-    -8,
-    -7,
-    -6,
-    -5,
-    -4,
-    -3,
-    -2,
-    -1,
-    0,
-    1,
-    2,
-    3,
-    4
-  ],
   "screen_subdivisions": 4,
   "final_subdivisions": 16,
   "refinement_rounds": 4,
@@ -151,5 +133,7 @@
     4,
     8,
     12
-  ]
+  ],
+  "strategy": "budget_guided",
+  "offset_neighborhood": 4
 }

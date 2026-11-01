@@ -7,5 +7,5 @@ dependencies:
   - mpfr=4.2.2
   - gmp=6.3.0
   - pytest
-  - numpy
+  - numpy=2.2.6
   - matplotlib

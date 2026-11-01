@@ -46,10 +46,10 @@ def main():
         axes[0].legend()
     fig.savefig(args.output/'selection.pdf')
     plt.close(fig)
-    from .model import Grid
+    from .model import from_metadata
     for record in records:
         meta=record['grid']
-        grid=Grid(meta['b'],meta['e'],meta['m'],float.fromhex(meta['domain_end']))
+        grid=from_metadata(meta)
         fig,ax=plt.subplots(layout='constrained')
         # Plot ideal reference spacings, not claimed exact mapping-cell widths.
         nodes=[grid.node(k) for k in grid.keys]

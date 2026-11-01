@@ -10,21 +10,29 @@ from .reference import (add64, bits64, from_bits, reference_data, rn64,
 @dataclass(frozen=True)
 class Grid:
     b: int
-    e: int
-    m: int
+    e: int | None = None
+    m: int | None = None
     domain_end: float = 1e7
+    offset_code: int | None = None
 
     def __post_init__(self):
         if (type(self.b) is not int or not 1 <= self.b <= 20 or
-                type(self.e) is not int or not -64 <= self.e <= 32 or
-                type(self.m) is not int or not 1 <= self.m <= 2**self.b or
                 not math.isfinite(self.domain_end) or not 0 < self.domain_end <= 1e7):
             raise ValueError('invalid additive-grid configuration')
+        if self.offset_code is None:
+            if (type(self.e) is not int or not -64 <= self.e <= 32 or
+                    type(self.m) is not int or not 1 <= self.m <= 2**self.b):
+                raise ValueError('invalid legacy offset')
+        elif (self.e is not None or self.m is not None or type(self.offset_code) is not int or
+              not 0 <= self.offset_code <= (0x7fefffffffffffff >> self.shift)):
+            raise ValueError('invalid aligned offset code')
         if bits64(add64(self.domain_end, self.offset)) + (1 << (self.shift-1)) >= 2**64:
             raise ValueError('quantizer addition overflows')
 
     @property
     def offset(self):
+        if self.offset_code is not None:
+            return from_bits(self.offset_code << self.shift)
         return math.ldexp(float(2*(1 << self.b)-self.m), self.e)
 
     @property
@@ -65,10 +73,19 @@ class Grid:
                 else math.nextafter(self.transition(key+1), -math.inf))
 
     def metadata(self):
-        return dict(b=self.b, e=self.e, m=self.m, offset=self.offset.hex(),
+        result = dict(b=self.b, offset=self.offset.hex(), offset_code=bits64(self.offset) >> self.shift,
                     domain_end=self.domain_end.hex(), shift=self.shift,
                     key_min=self.keys.start, key_max=self.keys.stop-1,
                     row_count=len(self.keys), quantizer='nearest-half-up')
+        if self.offset_code is None:
+            result.update(e=self.e, m=self.m)
+        return result
+
+
+def from_metadata(meta):
+    if 'offset_code' in meta:
+        return Grid(meta['b'], domain_end=float.fromhex(meta['domain_end']), offset_code=meta['offset_code'])
+    return Grid(meta['b'], meta['e'], meta['m'], float.fromhex(meta['domain_end']))
 
 
 @lru_cache(maxsize=128)
