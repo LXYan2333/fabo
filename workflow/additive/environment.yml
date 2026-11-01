@@ -1,0 +1,11 @@
+name: fabo-additive
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.15
+  - gmpy2=2.3.2
+  - mpfr=4.2.2
+  - gmp=6.3.0
+  - pytest
+  - numpy
+  - matplotlib
