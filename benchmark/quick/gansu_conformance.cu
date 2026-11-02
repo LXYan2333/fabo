@@ -8,10 +8,8 @@
 #include <vector>
 #include <algorithm>
 #include <limits>
-#include "fabo_probe_runtime.h"
-#define VY(a,b,l) YVerticalTemp[(l) * (gridDim.x * blockDim.x)]
-#include "fabo_probe_boys.h"
-#undef VY
+#define FABO_COMPARATOR_GANSU 1
+#include "comparator_runtime.cuh"
 #include "boys.hpp"
 
 static void check(cudaError_t e) {
@@ -20,7 +18,7 @@ static void check(cudaError_t e) {
 __global__ void adapted(int n, const double* xs, size_t count, const double* table, double* out) {
     const size_t i = blockIdx.x*blockDim.x+threadIdx.x;
     if (i >= count) return;
-    FaboProbeFmT(n < 0 ? i%13 : n, xs[i], out+i);
+    FaboComparatorFmT(n < 0 ? i%13 : n, xs[i], out+i);
 }
 __global__ void original(int n, const double* xs, size_t count, const double* table, double* out) {
     const size_t i = blockIdx.x*blockDim.x+threadIdx.x;
@@ -37,8 +35,8 @@ int main(int argc, char** argv) {
     if (!f) return 2;
     bool valid = std::fread(table.data(),8,table.size(),f)==table.size() && std::fgetc(f)==EOF;
     if (std::fclose(f)!=0 || !valid) return 2;
-    if (setenv("FABO_GANSU_TABLE",argv[1],1)!=0) return 2;
-    fabo_probe_init_();
+    if (setenv("FABO_COMPARATOR_TABLE",argv[1],1)!=0) return 2;
+    fabo_comparator_init_();
     const size_t count=4099; // Mixed requests, repeated inputs and a partial warp/block.
     const size_t stride=(count+127)/128*128;
     const double sentinel=-987.;

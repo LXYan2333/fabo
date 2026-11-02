@@ -2,7 +2,7 @@
 
 For the restored S66 convergence/iteration-count probe and later fixed-length replay hooks, see [the calibration workflow](../../workflow/quick/README.md). Use `--scf-training` instead of `--probe`; the two modes are mutually exclusive. Calibration uses official QUICK's SAD/DIIS trajectory, not the fixed-density one-update harness below.
 
-`fabo_additive` replaces only the two Boys call sites in QUICK's GPU two-electron energy helpers. It uses the bundled numerical selections, not the previous recurrence-patch/exp-dictionary implementation. `official` is the unchanged Boys control. The restored comparator source files remain available separately; this preparation command currently exposes these two variants only.
+`fabo_additive` replaces only the two Boys call sites in QUICK's GPU two-electron energy helpers. It uses the bundled numerical selections, not the previous recurrence-patch/exp-dictionary implementation. `official` is the unchanged Boys control. The same preparation command also exposes `libintx_gpu`, `vsr`, and `gansu` through the direct strided bindings described below.
 
 QUICK is pinned to revision `730af1533da8912ce5874852561e63b5907f9d7a`. Prepare independent disposable trees, leaving the submodule untouched:
 
@@ -12,17 +12,17 @@ python -m workflow.quick.prepare --variant official --probe --output .work/quick
 python -m workflow.quick.prepare --variant fabo_additive --probe --output .work/quick-additive
 ```
 
-Preparation performs no numerical search, build, benchmark, or cluster submission. The destination must not exist. `fabo-variant.json` records the upstream revision, selected numerical identities and copied/patched source checksums. Source and coefficient data are embedded in the prepared tree; binaries do not need runtime table files or paths to the author's workspace.
+Preparation performs no numerical search, build, benchmark, or cluster submission. The destination must not exist. `fabo-variant.json` records the upstream revision, selected numerical identities and copied/patched source checksums. FABO's coefficient data are embedded in the prepared tree; its binary needs no runtime table file. LibintX and GANSU instead load the workflow-generated author table once during initialization, using `FABO_COMPARATOR_TABLE`.
 
 Build each tree using QUICK's CUDA build procedure, with matching compiler, architecture and arithmetic options. For example, on a machine with the supported CUDA toolkit and QUICK's documented build dependencies:
 
 ```sh
 cmake -S .work/quick-additive -B .work/quick-additive-build \
   -DCUDA=ON -DMPI=OFF -DENABLEF=OFF -DCMAKE_BUILD_TYPE=Release
-cmake --build .work/quick-additive-build --parallel 1
+cmake --build .work/quick-additive-build --target quick.cuda --parallel 1
 ```
 
-Both prepared variants use C++17; existing CUDA optimization flags are preserved. CUDA toolkit support/architecture selection remains QUICK's responsibility. This patch targets CUDA, not HIP. `ENABLEF` is a build option, not a second binding generator option.
+All prepared QUICK variants use C++17; existing CUDA optimization flags are preserved. Standalone LibintX coefficient/oracle builds use C++20 as required by its upstream headers. CUDA toolkit support/architecture selection remains QUICK's responsibility. This patch targets CUDA, not HIP. `ENABLEF` is a build option, not a second binding generator option.
 
 FABO runtime precondition assertions are opt-in (`FAST_BOYS_ENABLE_ASSERTS=1`) and disabled by default, even if QUICK does not define `NDEBUG`. No QUICK source/flag workaround is needed to remove these FABO checks from timing builds. This does not change QUICK's own assertion policy. Define the macro consistently for diagnostic builds; compile-time checks remain active in all builds.
 
@@ -42,3 +42,7 @@ nvcc -std=c++17 -O3 -arch=sm_120 --fmad=false -Iinclude -Ibenchmark/quick \
 ```
 
 Tests check both ENABLEF mappings, heterogeneous runtime endpoints, strided outputs/sentinels, host conformance against the direct evaluator, fail-closed source contexts, and preparation provenance. GPU runtime validation is a separate check; host tests alone do not certify CUDA integration.
+
+## Current comparison workflow
+
+The restored backend choices are `official`, `fabo_additive`, `libintx_gpu`, `vsr`, and `gansu`. Prepare disposable sources with `python -m workflow.quick.prepare --variant NAME --output PATH --scf-training`. `comparator_binding.cuh` directly writes QUICK's strided output; `comparator_runtime.cuh` uploads author tables once before timed work. Table files are supplied by `FABO_COMPARATOR_TABLE`, which the comparison controller sets automatically. Use `workflow.quick.compare`, documented in `workflow/quick/README.md`, for archive import, build, adapter checks and fixed-length trajectories. Older helper names in historical comparator documentation are not the current orchestration entry points.

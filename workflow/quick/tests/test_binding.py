@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 import pytest
-from benchmark.quick.patch_quick import ROOT, patch
+from benchmark.quick.patch_quick import ROOT, VARIANTS, patch
 
 
 def source_tree(tmp_path):
@@ -18,7 +18,7 @@ def source_tree(tmp_path):
     return tmp_path
 
 
-@pytest.mark.parametrize('variant',['official','fabo_additive'])
+@pytest.mark.parametrize('variant',VARIANTS)
 def test_patch_and_manifest(tmp_path,variant):
     root=source_tree(tmp_path)
     manifest=patch(root,variant,probe=True)
@@ -28,12 +28,17 @@ def test_patch_and_manifest(tmp_path,variant):
     calls=(root/'src/gpu/gpu_get2e_subs.h').read_text()
     if variant=='fabo_additive':
         assert calls.count('FaboQuickFmT<FABO_QUICK_FAMILY_MAX>(I + J + K + L,')==2
-        assert 'FmT(I + J + K + L,' not in calls
+        assert ' FmT(I + J + K + L,' not in calls
         assert set(manifest['models'])=={'0-4','0-8','0-12'}
         assert 'list(APPEND QUICK_CUDA_SOURCE ../additive_host.cc)' in cmake
         assert 'fabo_quick_boys_init_();\n    PRINTDEBUG' in (root/'src/gpu/cuda/gpu.cu').read_text()
-    else:
+    elif variant=='official':
         assert calls==(ROOT/'third_party/quick/src/gpu/gpu_get2e_subs.h').read_text()
+    else:
+        assert calls.count('FaboComparatorFmT(I + J + K + L,')==2
+        assert ' FmT(I + J + K + L,' not in calls
+        assert 'fabo_comparator_init_();\n    PRINTDEBUG' in (root/'src/gpu/cuda/gpu.cu').read_text()
+        assert (root/'src/gpu/comparator_binding.cuh').is_file()
     for name,digest in manifest['copied_sources'].items():
         assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
     with pytest.raises(ValueError,match='already patched'):

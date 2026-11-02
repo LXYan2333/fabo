@@ -6,7 +6,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-VARIANTS = ('official', 'fabo_additive')
+VARIANTS = ('official', 'fabo_additive', 'libintx_gpu', 'vsr', 'gansu')
 PIN = '730af1533da8912ce5874852561e63b5907f9d7a'
 
 
@@ -48,6 +48,25 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
                 'probe': probe, 'scf_training': training,
                 'scope': 'GPU two-electron energy Boys calls; gradients and one-electron paths unchanged'}
     copies = {}
+    if variant in ('libintx_gpu', 'vsr', 'gansu'):
+        macro = {'libintx_gpu': 'LIBINTX', 'vsr': 'VSR', 'gansu': 'GANSU'}[variant]
+        header = 'src/gpu/gpu_get2e_subs.h'
+        edit(header, '#include "gpu_fmt.h"', '#include "gpu_fmt.h"\n'
+             f'#define FABO_COMPARATOR_{macro} 1\n#include "comparator_binding.cuh"')
+        edit(header, 'FmT(I + J + K + L, AB * CD * ABCD',
+             'FaboComparatorFmT(I + J + K + L, AB * CD * ABCD', 2)
+        edit('src/gpu/cuda/gpu_get2e.cu', '#include <cuda.h>',
+             '#include <cuda.h>\n'+f'#define FABO_COMPARATOR_{macro} 1\n#include "../comparator_runtime.cuh"')
+        edit('src/gpu/cuda/gpu.cu', '#include "gpu.h"',
+             '#include "gpu.h"\nextern "C" void fabo_comparator_init_();')
+        edit('src/gpu/cuda/gpu.cu', '    PRINTDEBUG("FINISH GPU INIT");',
+             '    fabo_comparator_init_();\n    PRINTDEBUG("FINISH GPU INIT");')
+        names = ['comparator_binding.cuh', 'comparator_runtime.cuh']
+        names += {'libintx_gpu': ['libintx_boys.h'],
+                  'vsr': ['vsr_boys.h', 'vsr_coefficients.h'],
+                  'gansu': ['gansu_boys.h']}[variant]
+        for name in names:
+            copies[Path('src/gpu')/name] = HERE/name
     if variant == 'fabo_additive':
         numerical = json.loads((ROOT/'include/manifest.json').read_text())
         for n in (4, 8, 12):

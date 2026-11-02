@@ -1,0 +1,11 @@
+{
+  "calibration": {},
+  "comparison": {
+    "variants": ["official", "fabo_additive", "libintx_gpu", "vsr", "gansu"],
+    "rounds": 5,
+    "build_workers": 5,
+    "cuda_arch": "sm_120",
+    "calibration_root": "/export/home/lxyan2/fast-boys-fresh/quick-s66/6d3038d19552d85c/results",
+    "calibration_sha256": "369dd12b05c2b8d95726473ad73d8a52872a46d2da0da1fa6960f5c2c544b5b9"
+  }
+}
