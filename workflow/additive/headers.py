@@ -132,8 +132,7 @@ def main_source(record,ident,error,payload_sha256):
         up='minimum_up' if n==first else 'hi+1'
         offset=n-first
         lines += [f'      const auto hi={hi};',
-                  f'      const unsigned code=unsigned((row[{correction_word(record,n)}] >> {8*(offset%8)}) & 255U);',
-                  f'      out[({n}-First)*stride]=O::add(O::value({up}),O::fma(h,q,-O::correction(hi,code)));',
+                  f'      out[({n}-First)*stride]=O::add(O::value({up}),O::fma(h,q,-O::template correction_from_word<{offset%8}>(hi,row[{correction_word(record,n)}])));',
                   f'      if(last_output=={n}) return;', '    }']
     return '\n'.join(lines+['  }','};','}'])+'\n'
 
@@ -165,9 +164,8 @@ def tail_source(record,ident):
         i=top-first+n-first
         lines += [f'    if constexpr(First<={n} && {n}<=Limit) {{', f'      double q=g{n+p};']
         lines += [f'      q=O::fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
-        lines += [f'      const unsigned code=unsigned((row[{1+i//8}]>>{8*(i%8)}) & 255U);',
-                  f'      const auto hi=O::bits(g{n});',
-                  '      const double v=O::add(O::value(hi+1),O::fma(h,q,-O::correction(hi,code)));',
+        lines += [f'      const auto hi=O::bits(g{n});',
+                  f'      const double v=O::add(O::value(hi+1),O::fma(h,q,-O::template correction_from_word<{i%8}>(hi,row[{1+i//8}])));',
                   f'      out[({n}-First)*stride]=O::scale(v,unsigned({2*n+1}*k));',
                   f'      if(last_output=={n}) return;', '    }']
     return '\n'.join(lines+['  }','};','}'])+'\n'
@@ -221,7 +219,7 @@ def generate(summary,output,ranges=None,workers=1):
     if error['metric'] not in ('ulp','absolute','relative'):
         raise ValueError('unsupported error metric')
     manifest={'schema':1,'numerical_identity':summary['identity'],'models':{},'generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-              'runtime_sources':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((ROOT/'include/fast_boys').rglob('*')) if p.is_file() and p.suffix in ('.h','.cuh') and 'models' not in p.relative_to(ROOT/'include/fast_boys').parts and p.name!='selected.h'}}
+              'runtime_sources':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((ROOT/'include/fast_boys').rglob('*')) if p.is_file() and p.suffix in ('.h','.cuh') and 'models' not in p.relative_to(ROOT/'include/fast_boys').parts and p.name not in ('selected.h','selected_simd.h')}}
     tasks=[(output,key,records[key],error,manifest['generator_sha256']) for key in chosen]
     if workers==1:
         manifest['models']=dict(map(emit_main,tasks))

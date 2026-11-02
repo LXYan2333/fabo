@@ -235,6 +235,28 @@ def test_two_translation_units(fixture,tmp_path):
     compile_run(tmp_path,'#include "shared.h"\nconst void* other(); int main(){return other()!=shared_table.data();}',[directory,tmp_path],[str(tmp_path/'a.cc')])
 
 
+def test_positioned_correction_decoder(tmp_path):
+    source='''
+#include "fast_boys/detail/cuda/arithmetic.cuh"
+#include <initializer_list>
+using O=fast_boys::detail::Binary64;
+template<int Byte> bool check() {
+ for(auto hi : {0x3ff0000000000000ULL,0x3fefffffffffffffULL,
+                0x200abcdef0123456ULL,0x7fefffffffffffffULL})
+  for(unsigned code=0;code<256;++code)
+   for(auto noise : {0ULL,~0ULL,0x0123456789abcdefULL,0xfedcba9876543210ULL}) {
+    auto word=(noise & ~(255ULL<<(8*Byte))) | (std::uint64_t(code)<<(8*Byte));
+    if(O::bits(O::correction(hi,code)) !=
+       O::bits(O::correction_from_word<Byte>(hi,word))) return false;
+   }
+ if constexpr(Byte<7) return check<Byte+1>();
+ return true;
+}
+int main(){return !check<0>();}
+'''
+    compile_run(tmp_path,source,[ROOT/'include'])
+
+
 @pytest.mark.parametrize('ndebug',[False,True])
 def test_opt_in_assertions(fixture,tmp_path,ndebug):
     directory,_,_,_,manifest=fixture

@@ -49,7 +49,7 @@ def main_kernel(entry):
         for j in range(p-1,0,-1):
             body += [f' q=Fma(a{j+1},q,c{n+j});']
         body += [f' const auto hi=Bits(c{n});',
-                 f' At<{n}-First>(out...)=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,Correction(hi,ByteAt<{(n-first)%8}>(w{slot}))));',' }']
+                 f' At<{n}-First>(out...)=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{(n-first)%8}>(hi,w{slot})));',' }']
     return wrap(entry['id'],entry['cpp_model'],'Kernel',body)
 
 
@@ -81,7 +81,7 @@ def tail_kernel(entry,metadata):
         body += [f' if constexpr(First<={n} && {n}<=Last) {{',f' V q=g{n+p};']
         body += [f' q=Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
         body += [f' const auto hi=Bits(g{n});',
-                 f' const auto v=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,Correction(hi,ByteAt<{i%8}>(w{1+i//8}))));',
+                 f' const auto v=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{i%8}>(hi,w{1+i//8})));',
                  f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),MultiplyConstant<{2*n+1},511>(k)),At<{n}-First>(out...));',' }']
     return wrap(entry['id'],entry['cpp_model'],'TailKernel',body)
 

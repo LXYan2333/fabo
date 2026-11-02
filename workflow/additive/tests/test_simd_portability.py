@@ -163,6 +163,13 @@ template<int Byte> bool check(fb::U words,const std::uint64_t* inputs) {
  hn::Store(fb::detail::ByteAt<Byte>(words),fb::DU(),out);
  for(unsigned i=0;i<hn::Lanes(fb::DU());++i)
   if(out[i]!=((inputs[i]>>(8*Byte))&255)) return false;
+ for(const auto hi : {0x3ff0000000000000ULL,0x3fefffffffffffffULL,
+                      0x200abcdef0123456ULL,0x7fefffffffffffffULL}) {
+  auto before=fb::detail::Bits(fb::detail::Correction(fb::detail::SU(hi),
+      hn::And(hn::ShiftRight<8*Byte>(words),fb::detail::SU(255))));
+  auto after=fb::detail::Bits(fb::detail::CorrectionFromWord<Byte>(fb::detail::SU(hi),words));
+  if(!hn::AllTrue(fb::DU(),hn::Eq(before,after))) return false;
+ }
  if constexpr(Byte<7) return check<Byte+1>(words,inputs);
  return true;
 }
@@ -200,6 +207,24 @@ extern "C" fb::U extract_byte1(fb::U words) {
     compile_source(tmp_path,source,compiler,flags)
     asm=subprocess.check_output(['objdump','-d',str(tmp_path/'probe.o')],text=True)
     assert 'vpsrldq' in asm, asm
+
+
+@pytest.mark.parametrize('compiler',['clang++','g++'])
+def test_positioned_correction_instruction(tmp_path,compiler):
+    if not shutil.which('objdump'):
+        pytest.skip('objdump unavailable')
+    source='''
+#include "fast_boys/simd.h"
+namespace fb=fast_boys::simd::HWY_NAMESPACE;
+extern "C" fb::V correction_byte1(fb::U hi,fb::U word) {
+ return fb::detail::CorrectionFromWord<1>(hi,word);
+}
+'''
+    compile_source(tmp_path,source,compiler,
+                   ['-DHWY_COMPILE_ONLY_STATIC','-march=icelake-server'])
+    asm=subprocess.check_output(['objdump','-d',str(tmp_path/'probe.o')],text=True)
+    assert asm.count('vpsllq') == 1, asm
+    assert 'vpsrl' not in asm, asm
 
 
 @pytest.mark.parametrize('compiler',['clang++','g++'])

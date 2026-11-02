@@ -1,2 +1,2 @@
 #pragma once
-#include "fast_boys/models/bcd899dda4ea3323d64431345f79baeab85c8092901fd9e854bca233c03b2ddc/data.h"
+#include "fast_boys/models/f1d610d8d4106dc8a98318dc4e0d6d4fa4a4d19d8ce74f3d95ca9f797a37fbb5/data.h"

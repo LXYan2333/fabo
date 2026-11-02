@@ -58,6 +58,22 @@ struct Binary64 {
     return value(((ordinary_hi & 0x7ff0000000000000ULL) - (53ULL << 52)) +
                  (std::uint64_t(code) << 45));
   }
+  template <int Byte>
+  FAST_BOYS_HD static inline double
+  correction_from_word(std::uint64_t ordinary_hi, std::uint64_t word) {
+    static_assert(0 <= Byte && Byte < 8,
+                  "byte index must be inside a u64 word");
+    constexpr int shift = 45 - 8 * Byte;
+    std::uint64_t positioned;
+    if constexpr (shift >= 0)
+      positioned = word << shift;
+    else
+      positioned = word >> -shift;
+    positioned &= std::uint64_t(255) << 45;
+    // Bit 52 contributes to the exponent: addition, not bitwise OR.
+    return value(((ordinary_hi & 0x7ff0000000000000ULL) - (53ULL << 52)) +
+                 positioned);
+  }
   // Exact power-of-two scaling of positive normal values, RN-even on underflow.
   FAST_BOYS_HD static inline double scale(double v, unsigned power) {
     const auto u = bits(v);

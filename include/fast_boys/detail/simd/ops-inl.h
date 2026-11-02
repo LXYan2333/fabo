@@ -269,6 +269,20 @@ HWY_INLINE V Correction(U hi, U code) {
       hn::Add(hn::Sub(hn::And(hi, SU(0x7ff0000000000000ULL)), SU(53ULL << 52)),
               hn::ShiftLeft<45>(code)));
 }
+template <int Byte> HWY_INLINE V CorrectionFromWord(U hi, U word) {
+  static_assert(0 <= Byte && Byte < 8, "byte index must be inside a u64 lane");
+  constexpr int shift = 45 - 8 * Byte;
+  U positioned;
+  if constexpr (shift >= 0)
+    positioned = hn::ShiftLeft<shift>(word);
+  else
+    positioned = hn::ShiftRight<-shift>(word);
+  positioned = hn::And(positioned, SU(255ULL << 45));
+  // Bit 52 contributes to the exponent: preserve the integer addition.
+  return Float(
+      hn::Add(hn::Sub(hn::And(hi, SU(0x7ff0000000000000ULL)), SU(53ULL << 52)),
+              positioned));
+}
 template <int Byte> HWY_INLINE U ByteAt(U word) {
   static_assert(0 <= Byte && Byte < 8, "byte index must be inside a u64 lane");
   if constexpr (Byte == 0)
