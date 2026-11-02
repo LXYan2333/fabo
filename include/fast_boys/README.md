@@ -1,4 +1,6 @@
-# CUDA evaluation API
+# Evaluation APIs
+
+The CUDA API is described below. See [SIMD.md](SIMD.md) for the Highway CPU API with compile-time output ranges and native/software gather selection.
 
 The evaluator uses fully materialized reference coefficients on the selected additive grid. It has no main-domain recurrence patches, exponential dictionary, or runtime exponential. Numerical models and exact table words are portable; CUDA operations and allocation helpers are separate.
 

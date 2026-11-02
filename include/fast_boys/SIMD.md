@@ -1,0 +1,52 @@
+# Highway SIMD API
+
+The CPU backend reuses the CUDA evaluator's exact table words, additive grid, order-dependent degrees, next-up corrections, and compact large-argument model. It does not create another numerical selection or table layout. Use C++17 and Highway 1.4 or newer with binary64 support.
+
+## Compile-time output ranges
+
+```cpp
+// Include this before hwy/foreach_target.h when using Highway dispatch.
+#include "fast_boys/simd_config.h"
+#include "fast_boys/selected_simd.h"
+// Include payloads only in the translation unit that owns storage.
+#include "fast_boys/models/data_0_4.h"
+#include "fast_boys/models/tail_data.h"
+
+using Model = fast_boys::selected::Model<4>;
+using Tail = fast_boys::selected::Tail;
+static constexpr fast_boys::BoysTable<Model> main_table{};
+static constexpr fast_boys::BoysTable<Tail> tail_table{};
+
+// Inside a HWY_BEFORE_NAMESPACE / HWY_AFTER_NAMESPACE target namespace:
+namespace fb = fast_boys::simd::HWY_NAMESPACE;
+auto boys = fb::make_evaluator(main_table.view(), tail_table.view());
+fb::V f1, f2, f3;
+boys.evaluate<1, 3>(x, f1, f2, f3);
+```
+
+`x` is a full Highway binary64 vector (`VFromD<ScalableTag<double>>`). Each output is a separate `HWY_RESTRICT` vector reference, in increasing order, and must not alias another output or table storage. The input is passed by value. No containers of SIMD vectors are used, allowing sizeless SVE/RVV vector types. Subsets share the original table and omit unrelated main-path coefficients and Horner calculations. There is no runtime-order CPU overload.
+
+`selected_simd.h` is a convenience catalog, not payload storage. A minimal caller can instead include `simd.h` and its main/tail `models/<id>/simd-inl.h` companions. These are target-toggle headers compatible with `hwy/foreach_target.h`; place application functions in the corresponding target namespace. The owning `BoysTable` belongs outside target namespaces and can be shared across targets or translation units through `TableView`. Keep its lifetime longer than every evaluator. No runtime table initialization is required for constexpr storage.
+
+## Gather policy
+
+`make_evaluator<true>` selects software gather; `<false>` selects Highway's native/fallback gather. The default is software on AVX2, AVX3, and AVX3_DL, native elsewhere. This is an ISA-based conservative GDS policy, not CPU vulnerability detection. The specialized software loader requires x86-64; on other architectures, including 32-bit x86, the software choice delegates to Highway's gather implementation.
+
+The x86-64 software path narrows physical word indices only when the maximum index fits, extracts packed indices, and loads exactly eight bytes per lane using `_mm_load_sd` for the low half and `_mm_loadh_pd` for the high half before combining vectors. These direct loads deliberately rely on compiler-intrinsic handling of uint64_t storage through double pointers, rather than a portable C++ aliasing guarantee. The checked Clang/GCC builds emit paired memory loads without stack staging or a separate unpack. It never reads an unused neighboring table entry. Main and correction words are gathered at eight-byte-aligned addresses; no unaligned-gather optimization or extra guard padding is used. Row multiplication uses identity, constant shift, or bounded 32-by-32 multiplication when applicable, otherwise ordinary Highway multiplication.
+
+On native x86 SIMD targets, correction-byte extraction uses `ShiftRightBytes` followed by a per-u64 `And(255)` to favor shuffle resources over lane-shift resources. Although the shift spans each 128-bit block, the retained low byte belongs to the original u64 lane for byte offsets 0–7. Offset zero needs only the mask. GCC/Clang use an empty register operand to preserve the entire shifted vector before masking; otherwise Clang can replace the shuffle with lane shifts. This emits no instruction or memory fence. Other compilers may still rewrite the operation. Other architectures and scalar/emulated targets retain ordinary lane shifts; this policy is not a measured speedup claim for every x86 microarchitecture.
+
+## Numerical contract and portability
+
+Use round-to-nearest, ties-to-even and gradual underflow (FTZ/DAZ off). Users should not enable floating-point traps. The evaluator neither changes nor checks those settings. Main and tail gathers use sanitized, valid indices even in mixed vectors. Negative zero is accepted; positive infinity gives zero; negative arguments and NaNs give NaNs. Exceptional lanes can execute arithmetic on safe dummy arguments before blending, so floating-point status flags are not part of the API contract.
+
+Explicit FMA and numerical reassociation fences preserve the existing operation graph. `simd_config.h` disables SSE2/SSSE3/SSE4 by default unless the caller already defines `HWY_DISABLED_TARGETS` or Highway has selected its targets. An override is supported for convenience: targets without native FMA use per-lane `std::fma`, which is not a tuned performance path. Do not interpret a fast-math build as a new numerical certificate. Strict scalar/SIMD bitwise conformance and separate fast-math diagnostics complement the archived sampled one-ULP qualification; they do not prove a continuous-domain error bound.
+
+## Generation and checks
+
+```sh
+python -m workflow.additive.simd_headers --include include
+FABO_HIGHWAY_ROOT=/path/to/highway python -m pytest workflow/additive/tests/test_simd*.py -q
+```
+
+The separate generator reads `include/manifest.json` and the archived compact tail. It writes only SIMD companions, the SIMD catalog, and `simd-manifest.json`, whose hashes associate the implementation with the unchanged numerical manifest. It does not rewrite CUDA headers, payloads, or search results. Compiler/ISA tests skip unavailable dependencies; cross-compilation alone does not validate runtime behavior on another architecture.
