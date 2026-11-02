@@ -1,0 +1,19 @@
+{
+  "description": "User-supplied VSR coefficients and OpenACC benchmark sources, copied without modification on 2026-10-29",
+  "paper": "Rasmus Vikhamar-Sandberg and Michal Repisky, J. Chem. Phys. 164, 154111 (2026)",
+  "doi": "10.1063/5.0316073",
+  "source_doi": "10.60893/figshare.jcp.c.8390929",
+  "source_url": "https://doi.org/10.60893/figshare.jcp.c.8390929",
+  "source_attribution": "User identified this supplementary-material collection as the source of the supplied local coefficients.txt and benchmark.zip files; no independent download/hash comparison was performed.",
+  "archive_sha256": "8c5f8c63739ad42fe3cc859d7a73f96955873d731a366dec9bf573bca0b37b0b",
+  "archive_local_copy": ".work/third-party-vsr/benchmark.zip",
+  "files": {
+    "supplied/Makefile": "9e98ded962ed7472fda8bbfc01747c6fe8d7151fdad576a2ecb36a892b21c718",
+    "supplied/benchmark.c": "2b5f3af271e0bf789d3dcb355b50c162997db02dd943445ae98da0498bb1c241",
+    "supplied/coefficients.txt": "8ea6831d5a2112f2d01e93c34942506de8721012ed27c62a549380a84f9936ca",
+    "supplied/constants.h": "3345c1ee2f4261807681097d08ff4540d46140c9e00fd2812bd4c6dce1feb781",
+    "supplied/minimax.c": "15ef8eb30285ac4f4de765a3353c6bdb69f0eea62c3e6b37dd24f5f30681722c"
+  },
+  "source_correction": "Table II confirms that the last number under F0 numerator, 4.59649054199579770E+11, belongs at the beginning of F0 denominator. The importer moves this one value; supplied files are unchanged.",
+  "license_status": "No license statement was included in the supplied files or archive. Confirm redistribution terms before public redistribution; no license is inferred from other dependencies."
+}

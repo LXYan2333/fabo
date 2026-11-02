@@ -34,6 +34,10 @@ python -m workflow.additive.artifacts .work/additive-smoke/summary.json --output
 
 The existing smoke profile is an explicitly bounded exhaustive regression fixture. Tests also exercise the guided job script and resume/merge path. The artifacts command regenerates selected tables and verifies checksums without repeating the search. It also creates degree, storage, error and grid-spacing plots. Omit --tables to avoid retaining expanded binary tables.
 
+## CUDA header generation
+
+`python -m workflow.additive.headers RUN/summary.json --output .work/generated/include --ranges 0-4 0-8 0-12` emits exact payload initializers and lightweight model headers with incremental scalar coefficient loads. It consumes the frozen summary without rerunning numerical selection. Omit `--ranges` to emit all models; `--workers 4` regenerates independent models in four processes with bounded row caches. The manifest preserves the numerical identity separately from the generated implementation identity. The completed `[0,N]`, N=0–24 selections are bundled in `include`, with their reproducible source summary at `data/numerical/additive-1ulp-summary.json`. See `include/fast_boys/README.md` for the static/runtime range API, allocation lifetime, compact large-argument fallback, and conformance commands. Expanded generated headers remain regenerable artifacts rather than numerical cache entries.
+
 ## Cluster execution
 
 Run the launcher from a frozen checkout on Heitler, using the pinned producer:

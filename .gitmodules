@@ -1,0 +1,6 @@
+[submodule "third_party/quick"]
+	path = third_party/quick
+	url = https://github.com/merzlab/QUICK.git
+[submodule "third_party/libintx"]
+	path = third_party/libintx
+	url = https://github.com/ValeevGroup/libintx.git

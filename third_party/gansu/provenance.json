@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/Yasuaki-Ito/GANSU",
+  "release": "v2026.8.10",
+  "release_url": "https://github.com/Yasuaki-Ito/GANSU/releases/tag/v2026.8.10",
+  "commit": "0b000a6cbcc5f5a630940ac1c2ba7f7ac2b8f132",
+  "retrieved": "2026-10-29",
+  "paper_doi": "10.3390/eng7050205",
+  "license": "BSD-3-Clause",
+  "files": {
+    "upstream/LICENSE": "0464b20adf7dd1cba3fed46fe973b6bc523ab05d3b3f15ce777259449a21bcd3",
+    "upstream/include/boys.hpp": "e796d2ec2521fcd74f794dd5649ad36061ccad4248e1ac705edc8734b2010c6e",
+    "upstream/include/parameters.h": "690fd1334bc95c63cfdd31ec247a9ac79bc087af0873d08729e54bf5edcf9b79",
+    "upstream/src/boys/boys_30720.h": "469bc04fbe762298d3ab7183e4b6579774e30eca3128e87aabc4c35164f97272"
+  }
+}
