@@ -1,0 +1,25 @@
+{
+  "enable_f": false,
+  "bases": ["6-31G*", "def2-SVP"],
+  "separations": ["1.00"],
+  "max_scf_iterations": 200,
+  "density_rms": 1e-6,
+  "calculation_timeout_seconds": 3600,
+  "post_build_wait_seconds": 10,
+  "build_jobs": 16,
+  "cmake": "/usr/bin/cmake",
+  "cc": "/usr/bin/gcc",
+  "cxx": "/usr/bin/g++",
+  "fc": "/usr/bin/gfortran",
+  "cuda": "/usr/local/cuda",
+  "quick_arch": "blackwell2",
+  "build_type": "Release",
+  "python": "/usr/bin/python3",
+  "slurm": {
+    "partition": "pc",
+    "node": "pc008",
+    "cpus": 16,
+    "memory": "96G",
+    "minutes": 480
+  }
+}

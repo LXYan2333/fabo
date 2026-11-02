@@ -5,6 +5,8 @@
 #include <time.h>
 extern "C" void fabo_probe_init_() {} // Device initialization already uploaded tables.
 extern "C" void fabo_probe_counts_() {} // No instrumentation in timing kernels.
+extern "C" void fabo_request_begin_() {} // SCF calibration collects no Boys requests.
+extern "C" void fabo_request_end_() {}
 extern "C" void fabo_probe_sync_() {
   const auto status = cudaDeviceSynchronize();
   if (status != cudaSuccess) {

@@ -16,10 +16,12 @@ def replace(text, old, new, count=1):
     return text.replace(old, new)
 
 
-def patch(root, variant, probe=False):
+def patch(root, variant, probe=False, training=False):
     root = Path(root).resolve()
     if variant not in VARIANTS:
         raise ValueError('unsupported variant: '+variant)
+    if probe and training:
+        raise ValueError('choose fixed-density probe or SCF training, not both')
     if root == (ROOT/'third_party/quick').resolve():
         raise ValueError('do not patch the upstream submodule; prepare a disposable tree')
     if (root/'fabo-variant.json').exists():
@@ -43,7 +45,8 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
 '''
     edit(cmake, marker, prelude+'\n'+marker)
     manifest = {'schema': 1, 'variant': variant, 'quick_revision': PIN,
-                'probe': probe, 'scope': 'GPU two-electron energy Boys calls; gradients and one-electron paths unchanged'}
+                'probe': probe, 'scf_training': training,
+                'scope': 'GPU two-electron energy Boys calls; gradients and one-electron paths unchanged'}
     copies = {}
     if variant == 'fabo_additive':
         numerical = json.loads((ROOT/'include/manifest.json').read_text())
@@ -91,10 +94,14 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
         model_files += [f'{m["id"]}/data.h' for m in [*manifest['models'].values(),numerical['tail']]]
         for name in model_files:
             copies[Path('src/gpu/fast_boys/models')/name] = base/'models'/name
-    if probe:
+    if probe or training:
         edit('src/gpu/cuda/gpu_get2e.cu', '#include <cuda.h>',
              '#include <cuda.h>\n#include "../probe_runtime.h"')
         copies[Path('src/gpu/probe_runtime.h')] = HERE/'probe_runtime.h'
+    if training:
+        from benchmark.quick.patch_scf_training import patch_training
+        patch_training(root, lambda path, old, new: edit(str(path.relative_to(root)), old, new))
+    if probe:
         edit('src/main.f90', '    if (quick_method%SAD) SAFE_CALL(getSadGuess(ierr))',
              '''    block
       character(len=32) :: fabo_mode

@@ -1,5 +1,7 @@
 # QUICK additive-grid variant
 
+For the restored S66 convergence/iteration-count probe and later fixed-length replay hooks, see [the calibration workflow](../../workflow/quick/README.md). Use `--scf-training` instead of `--probe`; the two modes are mutually exclusive. Calibration uses official QUICK's SAD/DIIS trajectory, not the fixed-density one-update harness below.
+
 `fabo_additive` replaces only the two Boys call sites in QUICK's GPU two-electron energy helpers. It uses the bundled numerical selections, not the previous recurrence-patch/exp-dictionary implementation. `official` is the unchanged Boys control. The restored comparator source files remain available separately; this preparation command currently exposes these two variants only.
 
 QUICK is pinned to revision `730af1533da8912ce5874852561e63b5907f9d7a`. Prepare independent disposable trees, leaving the submodule untouched:
