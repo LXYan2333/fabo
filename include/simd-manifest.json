@@ -5,7 +5,7 @@
     "workflow/additive/simd_headers.py": "240347446980ce8dee923e4116565346726193895b90166dc5dbad4078bec945",
     "include/fast_boys/simd.h": "e312bc9e51ef2de6c25ced5da4f6fe12409a39a5a8fbe7c0c489cc5e9116b606",
     "include/fast_boys/simd_config.h": "e6c65e9f0d8a6eb773e83756941e250c469f21732a40af693d9e8169b8ffffe2",
-    "include/fast_boys/detail/simd/ops-inl.h": "6a0cdb9ecb019b46fbfae7df17eb684b36151626867df686e0f60ebaafa33f70"
+    "include/fast_boys/detail/simd/ops-inl.h": "1d563c0cc2eea082567dfde3c0ec19cb18248ded28e27debfebc0bed6110c140"
   },
   "files": {
     "fast_boys/models/25601c6139b4a4d80802f3bfd62d67785cdb673b537b217bf0484005bc64f4a4/simd-inl.h": "fb8f8471d4c9b11c6730940792af0d57c5ada80016183c9d4c71f2538d63ddc5",

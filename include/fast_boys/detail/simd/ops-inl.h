@@ -185,6 +185,31 @@ HWY_INLINE __m128i WideLoadPair(const std::uint64_t *table, U index) {
 }
 #endif
 
+HWY_INLINE U NativeGather(const std::uint64_t *table, U index) {
+#if HWY_COMPILER_GCC_ACTUAL && HWY_ARCH_X86 && HWY_TARGET <= HWY_AVX2 &&       \
+    !defined(HWY_DISABLE_GCC_GATHER_WORKAROUND)
+  // Highway PR #3519 / GCC PR #127946: hiding the all-active mask keeps
+  // the zero merge source, breaking the gather destination's false dependency.
+  // No volatile or memory clobber: the intrinsic describes the memory read.
+  // Keep this here for callers using Highway versions without the workaround.
+  // https://github.com/google/highway/pull/3519
+#if HWY_TARGET == HWY_AVX2
+  // Highway's AVX2 uint64 gather uses the double intrinsic. Hide its native
+  // mask type to avoid a redundant mask copy (GCC PR #128233).
+  auto native_mask = hn::SetMask(D(), true);
+  __asm__("" : "+x"(native_mask.raw));
+  const auto mask = hn::RebindMask(DU(), native_mask);
+#else
+  auto mask = hn::SetMask(DU(), true);
+  __asm__("" : "+k"(mask.raw));
+#endif
+  return hn::MaskedGatherIndexOr(hn::Zero(DU()), mask, DU(), table,
+                                hn::BitCast(DI(), index));
+#else
+  return hn::GatherIndex(DU(), table, hn::BitCast(DI(), index));
+#endif
+}
+
 template <bool Software, std::uint64_t MaxIndex>
 HWY_INLINE U Gather(const std::uint64_t *table, U index) {
   static_assert(MaxIndex <= INT64_MAX, "gather index exceeds signed range");
@@ -228,8 +253,7 @@ HWY_INLINE U Gather(const std::uint64_t *table, U index) {
   } else
 #endif
   {
-    // Other ISAs and 32-bit x86 use Highway's gather implementation.
-    return hn::GatherIndex(DU(), table, hn::BitCast(DI(), index));
+    return NativeGather(table, index);
   }
 }
 

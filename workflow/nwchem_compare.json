@@ -1,0 +1,29 @@
+{
+  "legacy_revision": "728ec72",
+  "nwchem_source": "/export/home/yanlongxiang/fast-boys-deps/nwchem",
+  "simint_source": "/export/home/yanlongxiang/fast-boys-deps/simint-generator",
+  "libintx_source": "/export/home/yanlongxiang/fast-boys-deps/libintx",
+  "libintx_revision": "dd5bb8b9536c913afea3260a1ef68dae4ce1dc0e",
+  "highway_source": "/export/home/yanlongxiang/fast-boys-deps/highway",
+  "highway_revision": "9ca61efcab7f54c244cc211e573324e6a29ffa17",
+  "s66x8": "/home/lxyan/Code/cpp/simd_eri/benchmark/s66x8",
+  "ga_archive": "/export/home/yanlongxiang/fast-boys-deps/ga-5.9.2.tar.gz",
+  "mkl_root": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem",
+  "cc": "x86_64-conda-linux-gnu-gcc",
+  "cxx": "x86_64-conda-linux-gnu-g++",
+  "fc": "x86_64-conda-linux-gnu-gfortran",
+  "mpicc": "mpicc",
+  "mpifort": "mpifort",
+  "python": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/bin/python",
+  "architecture": "sapphirerapids",
+  "build_workers": 8,
+  "partition": "6526Y",
+  "build_node": "c023",
+  "timing_node": "c021",
+  "core": 0,
+  "scratch": "/tmp",
+  "environment": {
+    "PATH": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/bin:/usr/bin:/bin",
+    "LD_LIBRARY_PATH": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/lib"
+  }
+}
