@@ -2,6 +2,18 @@
 BACKENDS = ('original', 'fabo', 'libintx', 'vsr', 'laikov')
 
 def header(n, backend):
+    if backend=='reference' and 0<=n<=8:
+        return f'''#pragma once
+#include <immintrin.h>
+extern "C" void fabo_reference_boys(int,int,const double*,double*);
+namespace fabo_nw_reference_{n} {{
+inline void evaluate(__m512d x,__m512d* out,int lanes) {{
+alignas(64) double input[8],values[{8*(n+1)}];
+_mm512_store_pd(input,x);fabo_reference_boys({n},lanes,input,values);
+for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
+}}
+}}
+'''
     if backend not in BACKENDS[1:] or not 0 <= n <= 8:
         raise ValueError('unsupported backend/order')
     lines = ['#pragma once', '#include "fast_boys/simd_config.h"',

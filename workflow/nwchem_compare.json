@@ -1,4 +1,11 @@
 {
+  "systems": [1,17,24,34],
+  "bases": ["6-31G*","def2-SVP","cc-pVDZ"],
+  "copies": [1,2,4,8,16,32],
+  "spacing_angstrom": 3.4,
+  "minimum_fock_seconds": 2.0,
+  "rounds": 5,
+  "reference_rounds": 2,
   "legacy_revision": "728ec72",
   "nwchem_source": "/export/home/yanlongxiang/fast-boys-deps/nwchem",
   "simint_source": "/export/home/yanlongxiang/fast-boys-deps/simint-generator",

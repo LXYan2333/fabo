@@ -48,6 +48,59 @@ def test_input(tmp_path):
     assert ' rhf\n direct' in text and 'cc-pVDZ' in text
     assert 'set int:cando_nw f' in text and 'basis spherical segment' in text
 
+def test_reference_binding_has_explicit_valid_lanes():
+    text=header(8,'reference')
+    assert 'int lanes' in text and 'fabo_reference_boys(8,lanes,input,values)' in text
+    assert 'reference' not in BACKENDS
+
+def test_reference_libraries_propagate_to_static_consumers():
+    from workflow.nwchem_compare import reference_cmake
+    text=reference_cmake('/source/reference.cc','/environment')
+    assert 'target_link_libraries(simint PUBLIC "/environment/lib/libmpfr.so" "/environment/lib/libgmp.so")' in text
+    assert '-fno-fast-math;-ffp-contract=off;-fno-lto' in text
+
+def test_bundled_driver_has_standalone_geometry_and_scheduler(tmp_path):
+    from workflow.nwchem_compare import workflow_files
+    for path in workflow_files():
+        dest=tmp_path/path.relative_to(ROOT);dest.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(path,dest)
+    import sys
+    subprocess.run([sys.executable,'-c',
+        'from workflow.quick.geometry import stack_geometry; '
+        'from workflow.nwchem_cluster import write_scripts; '
+        'from workflow.nwchem_compare import prepare; '
+        'assert stack_geometry([["H","0","0","0"]],2,3.4)[1]==[3.4,0.,0.]'],cwd=tmp_path,check=True)
+
+def test_exact_repeatability(tmp_path):
+    from workflow.nwchem_compare import check_repeatability
+    folders=[tmp_path/str(i) for i in range(2)]
+    for p in folders:
+        write_sample(p)
+        save(p/'complete.json',{f.name:sha(f) for f in p.iterdir()})
+    check_repeatability(folders)
+    p=folders[1]
+    import numpy as np
+    np.array([1,0,0,np.nextafter(1.,2.)],dtype='<f8').tofile(p/'fock.bin')
+    save(p/'complete.json',{f.name:sha(f) for f in p.iterdir() if f.name!='complete.json'})
+    with pytest.raises(ValueError,match='nonreproducible fock'):check_repeatability(folders)
+
+def test_frozen_selection_is_bound_to_sizing_records(tmp_path):
+    from workflow.nwchem_compare import selected_cases
+    cases=[dict(id=f'{n}-{basis}',system=1,copies=n,basis=basis,geometry_sha256=f'geometry-{n}') for n in (1,2) for basis in ('def2-SVP','cc-pVDZ')]
+    save(tmp_path/'config.json',dict(systems=[1],minimum_fock_seconds=2))
+    save(tmp_path/'cases.json',cases)
+    for case in cases:
+        if case['basis']!='def2-SVP':continue
+        p=tmp_path/'sizing'/case['id']/'fixture';write_sample(p)
+        if case['copies']==1:
+            csv=p/'scf-iterations.csv';csv.write_text(csv.read_text().replace('1,2,1,3,','1,1.5,1,3,'))
+        save(p/'complete.json',{f.name:sha(f) for f in p.iterdir()})
+    save(tmp_path/'selected-stacks.json',{'1':cases[2]})
+    save(tmp_path/'selected-cases.json',cases[2:])
+    assert selected_cases(tmp_path)==cases[2:]
+    save(tmp_path/'selected-cases.json',cases[:2])
+    with pytest.raises(ValueError,match='sizing evidence'):selected_cases(tmp_path)
+
 @pytest.mark.parametrize('compiler',['g++','clang++'])
 def test_compile_fabo_binding(tmp_path,compiler):
     hwy=ROOT/'third_party/workflow/highway'
@@ -110,7 +163,9 @@ def write_sample(folder):
     (folder/'scf-iterations.csv').write_text('iteration,fock_seconds,jk_seconds,scf_seconds,energy_hartree,gradient_norm,energy_gradient_evaluations\n1,2,1,3,-4,0.1,1\n')
     (folder/'scf-protocol.txt').write_text('1 2 2 1\n')
     (folder/'mkl-runtime.txt').write_text('THREADS 1\nMAP fake\n')
-    for name in ('density-in','density-out','fock'):
+    import struct
+    (folder/'energy.bin').write_bytes(struct.pack('<d',-4))
+    for name in ('density-in','density-out','fock','hcore'):
         np.array([1,0,0,1],dtype='<f8').tofile(folder/(name+'.bin'))
 
 

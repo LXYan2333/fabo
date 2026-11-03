@@ -7,7 +7,7 @@ CALL = re.compile(r'boys_F_split\(\s*(\w+)\s*,\s*F_x\s*,\s*(\d+)\s*\);')
 
 
 def patch(tree, mode, maximum, binding_directory=None):
-    if mode not in ('original', 'fabo', 'libintx', 'vsr', 'laikov'):
+    if mode not in ('original', 'fabo', 'libintx', 'vsr', 'laikov', 'reference'):
         raise ValueError('unknown Simint binding mode')
     tree = Path(tree)
     changes = {}
@@ -24,7 +24,7 @@ def patch(tree, mode, maximum, binding_directory=None):
         seen.update(orders)
         if mode != 'original':
             names={n:json.loads((Path(binding_directory)/f'order-{n}/binding.json').read_text())['namespace'] for n in orders}
-            text = CALL.sub(lambda m: f'::{names[int(m[2])]}::evaluate(F_x,{m[1]});', text)
+            text = CALL.sub(lambda m: f'::{names[int(m[2])]}::evaluate(F_x,{m[1]}' + (',nlane' if mode=='reference' else '') + ');', text)
             text = ''.join(f'#include "order-{n}/binding.h"\n' for n in sorted(orders)) + text
         changes[path] = text
         sources.append(str(path.relative_to(tree/'simint')))

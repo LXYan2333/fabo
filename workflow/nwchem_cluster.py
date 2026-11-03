@@ -8,7 +8,7 @@ import shlex
 def write_scripts(run, repo, config):
     run,repo=Path(run).resolve(),Path(repo).resolve()
     q=shlex.quote
-    for stage in ('build','smoke','benchmark'):
+    for stage in ('build','smoke','size','benchmark','reference'):
         building=stage=='build'
         node=config['build_node' if building else 'timing_node']
         partition=config.get('partition','6526Y')
@@ -34,7 +34,7 @@ def main():
     p.add_argument('--repo',type=Path,default=Path(__file__).resolve().parents[1])
     a=p.parse_args()
     write_scripts(a.run,a.repo,json.loads((a.run/'config.json').read_text()))
-    print('Scripts prepared only. Submit build.sbatch, then smoke.sbatch, inspect smoke, then benchmark.sbatch.')
+    print('Scripts prepared only. Submit build -> smoke -> size -> benchmark -> reference with afterok dependencies.')
 
 
 if __name__=='__main__':main()

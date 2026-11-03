@@ -118,6 +118,7 @@ def patch_single_update(root):
     text=replace(text, '        call ga_copy(g_tmp, g_movecs)',
                  '        call ga_copy(g_tmp, g_movecs)\n'
                  '        call fabo_nw_record(iter,energy,gnorm)\n'
+                 '        call fabo_nw_dump_energy(energy)\n'
                  '        goto 333')
     text=replace(text, '     $     fabo_nw_diis=requested.and.nmo.eq.nbf',
                  "     $     fabo_nw_diis=requested.and.nmo.eq.nbf\n"
@@ -134,7 +135,7 @@ def patch_single_update(root):
     fock=root/'src/ddscf/rohf_fock.F'
     text=fock.read_text()
     anchor='      call ga_dadd(One, g_hcore, One, g_cfock, g_cfock)'
-    text=replace(text,anchor,anchor+'\n      call fabo_nw_capture(g_cdens,g_cfock)')
+    text=replace(text,anchor,anchor+'\n      call fabo_nw_capture(g_cdens,g_cfock,g_hcore)')
     fock.write_text(text)
     return changed
 

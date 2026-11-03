@@ -1,0 +1,19 @@
+# Fixed-density NWChem comparison
+
+The suite uses S66 water, uracil, benzene and pentane dimers, with spherical 6-31G*, def2-SVP and cc-pVDZ bases. Original NWChem+Simint sizes each molecule using def2-SVP and increasing copy counts, beginning at one. The first Fock build reaching two seconds fixes its geometry for all three bases. Copies are translated along the thinnest bounding-box axis by its extent plus 3.4 Angstrom. Exhausting the configured counts is a failure, not an implicitly accepted short workload.
+
+Each molecule/basis gets an archived official atomic-guess state. The same orbitals, occupations, overlap and orthogonalizer are replayed for every backend. Input density and core-Hamiltonian hashes must match. Each process performs one Fock build and one orbital update, not SCF convergence; normal integral screening remains enabled. Five rotating-order repetitions measure original Simint, FABO, LibintX, VSR and Laikov. Raw matrices and binary64 energy are retained. Energy belongs to the input density and its Fock matrix, whereas density-out is the updated density.
+
+Two additional fresh-process updates use an untimed correctly-rounded Boys oracle at the same Simint call sites. Valid lane counts prevent interpreting padding as physical input. The oracle imports QUICK's MPFR-generated binary128 Taylor table and evaluates its conservative interval algorithm using 113-bit MPFR operations. Endpoint agreement after RN-even binary64 conversion certifies each value; ambiguous cases use adaptive directed positive-series or complete-integral bounds through 8192 bits. Resource exhaustion fails closed. This reference replaces Boys values only: it does not make the remaining integral recurrence, accumulation or eigensolver exact. Its observed runtime is excluded from performance summaries.
+
+All repetitions of a backend must have identical Fock, input/output density, core-Hamiltonian and energy bytes. A mismatch retains observations but fails the repeatability check; no averaging hides it. This is a same-binary/node/environment property, not a promise across architectures. MKL uses automatic dispatch and one thread. Dispatch controls, mapped libraries, floating-point controls, build identities and basis files are archived. The untimed oracle temporarily clears FTZ/DAZ and selects round-to-nearest in MXCSR, then restores the caller's complete MXCSR exactly. Endpoint agreement is checked by binary64 bits, including subnormals. Conformance tests exercise caller FTZ/DAZ and rounding-control variants as well as invalid unused SIMD lanes.
+
+Build on c023; size and run serially on exclusively allocated c021. Execution scratch is node-local. Use a fresh run directory and the bundled driver; existing runs are not overwritten. Stages are prepare, build, smoke, size, benchmark, reference and report. The cluster script generator writes build/smoke/size/benchmark/reference scripts; submit with afterok dependencies in that order. Benchmark publishes timing reports before reference work. The reference stage writes reference-summary.json only after repeatability succeeds. selected-stacks.json and selected-cases.json record sizing and frozen geometries; measurements/CASE/ROUND-BACKEND contains all raw outputs and completion hashes.
+
+```sh
+python -m workflow.nwchem_compare prepare --config CONFIG.json --run RUN
+python -m workflow.nwchem_cluster --run RUN --repo BUNDLED_REPOSITORY
+python -m workflow.nwchem_compare report --run RUN
+```
+
+Report regeneration does not execute calculations. Full execution additionally requires the pinned dependencies configured in workflow/nwchem_compare.json, including MPFR/GMP headers and libraries. No Boys model search or performance tuning is performed.
