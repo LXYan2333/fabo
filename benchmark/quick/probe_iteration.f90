@@ -6,7 +6,7 @@
     use, intrinsic :: ieee_arithmetic, only: ieee_is_finite
     implicit none
     character(len=*), intent(in) :: mode
-    character(len=1024) :: fixture, warmup_text
+    character(len=1024) :: fixture, warmup_text, guess
     integer :: unit, n, reduced, electrons, rep, warmup, status, k
     double precision :: begin_time, fock_end, end_time, energy
     double precision, allocatable :: p0(:,:), work_rect(:,:), work_sq(:,:), eigvec(:,:), coeff(:,:), eigen(:)
@@ -18,16 +18,25 @@
     call fabo_probe_init()
     allocate(p0(nbasis,nbasis), work_rect(nbasis,NBSuse), work_sq(NBSuse,NBSuse), eigvec(NBSuse,NBSuse), coeff(nbasis,NBSuse), eigen(NBSuse))
     if (mode == 'prepare') then
+      call get_environment_variable('FABO_INITIAL_GUESS',guess)
+      if (len_trim(guess) == 0) guess = 'hcore'
+      if (trim(guess) /= 'hcore' .and. trim(guess) /= 'sad') error stop 'invalid initial guess'
+      if (trim(guess) == 'sad') then
+        if (.not.quick_method%SAD) error stop 'SAD preparation was disabled'
+        p0 = quick_qm_struct%dense
+      endif
       quick_qm_struct%o = 0.0d0
       quick_qm_struct%dense = 0.0d0
       call gpu_upload_calculated(quick_qm_struct%o,quick_qm_struct%co,quick_qm_struct%vec,quick_qm_struct%dense)
       bCalc1e = .true.
       call get1e(.false.)
+      if (trim(guess) == 'hcore') then
       call MAT_DGEMM('n','n',nbasis,NBSuse,nbasis,1.0d0,quick_qm_struct%oneElecO,nbasis,quick_qm_struct%x,nbasis,0.0d0,work_rect,nbasis)
       call MAT_DGEMM('t','n',NBSuse,NBSuse,nbasis,1.0d0,quick_qm_struct%x,nbasis,work_rect,nbasis,0.0d0,work_sq,NBSuse)
       call MAT_DIAG(work_sq,NBSuse,NBSuse,eigen,eigvec)
       call MAT_DGEMM('n','n',nbasis,NBSuse,NBSuse,1.0d0,quick_qm_struct%x,nbasis,eigvec,NBSuse,0.0d0,coeff,nbasis)
       call MAT_DGEMM('n','t',nbasis,nbasis,quick_molspec%nelec/2,2.0d0,coeff,nbasis,coeff,nbasis,0.0d0,p0,nbasis)
+      endif
       call fabo_probe_sync()
       if (.not.all(ieee_is_finite(p0))) error stop "nonfinite P0"
       open(newunit=unit,file=trim(fixture),access='stream',form='unformatted',status='new')
@@ -44,6 +53,11 @@
     read(unit) n,reduced,electrons
     if (n /= nbasis .or. reduced /= NBSuse .or. electrons /= quick_molspec%nelec) error stop "fixture dimensions mismatch"
     read(unit) p0,quick_qm_struct%oneElecO,quick_qm_struct%s,quick_qm_struct%x
+    close(unit)
+    ! Exact replay evidence, written before either timer starts.
+    open(newunit=unit,file='replayed-fixture.bin',access='stream',form='unformatted',status='new')
+    write(unit) nbasis,NBSuse,quick_molspec%nelec
+    write(unit) p0,quick_qm_struct%oneElecO,quick_qm_struct%s,quick_qm_struct%x
     close(unit)
     bCalc1e = .false.
     warmup = 1

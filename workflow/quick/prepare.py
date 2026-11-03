@@ -4,13 +4,13 @@ import subprocess
 import tarfile
 from pathlib import Path
 
-from benchmark.quick.patch_quick import ROOT, PIN, VARIANTS, patch
+from benchmark.quick.patch_quick import ROOT, PIN, VARIANTS, REFERENCE_VARIANT, patch
 
 
 def prepare(output, variant, probe=False, upstream=None, training=False):
     output=Path(output).resolve()
     upstream=Path(upstream or ROOT/'third_party/quick').resolve()
-    if variant not in VARIANTS:
+    if variant not in (*VARIANTS, REFERENCE_VARIANT):
         raise ValueError('unsupported variant')
     if probe and training:
         raise ValueError('choose fixed-density probe or SCF training, not both')
@@ -31,7 +31,7 @@ def prepare(output, variant, probe=False, upstream=None, training=False):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--variant',choices=VARIANTS,required=True)
+    parser.add_argument('--variant',choices=(*VARIANTS, REFERENCE_VARIANT),required=True)
     parser.add_argument('--output',type=Path,required=True,help='new disposable QUICK source directory')
     mode=parser.add_mutually_exclusive_group()
     mode.add_argument('--probe',action='store_true',help='add optional fixed-density one-update harness')

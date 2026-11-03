@@ -2,9 +2,9 @@
 
 ## Availability in this branch
 
-The standalone reference-data helper and CUDA reference sources are retained, but the historical molecular `reference-check` orchestration is not implemented in this branch. In particular, `quick_gpu_agent.py`, `quick_gpu.smk`, the reference profiles, and the old unittest suite are not present. The method and completed-run descriptions below document that archived workflow, not a currently runnable reference backend.
+The current repeated fixed-density comparison is implemented by `workflow.quick.fixed_density`; see [quick/FIXED_DENSITY.md](quick/FIXED_DENSITY.md). It uses official QUICK's default SAD initial density, five single-update timing repetitions per numerical backend, and five accepted untimed correctly-rounded-Boys reference updates. The archived `reference-check` orchestration described later is a separate historical workflow.
 
-The supported QUICK preparation entry point is `python -m workflow.quick.prepare`, with variants `official` and `fabo_additive`; see `benchmark/quick/README.md`. Preparation does not build, benchmark, or run a molecular reference comparison. Current regression tests use pytest:
+The supported QUICK preparation entry point is `python -m workflow.quick.prepare`; `--variant reference --probe` prepares the untimed reference binding. The five timing variants remain `official`, `fabo_additive`, `libintx_gpu`, `vsr`, and `gansu`. Preparation alone does not build or execute QUICK. Current regression tests use pytest:
 
 ```sh
 .venv/bin/python -m pytest workflow/quick/tests -q
@@ -19,7 +19,7 @@ The standalone helper uses the current `workflow.additive.reference` directed-MP
 .venv/bin/python -m workflow.scripts.quick_reference_data resolve OVERRIDES.bin --requests REQUESTS.bin
 ```
 
-The output parent directory must exist. `generate` constructs the binary128 table, `fixtures` constructs standalone exact-rounded test values, and `resolve` consumes binary `(x_bits, order)` requests and writes binary `(x_bits, order, result_bits)` overrides. These utilities do not launch QUICK or provide the missing replay controller. The remaining sections preserve the archived reference design; its orchestration sources and profiles can be inspected at commit `c3c578806a02dc7e00cf076a0be83a3ba25aa6d4` (branch `fresh-start`). Reusing that orchestration requires its matching source tree, dependencies and environment; its historical run identities are not validations of the current FABO binding.
+The output parent directory must exist. `generate` constructs the binary128 table, `fixtures` constructs standalone exact-rounded test values, and `resolve` consumes binary `(x_bits, order)` requests and writes binary `(x_bits, order, result_bits)` overrides. These standalone utilities do not launch QUICK; the fixed-density controller handles replay. Historical orchestration sources and profiles are available at commit `c3c578806a02dc7e00cf076a0be83a3ba25aa6d4` (branch `fresh-start`); their completed-run identities are not validations of the current FABO binding.
 
 This is an untimed diagnostic, not an additional performance backend. It replaces the same two GPU two-electron Boys call sites as the other substitutions. Official one-electron integrals, screening preparation, integral recurrence, accumulation, diagonalization and energy arithmetic remain unchanged. Consequently the resulting molecular matrices are a reference for the Boys substitution, not correctly-rounded molecular observables.
 

@@ -1,0 +1,20 @@
+{
+  "config": {
+    "bases": ["def2-SVP"],
+    "build_jobs": 1,
+    "calculation_timeout_seconds": 7200,
+    "python": "/export/home/lxyan2/fast-boys-fresh/reference-env/bin/python",
+    "slurm": {"partition": "pc", "node": "pc008", "cpus": 16, "memory": "96G", "minutes": 1440}
+  },
+  "experiment": {
+    "copies": [8, 16],
+    "spacing_angstrom": 3.4,
+    "minimum_fock_seconds": 2.0,
+    "rounds": 5,
+    "build_workers": 6,
+    "cuda_arch": "sm_120",
+    "reference_python": "/export/home/lxyan2/fast-boys-fresh/reference-env/bin/python",
+    "reference_timeout_seconds": 43200,
+    "max_reference_attempts": 8
+  }
+}

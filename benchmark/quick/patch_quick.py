@@ -7,6 +7,7 @@ import shutil
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 VARIANTS = ('official', 'fabo_additive', 'libintx_gpu', 'vsr', 'gansu')
+REFERENCE_VARIANT = 'reference'
 PIN = '730af1533da8912ce5874852561e63b5907f9d7a'
 
 
@@ -18,8 +19,10 @@ def replace(text, old, new, count=1):
 
 def patch(root, variant, probe=False, training=False):
     root = Path(root).resolve()
-    if variant not in VARIANTS:
+    if variant not in (*VARIANTS, REFERENCE_VARIANT):
         raise ValueError('unsupported variant: '+variant)
+    if variant == REFERENCE_VARIANT and not probe:
+        raise ValueError('reference is restricted to the untimed fixed-density probe')
     if probe and training:
         raise ValueError('choose fixed-density probe or SCF training, not both')
     if root == (ROOT/'third_party/quick').resolve():
@@ -48,6 +51,16 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
                 'probe': probe, 'scf_training': training,
                 'scope': 'GPU two-electron energy Boys calls; gradients and one-electron paths unchanged'}
     copies = {}
+    if variant == REFERENCE_VARIANT:
+        edit('src/gpu/gpu_get2e_subs.h', '#include "gpu_fmt.h"',
+             '#include "gpu_fmt.h"\n#include "reference_binding.cuh"')
+        edit('src/gpu/gpu_get2e_subs.h', 'FmT(I + J + K + L, AB * CD * ABCD',
+             'FaboReferenceFmT(I + J + K + L, AB * CD * ABCD', 2)
+        edit('src/gpu/cuda/gpu_get2e.cu', '#include <cuda.h>',
+             '#define FABO_QUICK_REFERENCE 1\n#include <cuda.h>')
+        for name in ('reference_boys.h', 'reference_binding.cuh'):
+            copies[Path('src/gpu')/name] = HERE/name
+        copies[Path('src/gpu/cuda/reference_runtime.h')] = HERE/'reference_runtime.h'
     if variant in ('libintx_gpu', 'vsr', 'gansu'):
         macro = {'libintx_gpu': 'LIBINTX', 'vsr': 'VSR', 'gansu': 'GANSU'}[variant]
         header = 'src/gpu/gpu_get2e_subs.h'
@@ -123,9 +136,11 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
     if probe:
         edit('src/main.f90', '    if (quick_method%SAD) SAFE_CALL(getSadGuess(ierr))',
              '''    block
-      character(len=32) :: fabo_mode
+      character(len=32) :: fabo_mode, fabo_guess
       call get_environment_variable("FABO_QUICK_MODE", fabo_mode)
-      if (len_trim(fabo_mode) > 0) quick_method%SAD = .false.
+      call get_environment_variable("FABO_INITIAL_GUESS", fabo_guess)
+      if (len_trim(fabo_mode) > 0 .and. &
+          .not.(trim(fabo_mode) == 'prepare' .and. trim(fabo_guess) == 'sad')) quick_method%SAD = .false.
     end block
     if (quick_method%SAD) SAFE_CALL(getSadGuess(ierr))''')
         edit('src/modules/quick_scf_module.f90', '     done = .false.',

@@ -2,8 +2,8 @@
 #include <cuda_runtime.h>
 #define min(x,y) (((x)<(y)) ? (x) : (y))
 #define max(x,y) (((x)<(y)) ? (y) : (x))
-#define FABO_PROBE_VARIANT 4
-#include "cuda/probe_runtime.h"
+#define FABO_QUICK_REFERENCE 1
+#include "probe_runtime.h"
 #ifndef min
 #error QUICK's min macro was not restored
 #endif

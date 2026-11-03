@@ -46,14 +46,7 @@ def settings(raw):
     return config,spec
 
 
-def prepare_run(output,dataset,raw,smoke=False,eigen=Path('/usr/include/eigen3')):
-    config,spec=settings(raw)
-    rows=inventory(dataset); selected=cases(rows,config['bases'],config['separations'])
-    if smoke: selected=[r for r in selected if r['system']==1 and r['separation']=='1.00']
-    if not selected: raise ValueError('empty smoke selection')
-    output=Path(output).resolve(); output.mkdir(parents=True,exist_ok=False)
-    for variant in spec['variants']:
-        prepare_quick(output/'variants'/variant/'source',variant,training=True)
+def bundle_sources(output, eigen):
     # Keep all source/coefficients needed to rebuild adapters, including upstream
     # oracles. Do not bundle old parameter-search machinery or unrelated files.
     for directory in ('workflow/quick','benchmark/quick'):
@@ -74,6 +67,17 @@ def prepare_run(output,dataset,raw,smoke=False,eigen=Path('/usr/include/eigen3')
     from benchmark.quick.gansu_adapter import generate as gansu_generate
     if gansu_generate(ROOT/'third_party/gansu/upstream')!=(ROOT/'benchmark/quick/gansu_boys.h').read_text():
         raise ValueError('stale generated GANSU adapter')
+
+
+def prepare_run(output,dataset,raw,smoke=False,eigen=Path('/usr/include/eigen3')):
+    config,spec=settings(raw)
+    rows=inventory(dataset); selected=cases(rows,config['bases'],config['separations'])
+    if smoke: selected=[r for r in selected if r['system']==1 and r['separation']=='1.00']
+    if not selected: raise ValueError('empty smoke selection')
+    output=Path(output).resolve(); output.mkdir(parents=True,exist_ok=False)
+    for variant in spec['variants']:
+        prepare_quick(output/'variants'/variant/'source',variant,training=True)
+    bundle_sources(output,eigen)
     for item in rows:
         if any(case['geometry']==item['geometry'] for case in selected):
             dst=output/item['geometry']; dst.parent.mkdir(parents=True,exist_ok=True)
