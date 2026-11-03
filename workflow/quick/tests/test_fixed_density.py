@@ -163,3 +163,57 @@ def test_resume_pending_mpfr_transaction(tmp_path,monkeypatch,already_replaced):
     assert (attempt/'resolved.json').exists()
     f.resolve_pending(tmp_path,saved,destination)
     assert len(calls)==(0 if already_replaced else 1)
+
+
+def test_bundled_ccpvdz_and_other_bases_need_no_f():
+    from benchmark.quick.patch_quick import ROOT
+    rows=f.basis_shells(ROOT/'third_party/quick/basis',['6-31G*','def2-SVP','cc-pVDZ'])
+    assert rows['cc-pVDZ']['elements']=={'H':['S','P'],'C':['S','P','D'],'N':['S','P','D'],'O':['S','P','D']}
+    with pytest.raises(ValueError,match='angular momentum'):
+        f.basis_shells(ROOT/'third_party/quick/basis',['def2-TZVP'])
+
+
+def test_stack_geometry_keeps_whole_dimer_and_separates_copies():
+    atoms=[['C','0','0','0'],['H','1','2','0.5']]
+    text,translation=f.stack_geometry(atoms,4,3.4)
+    assert translation==[0.,0.,3.9]
+    rows=[line.split() for line in text.splitlines()[2:]]
+    assert len(rows)==8
+    for i in range(4):
+        assert float(rows[2*i+1][3])-float(rows[2*i][3])==pytest.approx(.5)
+        if i:assert float(rows[2*i][3])-float(rows[2*i-1][3])==pytest.approx(3.4)
+
+
+def test_suite_sizes_only_svp_and_freezes_stack_across_bases(tmp_path,monkeypatch):
+    systems=[1,17];bases=['6-31G*','def2-SVP','cc-pVDZ'];cases=[]
+    for system in systems:
+        for count in (4,8):
+            for basis in bases:
+                cases.append(dict(id=f'{system}-{count}-{basis}',system=system,copies=count,basis=basis,
+                                  geometry=f'{system}-{count}.xyz',sha256=f'{system}-{count}',translation_angstrom=[0,0,3.4],atoms=count*6))
+    saved=dict(identity='test',recipe=dict(schema=2,experiment=dict(systems=systems),config=dict(bases=bases),cases=cases))
+    calls=[];cache={}
+    def prepare(root,saved,case,build,scratch,size):
+        if case['id'] not in cache:
+            calls.append((case,size))
+            row=dict(case=case)
+            if size:
+                row.update(sizing=dict(fock_seconds=3 if case['copies']==(4 if case['system']==17 else 8) else 1),
+                           target_met=case['copies']==(4 if case['system']==17 else 8))
+            cache[case['id']]=row
+        return cache[case['id']]
+    monkeypatch.setattr(f,'prepare_fixture',prepare)
+    monkeypatch.setattr(f,'selected_case',lambda root,saved,case_id:cache[case_id])
+    selections=f.select_workloads(tmp_path,saved,None,tmp_path)
+    assert len(selections)==6
+    assert all(row['case']['copies']==(8 if row['case']['system']==1 else 4) for row in selections)
+    assert all(case['basis']=='def2-SVP' for case,size in calls if size)
+    assert all(case['copies']==(8 if case['system']==1 else 4) for case,size in calls if not size)
+    # A per-basis geometry change must not be accepted, even if its row exists.
+    selections[0]['case']['sha256']='altered'
+    with pytest.raises(ValueError,match='geometry differs'):f.validate_selections(tmp_path,saved)
+
+
+def test_suite_sample_paths_do_not_collide():
+    saved={'recipe':{'schema':2}}
+    assert f.sample_directory(Path('/run'),saved,'water-ccpvdz',0,'official')!=f.sample_directory(Path('/run'),saved,'water-svp',0,'official')

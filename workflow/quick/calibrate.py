@@ -40,7 +40,7 @@ def settings(raw):
     c = DEFAULTS | raw
     if type(c['enable_f']) is not bool:
         raise ValueError('enable_f must be Boolean')
-    for key, allowed in (('bases', ('6-31G*', 'def2-SVP', 'def2-TZVP')),
+    for key, allowed in (('bases', ('6-31G*', 'def2-SVP', 'cc-pVDZ', 'def2-TZVP')),
                          ('separations', SEPARATIONS)):
         values = c[key]
         if not isinstance(values,list) or not values or any(not isinstance(v,str) for v in values) or len(set(values))!=len(values) or any(v not in allowed for v in values):

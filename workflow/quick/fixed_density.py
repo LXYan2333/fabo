@@ -25,11 +25,14 @@ from .s66 import inventory, sha
 def prepare(root, dataset, raw):
     config = c.settings(raw['config'])
     options = raw['experiment']
-    if set(options) != {'copies', 'spacing_angstrom', 'minimum_fock_seconds', 'rounds', 'build_workers', 'cuda_arch', 'reference_python', 'reference_timeout_seconds', 'max_reference_attempts'}:
+    if set(options) != {'systems', 'copies', 'spacing_angstrom', 'minimum_fock_seconds', 'rounds', 'build_workers', 'cuda_arch', 'reference_python', 'reference_timeout_seconds', 'max_reference_attempts'}:
         raise ValueError('invalid experiment options')
     copies = options['copies']
     if not copies or any(type(v) is not int or v < 1 for v in copies) or copies != sorted(set(copies)):
         raise ValueError('copies must be increasing positive integers')
+    systems=options['systems']
+    if not systems or len(set(systems))!=len(systems) or any(type(v) is not int or not 1<=v<=66 for v in systems):
+        raise ValueError('systems must be unique S66 integer IDs')
     for key in ('rounds', 'build_workers', 'reference_timeout_seconds', 'max_reference_attempts'):
         if type(options[key]) is not int or options[key] < 1:
             raise ValueError('invalid '+key)
@@ -38,8 +41,9 @@ def prepare(root, dataset, raw):
     for key in ('spacing_angstrom', 'minimum_fock_seconds'):
         if not math.isfinite(options[key]) or options[key] <= 0:
             raise ValueError('invalid '+key)
-    if config['bases'] != ['def2-SVP'] or config['enable_f']:
-        raise ValueError('this stacked-uracil experiment uses def2-SVP without ENABLEF')
+    if 'def2-SVP' not in config['bases'] or config['enable_f']:
+        raise ValueError('size using def2-SVP; this profile supports s/p/d bases without ENABLEF')
+    basis_coverage=basis_shells(ROOT/'third_party/quick/basis',config['bases'])
     root.mkdir(parents=True, exist_ok=False)
     for variant in (*VARIANTS, 'reference'):
         prepare_quick(root/'variants'/variant/'source', variant, probe=True)
@@ -48,23 +52,27 @@ def prepare(root, dataset, raw):
         destination = root/'bundle'/name
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT/name, destination)
-    source = next(r for r in inventory(dataset) if r['system'] == 17 and r['separation'] == '1.00')
-    atoms = [line.split() for line in Path(source['source']).read_text().splitlines()[2:]]
+    sources=[r for r in inventory(dataset) if r['system'] in systems and r['separation']=='1.00']
     cases = []
-    for count in copies:
-        path = root/'workloads'/f'uracil-{count}.xyz'
-        path.parent.mkdir(exist_ok=True)
-        lines = [str(len(atoms)*count), f'{count} translated S66-17 dimers; Angstrom']
-        for i in range(count):
-            for atom,x,y,z in atoms:
-                lines.append(f'{atom} {float(x):.12f} {float(y):.12f} {float(z)+options["spacing_angstrom"]*i:.12f}')
-        path.write_text('\n'.join(lines)+'\n')
-        cases.append(dict(id=f'uracil-{count}--def2-svp', basis='def2-SVP', copies=count,
-                          atoms=len(atoms)*count, geometry=str(path.relative_to(root)), sha256=sha(path)))
+    for source in sources:
+        original=root/'original-geometries'/Path(source['source']).name
+        original.parent.mkdir(exist_ok=True);shutil.copyfile(source['source'],original)
+        atoms = [line.split() for line in original.read_text().splitlines()[2:]]
+        for count in copies:
+            path = root/'workloads'/f's66-{source["system"]:02d}-stack-{count}.xyz'
+            path.parent.mkdir(exist_ok=True)
+            text,translation=stack_geometry(atoms,count,options['spacing_angstrom'])
+            path.write_text(text)
+            for basis in config['bases']:
+                cases.append(dict(id=f's66-{source["system"]:02d}-stack-{count}--{basis.lower().replace("*","star")}',
+                                  system=source['system'],name=source['name'],basis=basis,copies=count,
+                                  atoms=len(atoms)*count,geometry=str(path.relative_to(root)),sha256=sha(path),
+                                  original_geometry=str(original.relative_to(root)),original_sha256=sha(original),
+                                  translation_angstrom=translation))
     script = c.slurm_script(config).replace('fabo-s66-calibrate', 'fabo-fixed-density').replace('workflow.quick.calibrate execute', 'workflow.quick.fixed_density execute')
     (root/'run.sbatch').write_text(script)
-    recipe = dict(schema=1, quick_revision=PIN, config=config, experiment=options, cases=cases,
-                  source_geometry=source, initial_guess='official QUICK default SAD',
+    recipe = dict(schema=2, quick_revision=PIN, config=config, experiment=options, cases=cases,
+                  source_geometries=sources, basis_coverage=basis_coverage, initial_guess='official QUICK default SAD',
                   comparison=dict(variants=list(VARIANTS), cuda_arch=options['cuda_arch']),
                   input_hashes={str(p.relative_to(root)):sha(p) for p in root.rglob('*') if p.is_file()})
     saved = dict(identity=c.identity(recipe), recipe=recipe)
@@ -72,6 +80,41 @@ def prepare(root, dataset, raw):
     for variant in (*VARIANTS, 'reference'):
         child = dict(parent=saved['identity'], variant=variant, config=config|{'build_jobs':1})
         c.write_json(root/'variants'/variant/'run.json', dict(identity=c.identity(child), recipe=child))
+
+
+def basis_shells(directory,bases):
+    """Check the actual bundled H/C/N/O basis blocks, not their names alone."""
+    import re
+    result={}
+    for basis in bases:
+        matches=[line.split('|')[2].strip().upper() for line in (directory/'basis_link').read_text().splitlines()
+                 if len(line.split('|'))>=4 and line.split('|')[1].strip().lower()=='#'+basis.lower()]
+        if len(matches)!=1:raise ValueError('ambiguous/missing basis mapping')
+        path=directory/matches[0];element=None;shells={e:set() for e in ('H','C','N','O')}
+        for line in path.read_text().splitlines():
+            fields=line.split()
+            if len(fields)==2 and fields[1]=='0' and fields[0].isalpha():
+                element=fields[0]
+            elif line.strip()=='****':element=None
+            elif element in shells and len(fields)>=3 and re.fullmatch('[SPDFGHI]+',fields[0]):
+                shells[element].update(fields[0])
+        if any(not s or s-set('SPD') for s in shells.values()):
+            raise ValueError('basis requires unsupported angular momentum or missing H/C/N/O block')
+        result[basis]=dict(file=path.name,sha256=sha(path),elements={e:sorted(s,key='SPDFGHI'.index) for e,s in shells.items()})
+    return result
+
+
+def stack_geometry(atoms,count,gap):
+    """Translate along the thinnest bounding-box axis; keep copies separated."""
+    coordinates=[[float(v) for v in atom[1:]] for atom in atoms]
+    spans=[max(r[i] for r in coordinates)-min(r[i] for r in coordinates) for i in range(3)]
+    axis=min(range(3),key=lambda i:(spans[i],i))
+    translation=[0.,0.,0.];translation[axis]=spans[axis]+gap
+    lines=[str(len(atoms)*count),f'{count} translated dimers; Angstrom; translation={translation}']
+    for copy in range(count):
+        for atom,xyz in zip(atoms,coordinates):
+            lines.append(atom[0]+' '+ ' '.join(f'{v+copy*t:.12f}' for v,t in zip(xyz,translation)))
+    return '\n'.join(lines)+'\n',translation
 
 
 def verify(root):
@@ -98,10 +141,11 @@ def check_complete(folder, identity, expected_files=None):
             raise ValueError('changed completed file: '+str(folder/name))
 
 
-def selected_case(root, saved):
-    selection=json.loads((root/'selected-case.json').read_text())
+def selected_case(root, saved, case_id=None):
+    path=root/'selections'/(case_id+'.json') if case_id is not None else root/'selected-case.json'
+    selection=json.loads(path.read_text())
     case=selection['case']
-    if case not in saved['recipe']['cases']:
+    if case not in saved['recipe']['cases'] or (case_id is not None and case['id']!=case_id):
         raise ValueError('selected case is outside the frozen recipe')
     folder=root/'fixtures'/case['id']
     check_complete(folder,saved['identity'],
@@ -111,6 +155,12 @@ def selected_case(root, saved):
             list(fixture_dimensions(folder/'fixture.bin'))!=selection['dimensions']):
         raise ValueError('selected fixture identity mismatch')
     return selection
+
+
+def sample_directory(root,saved,case_id,round_,variant):
+    parent=root/'samples'
+    if saved['recipe'].get('schema',1)>=2:parent=parent/case_id
+    return parent/f'{round_:02d}'/variant
 
 
 def sample_files(variant):
@@ -127,6 +177,8 @@ def checked_sample(folder,saved,selection,variant,round_):
             row['replay_sha256']!=selection['fixture_sha256'] or
             row['overrides_sha256']!=(sha(folder/'overrides.bin') if variant=='reference' else None)):
         raise ValueError('cached sample semantic identity mismatch')
+    if saved['recipe'].get('schema',1)>=2 and row.get('case')!=selection['case']['id']:
+        raise ValueError('cached sample belongs to a different molecule/basis')
     raw=read_sample(folder,selection['dimensions'][0],variant=='reference')
     if any(row[k]!=v for k,v in raw.items()):
         raise ValueError('cached sample differs from raw observations')
@@ -252,7 +304,7 @@ def reference_data(root, saved, scratch):
 
 
 def run_sample(root,saved,case,reference,variant,round_,build,scratch):
-    destination=root/'samples'/f'{round_:02d}'/variant
+    destination=sample_directory(root,saved,case['id'],round_,variant)
     if (destination/'complete.json').exists():
         return checked_sample(destination,saved,reference,variant,round_)
     destination.mkdir(parents=True,exist_ok=True)
@@ -277,7 +329,7 @@ def run_sample(root,saved,case,reference,variant,round_,build,scratch):
                 if basis!=reference['basis'] or sha(local/'replayed-fixture.bin')!=reference['fixture_sha256']:
                     raise ValueError('basis or initial density replay differs')
                 result=read_sample(local,n,variant=='reference')
-                result.update(variant=variant,round=round_,basis=basis,fixture_sha256=reference['fixture_sha256'],
+                result.update(variant=variant,round=round_,case=case['id'],basis=basis,fixture_sha256=reference['fixture_sha256'],
                               replay_sha256=sha(local/'replayed-fixture.bin'),overrides_sha256=override_hash)
             except subprocess.CalledProcessError as error:
                 archive(local,attempt_dir)
@@ -296,18 +348,20 @@ def run_sample(root,saved,case,reference,variant,round_,build,scratch):
     raise RuntimeError('reference replay budget exhausted')
 
 
-def report(root, saved, with_reference):
+def report(root, saved, with_reference, case_id=None):
     import numpy as np
     rounds=saved['recipe']['experiment']['rounds']
     variants=(*VARIANTS,'reference') if with_reference else VARIANTS
-    selection=selected_case(root,saved)
+    selection=selected_case(root,saved,case_id)
+    result_root=root/'reports'/case_id if case_id is not None else root
+    result_root.mkdir(parents=True,exist_ok=True)
     rows={}
     for v in variants:
         rows[v]=[]
         for r in range(rounds):
-            folder=root/'samples'/f'{r:02d}'/v
+            folder=sample_directory(root,saved,selection['case']['id'],r,v)
             rows[v].append(checked_sample(folder,saved,selection,v,r))
-    summary=dict(identity=saved['identity'],rounds=rounds,initial_guess='official SAD',
+    summary=dict(identity=saved['identity'],rounds=rounds,initial_guess='official SAD',case=selection['case'],dimensions=selection['dimensions'],basis=selection['basis'],
                  reference_status='complete' if with_reference else 'pending', variants={})
     for v in variants:
         energies=[r['energy_hartree'] for r in rows[v]]
@@ -316,14 +370,14 @@ def report(root, saved, with_reference):
             summary['variants'][v]['timing']={k:statistics_for([r[k] for r in rows[v]]) for k in ('fock_seconds','iteration_seconds')}
     if with_reference:
         n=selection['dimensions'][0]
-        arrays=[read_outputs(root/'samples'/f'{r:02d}'/'reference/outputs.bin',n) for r in range(rounds)]
+        arrays=[read_outputs(sample_directory(root,saved,selection['case']['id'],r,'reference')/'outputs.bin',n) for r in range(rounds)]
         anchor=arrays[0]
         # Center before averaging, preserving sub-ulp mean displacements. Store
         # two binary64 parts so small backend differences are not rounded away.
         offset=np.sum([a-anchor for a in arrays],axis=0)/rounds
         hi=anchor+offset; lo=(anchor-hi)+offset
         sd=np.sqrt(np.sum([((a-anchor)-offset)**2 for a in arrays],axis=0)/(rounds-1))
-        folder=root/'reference-mean';folder.mkdir(exist_ok=True)
+        folder=result_root/'reference-mean';folder.mkdir(exist_ok=True)
         for name,a in (('hi',hi),('lo',lo),('sd',sd)):
             a.astype('<f8').tofile(folder/(name+'.bin'))
         c.write_json(folder/'layout.json',dict(dimensions=[2,n,n],order='Fock then updated density, each column-major',
@@ -332,7 +386,7 @@ def report(root, saved, with_reference):
         energy_offset=math.fsum(r['energy_hartree']-energy_anchor for r in rows['reference'])/rounds
         for v in variants:
             for r,row in enumerate(rows[v]):
-                values=read_outputs(root/'samples'/f'{r:02d}'/v/'outputs.bin',n)
+                values=read_outputs(sample_directory(root,saved,selection['case']['id'],r,v)/'outputs.bin',n)
                 delta=(values-hi)-lo
                 row['energy_difference_from_reference_mean']=(row['energy_hartree']-energy_anchor)-energy_offset
                 row['matrix_difference_from_reference_mean']={name:dict(max_absolute=float(np.max(np.abs(d))),frobenius=float(np.linalg.norm(d))) for name,d in zip(('fock','density'),delta)}
@@ -341,12 +395,104 @@ def report(root, saved, with_reference):
             summary['variants'][v]['max_matrix_difference_from_reference_mean']={name:max(r['matrix_difference_from_reference_mean'][name]['max_absolute'] for r in rows[v]) for name in ('fock','density')}
         summary['reference_note']='Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.'
         summary['reference_matrix_sd_max']={name:float(np.max(s)) for name,s in zip(('fock','density'),sd)}
-    c.write_json(root/('summary.json' if with_reference else 'timing-summary.json'),summary)
-    c.write_json(root/('samples.json' if with_reference else 'timing-samples.json'),rows)
+    c.write_json(result_root/('summary.json' if with_reference else 'timing-summary.json'),summary)
+    c.write_json(result_root/('samples.json' if with_reference else 'timing-samples.json'),rows)
+    return summary
+
+
+def prepare_fixture(root,saved,case,build,scratch,size):
+    folder=root/'fixtures'/case['id']
+    selection_file=root/'selections'/(case['id']+'.json')
+    if selection_file.exists():
+        selection=selected_case(root,saved,case['id'])
+        if ('sizing' in selection)!=size:raise ValueError('changed fixture sizing role')
+        return selection
+    folder.mkdir(parents=True,exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='fixture-',dir=scratch) as tmp:
+        local=Path(tmp)
+        basis=invoke(root,saved,case,'official','prepare',local/'fixture.bin',build,local/'prepare')
+        dimensions=fixture_dimensions(local/'fixture.bin')
+        shutil.copyfile(local/'fixture.bin',folder/'fixture.bin')
+        archive(local/'prepare',folder)
+        selection=dict(case=case,basis=basis,dimensions=dimensions,fixture_sha256=sha(folder/'fixture.bin'))
+        if size:
+            invoke(root,saved,case,'official','run',folder/'fixture.bin',build,local/'size')
+            sizing=read_sample(local/'size',dimensions[0],False)
+            if sha(local/'size/replayed-fixture.bin')!=selection['fixture_sha256']:
+                raise ValueError('sizing replay differs')
+            archive(local/'size',folder/'sizing')
+            selection.update(sizing=sizing,target_met=sizing['fock_seconds']>=saved['recipe']['experiment']['minimum_fock_seconds'])
+        c.write_json(folder/'fixture.json',selection);complete(folder,saved['identity'])
+    c.write_json(selection_file,selection)
+    return selected_case(root,saved,case['id'])
+
+
+def validate_selections(root,saved):
+    records=json.loads((root/'selected-stacks.json').read_text())
+    if set(records)!=set(map(str,saved['recipe']['experiment']['systems'])):
+        raise ValueError('selected molecule coverage mismatch')
+    selected=[]
+    for system in saved['recipe']['experiment']['systems']:
+        sizing=records[str(system)]
+        actual=selected_case(root,saved,sizing['case']['id'])
+        if actual!=sizing or sizing['case']['basis']!='def2-SVP' or sizing['case']['system']!=system:
+            raise ValueError('invalid def2-SVP sizing selection')
+        for basis in saved['recipe']['config']['bases']:
+            matches=[case for case in saved['recipe']['cases'] if case['system']==system and case['basis']==basis and case['copies']==sizing['case']['copies']]
+            if len(matches)!=1:raise ValueError('missing selected molecule/basis')
+            case=matches[0]
+            if any(case[key]!=sizing['case'][key] for key in ('geometry','sha256','translation_angstrom','atoms')):
+                raise ValueError('basis-specific geometry differs from sizing geometry')
+            selection=selected_case(root,saved,case['id'])
+            selected.append(selection)
+    return selected
+
+
+def report_suite(root,saved,with_reference):
+    selections=validate_selections(root,saved)
+    summaries=[report(root,saved,with_reference,s['case']['id']) for s in selections]
+    c.write_json(root/('summary.json' if with_reference else 'timing-summary.json'),
+                 dict(identity=saved['identity'],reference_status='complete' if with_reference else 'pending',cases=summaries))
+    rows=[]
+    for summary in summaries:
+        baseline=summary['variants']['official']['timing']['fock_seconds']['median']
+        for variant,record in summary['variants'].items():
+            row=dict(case=summary['case']['id'],system=summary['case']['system'],name=summary['case']['name'],
+                     basis=summary['case']['basis'],copies=summary['case']['copies'],atoms=summary['case']['atoms'],
+                     basis_functions=summary['dimensions'][0],backend=variant,
+                     fock_seconds=None,iteration_seconds=None,cv=None,speedup=None,
+                     energy_mean_difference=record.get('energy_mean_difference'))
+            if variant!='reference':
+                row.update(fock_seconds=record['timing']['fock_seconds']['median'],iteration_seconds=record['timing']['iteration_seconds']['median'],
+                           cv=record['timing']['fock_seconds']['cv'],speedup=baseline/record['timing']['fock_seconds']['median'])
+            rows.append(row)
+    with (root/('summary.csv' if with_reference else 'timing-summary.csv')).open('w') as stream:
+        writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
+
+
+def select_workloads(root,saved,build,scratch):
+    options=saved['recipe']['experiment'];stacks={}
+    for system in options['systems']:
+        candidates=sorted((case for case in saved['recipe']['cases'] if case['system']==system and case['basis']=='def2-SVP'),key=lambda case:case['copies'])
+        if not candidates:raise ValueError('missing def2-SVP sizing candidates')
+        for case in candidates:
+            selection=prepare_fixture(root,saved,case,build,scratch,True)
+            print('sizing',case['id'],selection['sizing']['fock_seconds'],flush=True)
+            if selection['target_met']:break
+        stacks[str(system)]=selection
+    stack_file=root/'selected-stacks.json'
+    if stack_file.exists() and json.loads(stack_file.read_text())!=stacks:
+        raise ValueError('selected stack counts changed on resume')
+    c.write_json(stack_file,stacks)
+    for case in saved['recipe']['cases']:
+        if case['copies']==stacks[str(case['system'])]['case']['copies']:
+            prepare_fixture(root,saved,case,build,scratch,case['basis']=='def2-SVP')
+    return validate_selections(root,saved)
 
 
 def execute(root):
     saved=verify(root); config=saved['recipe']['config']; options=saved['recipe']['experiment']
+    if saved['recipe'].get('schema')!=2:raise ValueError('execute with the workflow bundled in the original run')
     lock=(root/'execute.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     environment=dict(host=subprocess.check_output(['hostname'],text=True),gpu=subprocess.check_output(['nvidia-smi','--query-gpu=name,uuid,driver_version','--format=csv,noheader'],text=True),
                      nvcc=subprocess.check_output([config['cuda']+'/bin/nvcc','--version'],text=True))
@@ -365,37 +511,19 @@ def execute(root):
         prepare_tables(root,config,scratch)
         conformance(root,saved,scratch)
         reference_data(root,saved,scratch)
-        selected=root/'selected-case.json'
-        if selected.exists():
-            selection=selected_case(root,saved);case=selection['case']
-        else:
-            for case in saved['recipe']['cases']:
-                folder=root/'fixtures'/case['id'];folder.mkdir(parents=True,exist_ok=True)
-                with tempfile.TemporaryDirectory(prefix='sizing-',dir=scratch) as tmp:
-                    local=Path(tmp)
-                    basis=invoke(root,saved,case,'official','prepare',local/'fixture.bin',builds['official'],local/'prepare')
-                    dimensions=fixture_dimensions(local/'fixture.bin')
-                    shutil.copyfile(local/'fixture.bin',folder/'fixture.bin')
-                    archive(local/'prepare',folder)
-                    invoke(root,saved,case,'official','run',folder/'fixture.bin',builds['official'],local/'size')
-                    sizing=read_sample(local/'size',dimensions[0],False)
-                    if sha(local/'size/replayed-fixture.bin')!=sha(folder/'fixture.bin'):
-                        raise ValueError('sizing replay differs')
-                    archive(local/'size',folder/'sizing')
-                    selection=dict(case=case,basis=basis,dimensions=dimensions,fixture_sha256=sha(folder/'fixture.bin'),
-                                   sizing=sizing,target_met=sizing['fock_seconds']>=options['minimum_fock_seconds'])
-                    c.write_json(folder/'fixture.json',selection);complete(folder,saved['identity'])
-                print('sizing',case['id'],sizing['fock_seconds'],flush=True)
-                if selection['target_met']:break
-            c.write_json(selected,selection)
-        for r,_,v in schedule([case],list(VARIANTS),options['rounds']):
-            row=run_sample(root,saved,case,selection,v,r,builds[v],scratch)
-            print('timing',r,v,row['fock_seconds'],flush=True)
-        report(root,saved,False)
-        for r in range(options['rounds']):
-            run_sample(root,saved,case,selection,'reference',r,builds['reference'],scratch)
-            print('untimed reference',r,'accepted',flush=True)
-        report(root,saved,True)
+        selections=select_workloads(root,saved,builds['official'],scratch)
+        by_id={s['case']['id']:s for s in selections}
+        for r,case,v in schedule([s['case'] for s in selections],list(VARIANTS),options['rounds']):
+            row=run_sample(root,saved,case,by_id[case['id']],v,r,builds[v],scratch)
+            print('timing',case['id'],r,v,row['fock_seconds'],flush=True)
+        report_suite(root,saved,False)
+        for selection in selections:
+            case=selection['case']
+            for r in range(options['rounds']):
+                run_sample(root,saved,case,selection,'reference',r,builds['reference'],scratch)
+                print('untimed reference',case['id'],r,'accepted',flush=True)
+            report(root,saved,True,case['id'])
+        report_suite(root,saved,True)
         c.write_json(root/'complete.json',dict(identity=saved['identity'],summary_sha256=sha(root/'summary.json')))
 
 
@@ -408,7 +536,10 @@ def main():
     args=parser.parse_args();root=args.run.resolve()
     if args.stage=='prepare':prepare(root,args.dataset,json.loads(args.config.read_text()))
     elif args.stage=='execute':execute(root)
-    else:report(root,verify(root),True)
+    else:
+        saved=verify(root)
+        if saved['recipe'].get('schema',1)>=2:report_suite(root,saved,True)
+        else:report(root,saved,True)
 
 
 if __name__=='__main__':main()

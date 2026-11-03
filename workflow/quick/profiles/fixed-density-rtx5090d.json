@@ -7,6 +7,7 @@
     "slurm": {"partition": "pc", "node": "pc008", "cpus": 16, "memory": "96G", "minutes": 1440}
   },
   "experiment": {
+    "systems": [17],
     "copies": [8, 16],
     "spacing_angstrom": 3.4,
     "minimum_fock_seconds": 2.0,
