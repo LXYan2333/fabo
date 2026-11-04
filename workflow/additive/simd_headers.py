@@ -86,12 +86,35 @@ def tail_kernel(entry,metadata):
     return wrap(entry['id'],entry['cpp_model'],'TailKernel',body)
 
 
+def paired_tail_kernel(entry,main):
+    # Reuse the materialized main polynomial emitter, replacing coordinates
+    # and the final store. The two SIMD paths remain separate for now.
+    source=main_kernel(dict(main,id=entry['id'],cpp_model=entry['cpp_model']))
+    source=source.replace('struct Kernel<','struct TailKernel<').replace('const V x,Outputs&','const V x,Mask active,Outputs&')
+    start=source.index(' const auto y='); end=source.index(' static_assert',start)
+    source=source[:start]+''' const auto bits=Bits(x);
+ const auto exponent=hn::Sub(hn::ShiftRight<52>(bits),SU(1023));
+ const auto k=hn::ShiftRight<1>(exponent);
+ const auto u=Float(hn::Or(hn::And(bits,SU(0xfffffffffffffULL)),hn::ShiftLeft<52>(hn::Add(SU(1023),hn::And(exponent,SU(1))))));
+ const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(u),SU(1ULL<<(M::discarded_bits-1))));
+ const auto h=RoundedSub(Float(hn::ShiftLeft<M::discarded_bits>(key)),u);
+ const auto row=MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,SU(1023ULL<<M::retained_bits)));
+'''+source[end:]
+    r=main['record']
+    for n in range(r['first'],r['last']+1):
+        prefix=f' At<{n}-First>(out...)='
+        start=source.index(prefix); end=source.index(';',start)
+        expr=source[start+len(prefix):end]
+        source=source[:start]+f' const auto value={expr};\n'+prefix+f'hn::IfThenElse(active,Scale(Bits(value),MultiplyConstant<{2*n+1},511>(k)),At<{n}-First>(out...))'+source[end:]
+    return source
+
+
 def generate(include):
     include=Path(include)
     manifest=json.loads((include/'manifest.json').read_text())
     archive=Path(__file__).resolve().parents[2]/'data/numerical/compact-tail-1ulp.json'
-    tail=json.loads(archive.read_text())
-    if manifest['tail']['archive_definition']!=tail['metadata']['definition_id']:
+    tail=json.loads(archive.read_text()) if 'tails' not in manifest else None
+    if 'tails' not in manifest and manifest['tail']['archive_definition']!=tail['metadata']['definition_id']:
         raise ValueError('tail metadata differs from emitted table')
     files={}
     for entry in manifest['models'].values():
@@ -102,8 +125,12 @@ def generate(include):
         if min(entry['record']['degrees']) < 1:
             raise ValueError('SIMD requires positive Taylor degrees')
         files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=main_kernel(entry)
-    entry=manifest['tail']
-    files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=tail_kernel(entry,tail['metadata'])
+    if 'tails' in manifest:
+        for key,entry in manifest['tails'].items():
+            files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=paired_tail_kernel(entry,manifest['models'][key])
+    else:
+        entry=manifest['tail']
+        files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=tail_kernel(entry,tail['metadata'])
     guard='FAST_BOYS_SELECTED_SIMD_H_'
     files['fast_boys/selected_simd.h']='\n'.join([
         f'#if defined({guard}) == defined(HWY_TARGET_TOGGLE)',f'#ifdef {guard}',

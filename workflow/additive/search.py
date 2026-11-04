@@ -39,7 +39,7 @@ def identity(config):
     sources = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                for p in sorted(Path(__file__).parent.glob('*.py'))}
     return digest(dict(method='additive-materialized-nextup-v1', config=config, sources=sources,
-                       geometry_numpy=importlib.metadata.version('numpy') if config.get('strategy')=='budget_guided' else None,
+                       geometry_numpy=importlib.metadata.version('numpy') if config.get('strategy') in ('budget_guided','paired_budget_guided') else None,
                        python=sys.version.split()[0], gmpy2=g.version(), mpfr=g.mpfr_version(), gmp=g.mp_version()))
 
 
@@ -60,9 +60,13 @@ def validate(config):
         raise ValueError('invalid budget or qualification settings')
     if not config['retained_bits']:
         raise ValueError('empty grid family')
-    if config.get('strategy','exhaustive') not in ('exhaustive','budget_guided'):
+    if config.get('strategy','exhaustive') not in ('exhaustive','budget_guided','paired_budget_guided'):
         raise ValueError('invalid search strategy')
-    if config.get('strategy')=='budget_guided':
+    if config.get('strategy') in ('budget_guided','paired_budget_guided'):
+        if config.get('strategy')=='paired_budget_guided':
+            from .tail import storage as tail_storage
+            for first,last in config['requested_ranges']:
+                tail_storage(first,[config['maximum_degree']]*(last-first+1),0)
         for b in config['retained_bits']:
             Grid(b, domain_end=float(config['domain_end']), offset_code=0)
         if type(config.get('offset_neighborhood',4)) is not int or config.get('offset_neighborhood',4)<0:
@@ -81,6 +85,10 @@ def grids(config):
 
 
 def score(record):
+    if 'tail' in record:
+        return (max(record['degrees']),sum(record['degrees']),record['combined_table_bytes'],
+                max(q['max_error_upper'] for q in record['qualification']),tuple(record['degrees']),
+                record['tail']['retained_bits'],record['grid']['b'],record['grid']['offset_code'])
     return (max(record['degrees']), record['storage']['table_bytes'], tuple(record['degrees']),
             record['grid']['b'], record['grid'].get('offset_code',0), record['grid'].get('e',0), record['grid'].get('m',0))
 
@@ -169,6 +177,11 @@ def summarize(folder, run_id, config, records, complete):
             checksum.update(row)
         record['payload_sha256'] = checksum.hexdigest()
         record['minimum_order_prebiased'] = True
+        if 'tail' in record:
+            from .tail import payload_rows as tail_rows
+            checksum=hashlib.sha256()
+            for row in tail_rows(record['tail']): checksum.update(row)
+            record['tail']['payload_sha256']=checksum.hexdigest()
         record['window_edges'] = dict(b=record['grid']['b'] in (min(config['retained_bits']), max(config['retained_bits'])),
                                       degree=max(record['degrees']) == config['maximum_degree'])
     atomic_json(folder/'summary.json', dict(identity=run_id, complete=complete, counts=counts,
@@ -187,7 +200,7 @@ def main():
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     validate(config)
-    if config.get('strategy')=='budget_guided':
+    if config.get('strategy') in ('budget_guided','paired_budget_guided'):
         from .guided import run
         run(args,config)
         return

@@ -16,4 +16,6 @@ python -m workflow.nwchem_cluster --run RUN --repo BUNDLED_REPOSITORY
 python -m workflow.nwchem_compare report --run RUN
 ```
 
+For a failed run, `python -m workflow.nwchem_compare restart --source-run OLD --run NEW` creates a fresh snapshot from verified inputs, preserving executable permissions with metadata-preserving copies. It does not reuse build outputs or measurements. The new snapshot contains an executable-mode manifest checked before builds; do not copy source trees with a bytes-only copy operation. Then generate and submit scripts for NEW as above.
+
 Report regeneration does not execute calculations. Full execution additionally requires the pinned dependencies configured in workflow/nwchem_compare.json, including MPFR/GMP headers and libraries. No Boys model search or performance tuning is performed.

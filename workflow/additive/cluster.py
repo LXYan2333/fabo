@@ -34,9 +34,11 @@ def main():
         p.error('positive resource counts required')
     config=json.loads(a.config.read_text())
     validate(config)
-    guided=config.get('strategy')=='budget_guided'
+    guided=config.get('strategy') in ('budget_guided','paired_budget_guided')
     if guided:
         from .guided import tasks
+        if config.get('strategy')=='paired_budget_guided':
+            from .paired import tasks
         a.shards=len(tasks(config))
         a.workers=1
         a.concurrency=min(a.concurrency if a.concurrency is not None else 256,a.shards)

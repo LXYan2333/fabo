@@ -1,5 +1,7 @@
 # Evaluation APIs
 
+Paired-search catalogs (`FAST_BOYS_RANGE_TAILS`) select `Model<Last,First>` and `Tail<Last,First>`, with separate `data_First_Last.h` and `tail_data_First_Last.h` payload headers. Each pair shares degrees and row layout; CUDA selects coordinates and a row pointer, then executes common coefficient loads and Horner arithmetic. The pair's budget includes both tables. Subsets reuse the pair. Inputs must be finite and nonnegative, including -0.0; infinity and NaN are outside this contract. Users should not enable floating-point traps. The legacy bundled catalog described below remains unchanged until new qualified paired results are emitted.
+
 The CUDA API is described below. See [SIMD.md](SIMD.md) for the Highway CPU API with compile-time output ranges and native/software gather selection.
 
 The evaluator uses fully materialized reference coefficients on the selected additive grid. It has no main-domain recurrence patches, exponential dictionary, or runtime exponential. Numerical models and exact table words are portable; CUDA operations and allocation helpers are separate.

@@ -52,3 +52,25 @@ Guided mode creates one single-CPU, 2-GiB task per (range,b):225 tasks by defaul
 Each allocation has a24-hour limit. An afterany finalizer retries incomplete tasks at most twice, preserving completed probes, then merges only complete matching identities and coverage. An exhausted retry limit creates incomplete.json and reports failure. Numerical no-candidate outcomes are completed results, not infrastructure failures to retry. The controller does not require the laptop to stay connected. Do not submit concurrent writers to the same run.
 
 The older exhaustive source/results remain archival; their metadata are not silently relabeled as guided-search results. The large-argument method is not retuned here. Nothing in the bounded-domain summary qualifies inputs beyond its endpoint.
+# Paired main/tail construction
+
+`profiles/paired.json` enables `paired_budget_guided`. The 1 MiB budget counts both materialized tables, correction words and padding, independently for each requested order range. The old fixed-domain results are not overwritten. Input is finite binary64 x >= 0, including -0.0; callers must not enable floating-point traps.
+
+Each task owns an order range and normalized tail resolution, caching its per-order degree screens and boundary results across all main-grid resolutions. Common degrees are tried in ascending order. Sparse numerical screens use approximately 17 cells, followed by all-cell qualification. Tail switching checks compare with actual Boys reference intervals; a complete-integral bound accelerates clear cases and direct MPFR resolves ambiguous ones. The boundary describes a sampled safe suffix, not a continuous-domain proof. Unresolved references remain explicit. Next, both grids and the switch are frozen, degrees are reduced only when both domains qualify, and the main offset is shrunk with the existing heuristic. This is not a globally exhaustive optimization.
+
+Persistent checkpoints contain compact recipes and witnesses; expanded rows live only in bounded process caches. Tasks use node-local scratch with compact checkpoint publication. The task grouping avoids repeating tail boundary work for each main offset, but separate requested ranges currently have independent caches.
+
+Prepare or submit on the cluster with the pinned producer environment (omit `--submit` for preparation only):
+
+```sh
+python -m workflow.additive.cluster --repo "$PWD" --config workflow/additive/profiles/paired.json --output /path/to/new-run --python /path/to/pinned/python --nodes c021,c022,c023,c024,c025,c026,c027,c028 --submit
+```
+
+After successful aggregation, emit headers without repeating the search:
+
+```sh
+python -m workflow.additive.headers /path/to/new-run/summary.json --output /path/to/new-include
+python -m workflow.additive.simd_headers --include /path/to/new-include
+```
+
+Paired catalogs expose `selected::Model<Last,First>` and `selected::Tail<Last,First>` with separate opt-in `data_First_Last.h` and `tail_data_First_Last.h` payload headers. Subsets share their configured pair. CUDA shares coefficient loads and Horner arithmetic after coordinate preparation, then scales tail outputs before storing them. Highway currently keeps separate arithmetic paths. Existing legacy catalogs remain usable by the benchmark bindings.

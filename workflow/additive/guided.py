@@ -154,7 +154,10 @@ def selection(first,last,b,config,state,save):
 
 
 def run(args,config):
-    work=tasks(config)
+    task_function,select=tasks,selection
+    if config.get('strategy')=='paired_budget_guided':
+        from .paired import tasks as task_function, selection as select
+    work=task_function(config)
     if args.workers!=1 or args.shards<1 or not 0<=args.shard<args.shards:
         raise ValueError('guided search requires one worker and valid shard indices')
     folder=args.output
@@ -193,7 +196,7 @@ def run(args,config):
             state['active']={k:v for k,v in item.items() if k not in ('probes','result')}
             save()
         if 'result' not in item:
-            item['result']=selection(first,last,b,config,item,checkpoint)
+            item['result']=select(first,last,b,config,item,checkpoint)
             checkpoint()
         records.append(dict(index=index,results=[item['result']]))
     journal=folder/'records.jsonl'

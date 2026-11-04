@@ -2,7 +2,7 @@
   "numerical_identity": "2030d57e3b0b3105759333eab8b76ead603c4b62bac8c866be8cd1bae54f2240",
   "numerical_manifest_sha256": "1a9179b15f8353b8f8577c3b3b3cc9a5ea6b75177d10951af6dbad06635fb19e",
   "sources": {
-    "workflow/additive/simd_headers.py": "240347446980ce8dee923e4116565346726193895b90166dc5dbad4078bec945",
+    "workflow/additive/simd_headers.py": "26a8b67fc02414ed23d073714a106989a7e7712407e6ad361a5a627af516dc3b",
     "include/fast_boys/simd.h": "e312bc9e51ef2de6c25ced5da4f6fe12409a39a5a8fbe7c0c489cc5e9116b606",
     "include/fast_boys/simd_config.h": "e6c65e9f0d8a6eb773e83756941e250c469f21732a40af693d9e8169b8ffffe2",
     "include/fast_boys/detail/simd/ops-inl.h": "1d563c0cc2eea082567dfde3c0ec19cb18248ded28e27debfebc0bed6110c140"

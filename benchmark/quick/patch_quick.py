@@ -87,11 +87,14 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
             record = model['record']
             if record['first'] != 0 or record['last'] != n or record['status'] != 'qualified':
                 raise ValueError('invalid selected QUICK model')
-        if not numerical['tail']['matches_main_target']:
+        if 'tails' not in numerical and not numerical['tail']['matches_main_target']:
             raise ValueError('tail target differs from main model')
         manifest['numerical_identity'] = numerical['numerical_identity']
         manifest['models'] = {k: numerical['models'][k] for k in ('0-4', '0-8', '0-12')}
-        manifest['tail'] = numerical['tail']
+        if 'tails' in numerical:
+            manifest['tails'] = {k:numerical['tails'][k] for k in manifest['models']}
+        else:
+            manifest['tail'] = numerical['tail']
         header = 'src/gpu/gpu_get2e_subs.h'
         edit(header, '#include "gpu_fmt.h"', '''#include "gpu_fmt.h"
 #include "additive_binding.cuh"
@@ -120,10 +123,13 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
         for path in base.rglob('*'):
             if path.is_file() and path.suffix in ('.h','.cuh') and 'models' not in path.relative_to(base).parts:
                 copies[Path('src/gpu/fast_boys')/path.relative_to(base)] = path
-        model_files = [f'catalog_{numerical["catalog"]["id"]}.h', 'tail_data.h']
-        model_files += [f'{m["id"]}/model.h' for m in [*numerical['models'].values(),numerical['tail']]]
+        tails=list(numerical['tails'].values()) if 'tails' in numerical else [numerical['tail']]
+        selected_tails=list(manifest['tails'].values()) if 'tails' in manifest else tails
+        model_files = [f'catalog_{numerical["catalog"]["id"]}.h']
+        model_files += [f'tail_data_0_{n}.h' for n in (4,8,12)] if 'tails' in numerical else ['tail_data.h']
+        model_files += [f'{m["id"]}/model.h' for m in [*numerical['models'].values(),*tails]]
         model_files += [f'data_0_{n}.h' for n in (4,8,12)]
-        model_files += [f'{m["id"]}/data.h' for m in [*manifest['models'].values(),numerical['tail']]]
+        model_files += [f'{m["id"]}/data.h' for m in [*manifest['models'].values(),*selected_tails]]
         for name in model_files:
             copies[Path('src/gpu/fast_boys/models')/name] = base/'models'/name
     if probe or training:

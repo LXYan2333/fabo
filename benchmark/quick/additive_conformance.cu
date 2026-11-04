@@ -21,7 +21,13 @@ __global__ void evaluate(double *out) {
 
 template <int Family> static bool check() {
   using M = typename FaboQuickFamily<Family>::Model;
+#ifdef FAST_BOYS_RANGE_TAILS
+  using T = fast_boys::selected::Tail<M::last>;
+  constexpr int tail_key = -M::last;
+#else
   using T = fast_boys::selected::Tail;
+  constexpr int tail_key = -1;
+#endif
   using O = fast_boys::detail::Binary64;
   constexpr unsigned stride = 64;
   std::vector<double> values(13 * stride, -1.);
@@ -37,7 +43,7 @@ template <int Family> static bool check() {
   std::size_t bytes;
   auto evaluator = fast_boys::cuda::make_evaluator(
       fast_boys::TableView<M>::from_pointer(fabo_quick_host_table(M::last, &bytes)),
-      fast_boys::TableView<T>::from_pointer(fabo_quick_host_table(-1, &bytes)));
+      fast_boys::TableView<T>::from_pointer(fabo_quick_host_table(tail_key, &bytes)));
   const double inputs[] = {0., 0.01, 1., 100., 1e7, 1e8};
   for (unsigned lane = 0; lane < stride; ++lane) {
     double expected[13];

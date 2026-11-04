@@ -52,8 +52,39 @@ def verify_manifest(folder, manifest):
 
 def verify_inputs(out):
     verify_manifest(out,json.loads((out/'inputs.json').read_text()))
+    verify_input_modes(out)
     # Reproduction uses the same driver and patches that prepared the run.
     verify_manifest(ROOT,json.loads((out/'workflow.json').read_text()))
+
+def verify_input_modes(out):
+    # Older archives lack the mode manifest; still reject the known failure
+    # before spending minutes building unrelated Simint variants.
+    for name in ('src/config/strip_compiler.sh','src/config/check_env.sh',
+                 'src/util/util_nwchem_version.bash','src/tools/get-tools-github'):
+        path=out/'nwchem'/name
+        if not path.is_file() or not path.stat().st_mode & 0o111:
+            raise ValueError('missing executable NWChem script: '+str(path))
+    modes=out/'input-modes.json'
+    if modes.exists():
+        for name,expected in json.loads(modes.read_text()).items():
+            if (out/name).stat().st_mode & 0o111 != expected:
+                raise ValueError('changed executable mode: '+name)
+
+def restart_prepared(source,out):
+    """Clone only verified prepared inputs, preserving permissions, not results."""
+    source=source.resolve();out=out.resolve()
+    manifest=json.loads((source/'inputs.json').read_text())
+    verify_manifest(source,manifest);verify_input_modes(source)
+    out.mkdir(parents=True,exist_ok=False)
+    for name in manifest:
+        if name.startswith('driver/') or name in ('workflow.json','input-modes.json','restart.json'):continue
+        relative=Path(name)
+        if relative.is_absolute() or '..' in relative.parts:raise ValueError('invalid snapshot path')
+        destination=out/relative;destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(source/relative,destination)
+    save(out/'restart.json',dict(source_run=str(source),source_manifest_sha256=sha(source/'inputs.json'),
+                               reuse='Verified prepared inputs only; copy2 preserves executable permissions'))
+    freeze_workflow(out);verify_inputs(out)
 
 def verify_sample(folder):
     verify_manifest(folder,json.loads((folder/'complete.json').read_text()))
@@ -168,11 +199,14 @@ def prepare(out,config):
 def freeze_workflow(out):
     """Publish the source identity last, before any build/measurement starts."""
     if (out/'built.json').exists():raise ValueError('cannot refreeze a built run')
+    verify_input_modes(out)
     save(out/'workflow.json',{str(p.relative_to(ROOT)):sha(p) for p in workflow_files()})
     # Copy the exact source code too; hashes alone are not a reproduction archive.
     for p in workflow_files():
         target=out/'driver'/p.relative_to(ROOT)
-        target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,target)
+        target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,target)
+    save(out/'input-modes.json',{str(p.relative_to(out)):p.stat().st_mode & 0o111 for p in out.rglob('*')
+                                if p.is_file() and p.name not in ('inputs.json','input-modes.json')})
     save(out/'inputs.json',{str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p!=out/'inputs.json'})
 
 def build(out):
@@ -455,9 +489,12 @@ def reference_report(out):
     save(out/'reference-summary.json',dict(reference='Correctly-rounded Boys substitution, not exact molecular observables',results=results))
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('stage',choices=('prepare','build','smoke','size','benchmark','reference','report'));p.add_argument('--run',type=Path,required=True);p.add_argument('--config',type=Path)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('stage',choices=('prepare','restart','build','smoke','size','benchmark','reference','report'));p.add_argument('--run',type=Path,required=True);p.add_argument('--config',type=Path);p.add_argument('--source-run',type=Path)
     a=p.parse_args();out=a.run.resolve()
     if a.stage=='prepare':prepare(out,json.loads(a.config.read_text()))
+    elif a.stage=='restart':
+        if a.source_run is None:p.error('restart requires --source-run')
+        restart_prepared(a.source_run,out)
     elif a.stage=='build':build(out)
     elif a.stage=='report':report(out)
     else:

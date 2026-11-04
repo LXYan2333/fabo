@@ -134,7 +134,15 @@ def main_source(record,ident,error,payload_sha256):
         lines += [f'      const auto hi={hi};',
                   f'      out[({n}-First)*stride]=O::add(O::value({up}),O::fma(h,q,-O::template correction_from_word<{offset%8}>(hi,row[{correction_word(record,n)}])));',
                   f'      if(last_output=={n}) return;', '    }']
-    return '\n'.join(lines+['  }','};','}'])+'\n'
+    source='\n'.join(lines+['  }','};','}'])+'\n'
+    if 'tail' in record:
+        source=source.replace('std::size_t stride) {','std::size_t stride,unsigned scale_k=0) {')
+        for n in range(first,last+1):
+            prefix=f'      out[({n}-First)*stride]='
+            start=source.index(prefix); end=source.index(';',start)
+            expr=source[start+len(prefix):end]
+            source=source[:start]+f'      const double result={expr};\n'+prefix+f'scale_k ? O::scale(result,unsigned({2*n+1}*scale_k)) : result'+source[end:]
+    return source
 
 
 def tail_source(record,ident):
@@ -216,6 +224,9 @@ def generate(summary,output,ranges=None,workers=1):
     if not chosen or any(key not in records for key in chosen):
         raise ValueError('requested range is missing')
     error=summary['config']['error']
+    if any('tail' in records[key] for key in chosen):
+        from .paired_headers import generate as generate_pairs
+        return generate_pairs(summary,output,chosen,workers)
     if error['metric'] not in ('ulp','absolute','relative'):
         raise ValueError('unsupported error metric')
     manifest={'schema':1,'numerical_identity':summary['identity'],'models':{},'generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),

@@ -1,6 +1,7 @@
 from pathlib import Path
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 
@@ -55,8 +56,31 @@ def test_context_failure_does_not_modify_source(tmp_path):
     assert before=={str(p):p.read_bytes() for p in root.rglob('*') if p.is_file()}
 
 
+def paired_catalog(tmp_path):
+    from workflow.additive import tail
+    from workflow.additive.model import Grid,storage
+    from workflow.additive.headers import generate
+    from workflow.additive.search import payload_rows
+    grid=Grid(2,domain_end=40.,offset_code=0)
+    winners={}
+    for last in (4,8,12):
+        degrees=[2]*(last+1)
+        record=dict(first=0,last=last,degrees=degrees,grid=grid.metadata(),status='qualified',
+                    minimum_order_prebiased=True,qualification=[dict(status='qualified',scope='fixture only')]*(last+1),
+                    tail_qualification=[dict(status='qualified',scope='fixture only')]*(last+1))
+        record['storage']=storage(grid,0,degrees)
+        record['tail']=tail.construct(0,last,degrees,2,40.)
+        record['payload_sha256']=hashlib.sha256(b''.join(payload_rows(record))).hexdigest()
+        winners[f'0-{last}']=record
+    include=tmp_path/'paired'
+    generate(dict(complete=True,unresolved=0,identity='fixture-not-production',
+                  config=dict(error=dict(metric='ulp',limit=1),budget_bytes=1048576),winners=winners),include)
+    return include
+
+
+@pytest.mark.parametrize('paired',[False,True])
 @pytest.mark.parametrize('enable_f',[False,True])
-def test_host_binding_layout(tmp_path,enable_f):
+def test_host_binding_layout(tmp_path,enable_f,paired):
     compiler=shutil.which('clang++')
     if not compiler: pytest.skip('Clang unavailable')
     source=r'''
@@ -77,15 +101,23 @@ struct Dimensions { unsigned x; } gridDim{1},blockDim{17};
 extern "C" const std::uint64_t* fabo_quick_host_table(int,std::size_t*);
 template<int Family> int check() {
   using M=typename FaboQuickFamily<Family>::Model;
+#ifdef FAST_BOYS_RANGE_TAILS
+  using T=fast_boys::selected::Tail<M::last>;
+  constexpr int tail_key=-M::last;
+  auto& tail_ptr=fabo_quick_tail[Family/4-1];
+#else
   using T=fast_boys::selected::Tail;
+  constexpr int tail_key=-1;
+  auto& tail_ptr=fabo_quick_tail;
+#endif
   using O=fast_boys::detail::Binary64;
   std::size_t bytes;
   fabo_quick_main[Family/4-1]=fabo_quick_host_table(M::last,&bytes);
   if(bytes!=M::table_bytes) return 1;
-  fabo_quick_tail=fabo_quick_host_table(-1,&bytes);
+  tail_ptr=fabo_quick_host_table(tail_key,&bytes);
   auto e=fast_boys::cuda::make_evaluator(
     fast_boys::TableView<M>::from_pointer(fabo_quick_main[Family/4-1]),
-    fast_boys::TableView<T>::from_pointer(fabo_quick_tail));
+    fast_boys::TableView<T>::from_pointer(tail_ptr));
   const double points[]={0.,0.01,1.,100.,1e7,1e8};
   for(int last=0;last<=M::last;++last) for(double x:points) {
     double out[13*17],expected[13];
@@ -113,7 +145,21 @@ int main(){
     path=tmp_path/'binding.cc'; path.write_text(source)
     command=[compiler,'-std=c++17','-O2','-fno-fast-math','-ffp-contract=off',
              '-I'+str(ROOT/'include'),'-I'+str(ROOT/'benchmark/quick')]
+    if paired: command.insert(1,'-I'+str(paired_catalog(tmp_path)))
     if enable_f: command+=['-DENABLEF']
     subprocess.run(command+[str(path),str(ROOT/'benchmark/quick/additive_host.cc'),
                             '-o',str(tmp_path/'binding')],check=True,capture_output=True)
     subprocess.run([str(tmp_path/'binding')],check=True)
+
+
+@pytest.mark.parametrize('enable_f',[False,True])
+def test_paired_cuda_conformance_compiles(tmp_path,enable_f):
+    compiler=os.environ.get('FABO_NVCC',shutil.which('nvcc'))
+    if not compiler: pytest.skip('NVCC unavailable')
+    include=paired_catalog(tmp_path)
+    command=[compiler,'-std=c++17','-O2','-arch=sm_120','-I'+str(include),
+             '-I'+str(ROOT/'include'),'-I'+str(ROOT/'benchmark/quick'),'-c',
+             str(ROOT/'benchmark/quick/additive_conformance.cu'),'-o',str(tmp_path/'checker.o')]
+    if enable_f: command+=['-DENABLEF']
+    result=subprocess.run(command,capture_output=True,text=True)
+    assert result.returncode==0,result.stderr

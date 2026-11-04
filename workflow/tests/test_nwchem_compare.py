@@ -59,6 +59,27 @@ def test_reference_libraries_propagate_to_static_consumers():
     assert 'target_link_libraries(simint PUBLIC "/environment/lib/libmpfr.so" "/environment/lib/libgmp.so")' in text
     assert '-fno-fast-math;-ffp-contract=off;-fno-lto' in text
 
+def test_restart_preserves_and_checks_executable_modes(tmp_path,monkeypatch):
+    import workflow.nwchem_compare as module
+    repo=tmp_path/'repo';repo.mkdir();driver=repo/'driver.py';driver.write_text('# driver\n')
+    monkeypatch.setattr(module,'ROOT',repo)
+    monkeypatch.setattr(module,'workflow_files',lambda:[driver])
+    source=tmp_path/'original';source.mkdir()
+    for name in ('src/config/strip_compiler.sh','src/config/check_env.sh',
+                 'src/util/util_nwchem_version.bash','src/tools/get-tools-github'):
+        p=source/'nwchem'/name;p.parent.mkdir(parents=True,exist_ok=True)
+        p.write_text('#!/bin/sh\nexit 0\n');p.chmod(0o755)
+    module.freeze_workflow(source)
+    (source/'build.log').write_text('failed build')
+    dest=tmp_path/'restart';module.restart_prepared(source,dest)
+    assert not (dest/'build.log').exists()
+    module.verify_inputs(dest)
+    script=dest/'nwchem/src/config/strip_compiler.sh'
+    assert script.stat().st_mode & 0o111 == 0o111
+    script.chmod(0o644)
+    with pytest.raises(ValueError,match='executable'):module.verify_inputs(dest)
+    with pytest.raises(ValueError,match='executable'):module.restart_prepared(dest,tmp_path/'bad')
+
 def test_bundled_driver_has_standalone_geometry_and_scheduler(tmp_path):
     from workflow.nwchem_compare import workflow_files
     for path in workflow_files():

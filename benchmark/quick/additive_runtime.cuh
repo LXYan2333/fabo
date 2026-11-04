@@ -42,7 +42,16 @@ extern "C" void fabo_quick_boys_init_() {
 #else
   main[1] = fabo_quick_upload(8);
 #endif
+#ifdef FAST_BOYS_RANGE_TAILS
+  const std::uint64_t *tail[3]={fabo_quick_upload(-4),nullptr,nullptr};
+#ifdef ENABLEF
+  tail[1]=tail[2]=fabo_quick_upload(-12);
+#else
+  tail[1]=fabo_quick_upload(-8);
+#endif
+#else
   const auto *tail = fabo_quick_upload(-1);
+#endif
   fabo_quick_check(cudaMemcpyToSymbol(fabo_quick_main, main, sizeof(main)));
   fabo_quick_check(cudaMemcpyToSymbol(fabo_quick_tail, &tail, sizeof(tail)));
 }
