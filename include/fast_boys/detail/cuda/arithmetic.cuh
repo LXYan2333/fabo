@@ -9,7 +9,7 @@ static_assert(sizeof(double) == 8 && std::numeric_limits<double>::is_iec559 &&
                   std::numeric_limits<double>::digits == 53,
               "IEEE binary64 required");
 struct Binary64 {
-  FAST_BOYS_HD static inline std::uint64_t bits(double x) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE std::uint64_t bits(double x) {
 #if defined(__CUDA_ARCH__)
     return static_cast<std::uint64_t>(__double_as_longlong(x));
 #else
@@ -18,7 +18,7 @@ struct Binary64 {
     return r;
 #endif
   }
-  FAST_BOYS_HD static inline double value(std::uint64_t x) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double value(std::uint64_t x) {
 #if defined(__CUDA_ARCH__)
     return __longlong_as_double(static_cast<long long>(x));
 #else
@@ -27,7 +27,7 @@ struct Binary64 {
     return r;
 #endif
   }
-  FAST_BOYS_HD static inline double add(double a, double b) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double add(double a, double b) {
 #if defined(__CUDA_ARCH__)
     return __dadd_rn(a, b);
 #else
@@ -35,10 +35,14 @@ struct Binary64 {
     return r;
 #endif
   }
-  FAST_BOYS_HD static inline double sub(double a, double b) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double sub(double a, double b) {
+#if defined(__CUDA_ARCH__)
+    return __dsub_rn(a, b);
+#else
     return add(a, -b);
+#endif
   }
-  FAST_BOYS_HD static inline double mul(double a, double b) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double mul(double a, double b) {
 #if defined(__CUDA_ARCH__)
     return __dmul_rn(a, b);
 #else
@@ -46,20 +50,20 @@ struct Binary64 {
     return r;
 #endif
   }
-  FAST_BOYS_HD static inline double fma(double a, double b, double c) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double fma(double a, double b, double c) {
 #if defined(__CUDA_ARCH__)
     return __fma_rn(a, b, c);
 #else
     return std::fma(a, b, c);
 #endif
   }
-  FAST_BOYS_HD static inline double correction(std::uint64_t ordinary_hi,
+  FAST_BOYS_HD static FAST_BOYS_INLINE double correction(std::uint64_t ordinary_hi,
                                                unsigned code) {
     return value(((ordinary_hi & 0x7ff0000000000000ULL) - (53ULL << 52)) +
                  (std::uint64_t(code) << 45));
   }
   template <int Byte>
-  FAST_BOYS_HD static inline double
+  FAST_BOYS_HD static FAST_BOYS_INLINE double
   correction_from_word(std::uint64_t ordinary_hi, std::uint64_t word) {
     static_assert(0 <= Byte && Byte < 8,
                   "byte index must be inside a u64 word");
@@ -74,20 +78,14 @@ struct Binary64 {
     return value(((ordinary_hi & 0x7ff0000000000000ULL) - (53ULL << 52)) +
                  positioned);
   }
-  // Exact power-of-two scaling of positive normal values, RN-even on underflow.
-  FAST_BOYS_HD static inline double scale(double v, unsigned power) {
+  // Positive normal input; power <= 25039 for finite x and orders through 24.
+  // power=0 takes the normal path and preserves the input bits exactly.
+  FAST_BOYS_HD static FAST_BOYS_INLINE double scale(double v, unsigned power) {
     const auto u = bits(v);
-    const unsigned exponent = unsigned(u >> 52);
-    if (power < exponent)
+    const unsigned result_biased_exponent = unsigned(u >> 52);
+    if (FAST_BOYS_LIKELY(power < result_biased_exponent))
       return value(u - (std::uint64_t(power) << 52));
-    const std::uint64_t sig = (u & 0xfffffffffffffULL) | (1ULL << 52);
-    const unsigned shift = power - exponent + 1;
-    if (shift > 53)
-      return 0.0;
-    const auto q = sig >> shift;
-    const auto r = sig & ((1ULL << shift) - 1);
-    const auto half = 1ULL << (shift - 1);
-    return value(q + (r > half || (r == half && (q & 1))));
+    return ::ldexp(v, -static_cast<int>(power));
   }
 };
 } // namespace fast_boys::detail

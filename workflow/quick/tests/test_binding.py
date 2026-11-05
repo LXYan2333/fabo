@@ -78,6 +78,31 @@ def paired_catalog(tmp_path):
     return include
 
 
+def test_combined_patch_payloads(tmp_path,monkeypatch):
+    import benchmark.quick.patch_quick as patcher
+    repository=tmp_path/'repository'
+    repository.mkdir()
+    include=paired_catalog(repository)
+    include.rename(repository/'include')
+    # Reuse public implementation headers, but no legacy model payloads.
+    for src in (ROOT/'include/fast_boys').rglob('*'):
+        rel=src.relative_to(ROOT/'include/fast_boys')
+        if src.is_file() and 'models' not in rel.parts and src.name not in ('selected.h','selected_simd.h'):
+            dst=repository/'include/fast_boys'/rel
+            dst.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(src,dst)
+    tree=source_tree(tmp_path/'quick')
+    monkeypatch.setattr(patcher,'ROOT',repository)
+    manifest=patcher.patch(tree,'fabo_additive')
+    assert manifest['combined_table']
+    assert 'tail' not in manifest and 'tails' not in manifest
+    payloads=[p for p in manifest['copied_sources'] if p.endswith('/data.h')]
+    assert len(payloads)==3
+    assert not any('tail_data' in p for p in manifest['copied_sources'])
+    for name,digest in manifest['copied_sources'].items():
+        assert hashlib.sha256((tree/name).read_bytes()).hexdigest()==digest
+
+
 @pytest.mark.parametrize('paired',[False,True])
 @pytest.mark.parametrize('enable_f',[False,True])
 def test_host_binding_layout(tmp_path,enable_f,paired):
@@ -101,6 +126,7 @@ struct Dimensions { unsigned x; } gridDim{1},blockDim{17};
 extern "C" const std::uint64_t* fabo_quick_host_table(int,std::size_t*);
 template<int Family> int check() {
   using M=typename FaboQuickFamily<Family>::Model;
+#ifndef FAST_BOYS_COMBINED_TABLE
 #ifdef FAST_BOYS_RANGE_TAILS
   using T=fast_boys::selected::Tail<M::last>;
   constexpr int tail_key=-M::last;
@@ -110,14 +136,19 @@ template<int Family> int check() {
   constexpr int tail_key=-1;
   auto& tail_ptr=fabo_quick_tail;
 #endif
+#endif
   using O=fast_boys::detail::Binary64;
   std::size_t bytes;
   fabo_quick_main[Family/4-1]=fabo_quick_host_table(M::last,&bytes);
   if(bytes!=M::table_bytes) return 1;
+#ifdef FAST_BOYS_COMBINED_TABLE
+  auto e=fast_boys::cuda::make_evaluator(fast_boys::TableView<M>::from_pointer(fabo_quick_main[Family/4-1]));
+#else
   tail_ptr=fabo_quick_host_table(tail_key,&bytes);
   auto e=fast_boys::cuda::make_evaluator(
     fast_boys::TableView<M>::from_pointer(fabo_quick_main[Family/4-1]),
     fast_boys::TableView<T>::from_pointer(tail_ptr));
+#endif
   const double points[]={0.,0.01,1.,100.,1e7,1e8};
   for(int last=0;last<=M::last;++last) for(double x:points) {
     double out[13*17],expected[13];

@@ -258,25 +258,13 @@ HWY_INLINE U Gather(const std::uint64_t *table, U index) {
 }
 
 HWY_INLINE V Scale(U bits, U scale) {
-  const auto exponent = hn::ShiftRight<52>(bits);
-  const auto normal = hn::Lt(scale, exponent);
-  const auto delta = hn::Add(hn::Sub(scale, exponent), SU(1));
-  // Every executed variable shift is in [1,53], even for inactive lanes.
-  const auto shift = hn::Min(hn::Max(delta, SU(1)), SU(53));
-  const auto sig =
-      hn::Or(hn::And(bits, SU(0xfffffffffffffULL)), SU(1ULL << 52));
-  const auto truncated = hn::Shr(sig, shift);
-  const auto half = hn::Shl(SU(1), hn::Sub(shift, SU(1)));
-  const auto remainder = hn::And(sig, hn::Sub(hn::Shl(SU(1), shift), SU(1)));
-  const auto round = hn::Or(hn::Gt(remainder, half),
-                            hn::And(hn::Eq(remainder, half),
-                                    hn::Ne(hn::And(truncated, SU(1)), SU(0))));
-  const auto subnormal =
-      hn::IfThenElseZero(hn::Le(delta, SU(53)),
-                         hn::Add(truncated, hn::IfThenElseZero(round, SU(1))));
-  const auto result = hn::IfThenElse(
-      normal, hn::Sub(bits, hn::ShiftLeft<52>(scale)), subnormal);
-  return Float(hn::IfThenElseZero(hn::Ne(bits, SU(0)), result));
+  const auto result_biased_exponent = hn::ShiftRight<52>(bits);
+  const auto normal = hn::Lt(scale, result_biased_exponent);
+  if (HWY_LIKELY(hn::AllTrue(DU(), normal)))
+    return Float(hn::Sub(bits, hn::ShiftLeft<52>(scale)));
+  // Cold mixed/underflow path: delegate rounding and zero handling to Highway.
+  // The nonnegative scale fits int64_t; reinterpretation is exact here.
+  return hn::MulByPow2(Float(bits), hn::Neg(hn::BitCast(DI(), scale)));
 }
 
 HWY_INLINE V RoundedAdd(V a, V b) {
@@ -287,6 +275,31 @@ HWY_INLINE V RoundedSub(V a, V b) {
 }
 HWY_INLINE V RoundedMul(V a, V b) {
   return detail::ArithmeticFence(hn::Mul(a, b));
+}
+// Vector-length agnostic: no aggregate or array of potentially sizeless vectors.
+template<class M>
+HWY_INLINE void PrepareCombinedCoordinates(const V x,U& row,V& h,U& k) {
+  const auto in_main=hn::Le(x,S(M::domain_end));
+  const auto main_mask=hn::RebindMask(DU(),in_main);
+  const auto main_x=hn::IfThenElseZero(in_main,x);
+  const auto y=RoundedAdd(main_x,S(M::offset));
+  const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(y),SU(1ULL<<(M::discarded_bits-1))));
+  const auto ref=RoundedSub(Float(hn::ShiftLeft<M::discarded_bits>(key)),S(M::offset));
+  const auto main_h=RoundedSub(ref,main_x);
+  const auto main_row=hn::Sub(key,SU(M::key_min));
+  const auto bits=Bits(x);
+  const auto x_biased_exponent=hn::ShiftRight<52>(bits);
+  // Unbiased exponent is meaningful only in tail lanes (x > C >= 1).
+  const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,SU(1023));
+  k=hn::IfThenZeroElse(main_mask,hn::ShiftRight<1>(x_unbiased_exponent));
+  const auto u_biased_exponent=hn::Add(SU(1023),hn::And(x_unbiased_exponent,SU(1)));
+  const auto u=Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,SU(0xfffffffffffffULL)));
+  const auto tail_key=hn::ShiftRight<M::tail_discarded_bits>(hn::Add(Bits(u),SU(1ULL<<(M::tail_discarded_bits-1))));
+  const auto tail_h=RoundedSub(Float(hn::ShiftLeft<M::tail_discarded_bits>(tail_key)),u);
+  const auto tail_row=hn::Sub(tail_key,SU(1023ULL<<M::tail_retained_bits));
+  h=hn::IfThenElse(in_main,main_h,tail_h);
+  const auto logical_row=hn::IfThenElse(main_mask,main_row,hn::Add(tail_row,SU(M::tail_row_offset)));
+  row=MultiplyConstant<M::row_words,M::row_count+M::tail_row_count-1>(logical_row);
 }
 HWY_INLINE V Correction(U hi, U code) {
   return Float(

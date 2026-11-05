@@ -14,8 +14,17 @@
 // ENABLEF's SPD-labelled kernel can require F_12, not merely F_8.
 // The caller supplies its lane-specific YVerticalTemp pointer and
 // order_stride = size_t(gridDim.x) * blockDim.x (QUICK's LOCVY layout).
-// Upload each immutable main table once; share one compact tail allocation.
+// The combined model uploads one immutable main+tail allocation per family.
 // No scratch output array, warp reduction, or indirect function call is needed.
+template<class Model>
+FAST_BOYS_HD FAST_BOYS_INLINE void FaboAdditiveBoys(
+    const int last,const double x,double* FAST_BOYS_RESTRICT output,
+    std::size_t order_stride,fast_boys::TableView<Model> table) {
+  static_assert(Model::first==0,"QUICK FmT requires outputs starting at zero");
+  const auto boys=fast_boys::cuda::make_evaluator(table);
+  boys.template evaluate<0>(x,last,output,order_stride);
+}
+// Compatibility with archived pre-combined catalogs.
 template <class Model, class Tail>
 FAST_BOYS_HD inline void
 FaboAdditiveBoys(const int last, const double x,

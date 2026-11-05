@@ -8,6 +8,7 @@ from workflow.additive.headers import generate
 from workflow.additive.model import Grid, storage, evaluate_order
 from workflow.additive.reference import bits64
 from workflow.additive.search import payload_rows
+from workflow.additive import tail
 from workflow.additive.simd_headers import generate as generate_simd
 from workflow.additive.tests.test_simd_portability import compile_source
 
@@ -19,14 +20,15 @@ from workflow.additive.tests.test_simd_portability import compile_source
     ('g++',['-DHWY_COMPILE_ONLY_STATIC','-DHWY_DISABLED_TARGETS=0','-march=westmere','-maes']),
 ])
 def test_nonmonotonic_nonzero_start(tmp_path, compiler,flags):
-    grid=Grid(3,-3,4,0.8)
+    grid=Grid(3,-3,4,1.)
     record=dict(first=2,last=5,degrees=[5,2,1,3],grid=grid.metadata(),
                 minimum_order_prebiased=True,status='qualified',
                 qualification=[{'status':'qualified','scope':'fixture only'}]*4)
     record['storage']=storage(grid,2,record['degrees'])
     record['payload_sha256']=hashlib.sha256(b''.join(payload_rows(record))).hexdigest()
+    record['tail']=tail.construct(2,5,record['degrees'],3,1.)
     summary=dict(complete=True,identity='simd-fixture-not-production',
-                 config={'error':{'metric':'ulp','limit':1}},winners={'2-5':record})
+                 config={'error':{'metric':'ulp','limit':1},'budget_bytes':1048576},winners={'2-5':record})
     manifest=generate(summary,tmp_path)
     generate_simd(tmp_path)
     entry=manifest['models']['2-5']

@@ -9,6 +9,7 @@ from workflow.additive.tests.simd_support import require_host_isa
 ROOT=Path(__file__).resolve().parents[3]
 HWY=Path(os.environ.get('FABO_HIGHWAY_ROOT',ROOT/'third_party/workflow/highway'))
 CXX=os.environ.get('FABO_SIMD_CXX','clang++')
+INCLUDE=Path(os.environ.get('FABO_TEST_INCLUDE',ROOT/'include'))
 
 
 @pytest.mark.parametrize('isa,flags',[('avx2',['-march=haswell','-maes']),('avx512',['-march=icelake-server'])])
@@ -23,7 +24,9 @@ def test_simd(tmp_path,isa,flags,n,first,fast=False):
 #include "fast_boys/selected_simd.h"
 #include "fast_boys/cuda.cuh"
 #include "fast_boys/models/data_0_{n}.h"
-#include "fast_boys/models/tail_data.h"
+#ifndef FAST_BOYS_COMBINED_TABLE
+#include "fast_boys/models/tail_data_0_{n}.h"
+#endif
 #include <cstdio>
 #include <limits>
 #include <vector>
@@ -32,34 +35,54 @@ namespace fb=fast_boys::simd::HWY_NAMESPACE;
 namespace hn=hwy::HWY_NAMESPACE;
 static_assert(HWY_TARGET=={'HWY_AVX2' if isa=='avx2' else 'HWY_AVX3_DL'},"test must exercise the named ISA");
 using M=fast_boys::selected::Model<{n}>;
-using T=fast_boys::selected::Tail;
+#ifndef FAST_BOYS_COMBINED_TABLE
+using T=fast_boys::selected::Tail<{n}>;
+#endif
 static constexpr fast_boys::BoysTable<M> main_table{{}};
+#ifndef FAST_BOYS_COMBINED_TABLE
 static constexpr fast_boys::BoysTable<T> tail_table{{}};
+#endif
 __attribute__((noinline)) void reference(double x,double* ref) {{
+#ifdef FAST_BOYS_COMBINED_TABLE
+ auto scalar=fast_boys::cuda::make_evaluator(main_table.view());
+#else
  auto scalar=fast_boys::cuda::make_evaluator(main_table.view(),tail_table.view());
+#endif
  scalar.template evaluate<0,{n}>(x,ref);
 }}
 template<bool Software> __attribute__((noinline)) void evaluate(fb::V x,{','.join(f'fb::V& f{i}' for i in range(first,n+1))}) {{
+#ifdef FAST_BOYS_COMBINED_TABLE
+ auto e=fb::make_evaluator<Software>(main_table.view());
+#else
  auto e=fb::make_evaluator<Software>(main_table.view(),tail_table.view());
+#endif
  e.template evaluate<{first},{n}>(x,{variables});
 }}
 template<bool Software> int check() {{
  using O=fast_boys::detail::Binary64;
  constexpr auto cap=hn::MaxLanes(fb::D());
  HWY_ALIGN_MAX double xs[cap],out[{n+1}][cap];
- const double special[]={{0.,-0.,1e7,std::nextafter(1e7,INFINITY),1e8,1e100,1e300,
-   std::numeric_limits<double>::max(),INFINITY,-1.,NAN}};
+ const double special[]={{0.,-0.,M::domain_end,std::nextafter(M::domain_end,0.),std::nextafter(M::domain_end,INFINITY),1e8,1e100,1e300,
+   std::numeric_limits<double>::max()}};
  std::vector<double> samples(std::begin(special),std::end(special));
  for(unsigned i=0;i<1200;++i) samples.push_back(std::exp(i*0.013));
- // Exercise every compact-tail reference cell across normal/subnormal scales.
- for(int exponent:{{24,50,100,300,600,1000,1022}})
-  for(int j=0;j<=128;++j) {{
-   const double u=O::value((std::uint64_t(1023*64+j))<<46);
+ // Exercise every paired-tail reference cell across normal/subnormal scales.
+#ifdef FAST_BOYS_COMBINED_TABLE
+ constexpr auto tail_rows=M::tail_row_count;
+ constexpr auto tail_bits=M::tail_retained_bits,tail_shift=M::tail_discarded_bits;
+#else
+ constexpr auto tail_rows=T::row_count;
+ constexpr auto tail_bits=T::retained_bits,tail_shift=T::discarded_bits;
+#endif
+ for(int exponent:{{6,24,50,100,300,600,1000,1022}})
+  for(unsigned j=0;j<tail_rows;++j) {{
+   const double u=O::value(((std::uint64_t(1023)<<tail_bits)+j)<<tail_shift);
    const double v=std::ldexp(u,exponent);
    if(std::isfinite(v)) {{
     samples.push_back(std::nextafter(v,0.));
     samples.push_back(v);
-    samples.push_back(std::nextafter(v,INFINITY));
+    const double right=std::nextafter(v,INFINITY);
+    if(std::isfinite(right)) samples.push_back(right);
    }}
   }}
  for(std::uint64_t key=M::key_min;key<=M::key_max;++key) {{
@@ -93,7 +116,7 @@ int main(){{_mm_setcsr(_mm_getcsr() & ~0x8040U); return check<false>() || check<
 """
     src=tmp_path/'check.cc'; exe=tmp_path/'check'
     common=[CXX,'-std=c++17','-O2','-ffp-contract=off','-DHWY_COMPILE_ONLY_STATIC',
-            *flags,'-I'+str(ROOT/'include'),'-I'+str(HWY)]
+            *flags,'-I'+str(INCLUDE),'-I'+str(ROOT/'include'),'-I'+str(HWY)]
     extra=[]
     if fast:
         # Freeze the strict oracle in a separate object; do not recompile it

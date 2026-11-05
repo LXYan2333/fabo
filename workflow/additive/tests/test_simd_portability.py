@@ -11,6 +11,7 @@ from workflow.additive.tests.simd_support import require_host_isa
 
 ROOT = Path(__file__).resolve().parents[3]
 HWY = Path(os.environ.get('FABO_HIGHWAY_ROOT', ROOT / 'third_party/workflow/highway'))
+INCLUDE = Path(os.environ.get('FABO_TEST_INCLUDE', ROOT / 'include'))
 
 
 def compile_source(tmp_path, source, compiler='clang++', flags=(), link=False):
@@ -21,7 +22,7 @@ def compile_source(tmp_path, source, compiler='clang++', flags=(), link=False):
     src.write_text(source)
     exe = tmp_path / 'probe'
     cmd = [compiler, '-std=c++17', '-O2', '-ffp-contract=off',
-           '-I'+str(ROOT/'include'), '-I'+str(HWY), '-I'+str(tmp_path),
+           '-I'+str(INCLUDE), '-I'+str(ROOT/'include'), '-I'+str(HWY), '-I'+str(tmp_path),
            *flags, str(src)]
     cmd += [str(HWY/'hwy/abort.cc'), '-o', str(exe)] if link else ['-c','-o',str(tmp_path/'probe.o')]
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -34,11 +35,17 @@ PROBE = '''
 #include "fast_boys/selected_simd.h"
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 using M=fast_boys::selected::Model<4>;
-using T=fast_boys::selected::Tail;
+#ifndef FAST_BOYS_COMBINED_TABLE
+using T=fast_boys::selected::Tail<4>;
+#endif
 void probe(const std::uint64_t* main,const std::uint64_t* tail,
            fb::V x,fb::V& a,fb::V& b) {
+#ifdef FAST_BOYS_COMBINED_TABLE
+ auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main));
+#else
  auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main),
                           fast_boys::TableView<T>::from_pointer(tail));
+#endif
  e.evaluate<1,2>(x,a,b);
 }
 '''
@@ -76,10 +83,16 @@ HWY_BEFORE_NAMESPACE();
 namespace app { namespace HWY_NAMESPACE {
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 using M=fast_boys::selected::Model<0>;
-using T=fast_boys::selected::Tail;
+#ifndef FAST_BOYS_COMBINED_TABLE
+using T=fast_boys::selected::Tail<0>;
+#endif
 void Probe(const std::uint64_t* main,const std::uint64_t* tail,double* out) {
+#ifdef FAST_BOYS_COMBINED_TABLE
+ auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main));
+#else
  auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main),
                           fast_boys::TableView<T>::from_pointer(tail));
+#endif
  fb::V f;
  e.evaluate<0,0>(hwy::HWY_NAMESPACE::Zero(fb::D()),f);
  hwy::HWY_NAMESPACE::StoreU(f,fb::D(),out);
@@ -129,22 +142,22 @@ int main() {
 
 
 def test_simd_manifest():
-    manifest=json.loads((ROOT/'include/simd-manifest.json').read_text())
+    manifest=json.loads((INCLUDE/'simd-manifest.json').read_text())
     for name,digest in manifest['files'].items():
-        assert hashlib.sha256((ROOT/'include'/name).read_bytes()).hexdigest()==digest
+        assert hashlib.sha256((INCLUDE/name).read_bytes()).hexdigest()==digest
     for name,digest in manifest['sources'].items():
         assert hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==digest
-    assert hashlib.sha256((ROOT/'include/manifest.json').read_bytes()).hexdigest()==manifest['numerical_manifest_sha256']
+    assert hashlib.sha256((INCLUDE/'manifest.json').read_bytes()).hexdigest()==manifest['numerical_manifest_sha256']
 
 
 def test_regeneration(tmp_path):
     from workflow.additive.simd_headers import generate
-    shutil.copyfile(ROOT/'include/manifest.json',tmp_path/'manifest.json')
+    shutil.copyfile(INCLUDE/'manifest.json',tmp_path/'manifest.json')
     generate(tmp_path)
     manifest=json.loads((tmp_path/'simd-manifest.json').read_text())
     for name in manifest['files']:
-        assert (tmp_path/name).read_bytes()==(ROOT/'include'/name).read_bytes()
-    assert (tmp_path/'simd-manifest.json').read_bytes()==(ROOT/'include/simd-manifest.json').read_bytes()
+        assert (tmp_path/name).read_bytes()==(INCLUDE/name).read_bytes()
+    assert (tmp_path/'simd-manifest.json').read_bytes()==(INCLUDE/'simd-manifest.json').read_bytes()
 
 
 @pytest.mark.parametrize('target,flags', [

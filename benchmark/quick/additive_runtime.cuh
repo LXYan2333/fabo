@@ -42,6 +42,7 @@ extern "C" void fabo_quick_boys_init_() {
 #else
   main[1] = fabo_quick_upload(8);
 #endif
+#ifndef FAST_BOYS_COMBINED_TABLE
 #ifdef FAST_BOYS_RANGE_TAILS
   const std::uint64_t *tail[3]={fabo_quick_upload(-4),nullptr,nullptr};
 #ifdef ENABLEF
@@ -52,7 +53,10 @@ extern "C" void fabo_quick_boys_init_() {
 #else
   const auto *tail = fabo_quick_upload(-1);
 #endif
+#endif
   fabo_quick_check(cudaMemcpyToSymbol(fabo_quick_main, main, sizeof(main)));
+#ifndef FAST_BOYS_COMBINED_TABLE
   fabo_quick_check(cudaMemcpyToSymbol(fabo_quick_tail, &tail, sizeof(tail)));
+#endif
 }
 #endif

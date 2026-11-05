@@ -1,0 +1,142 @@
+{
+  "config": {
+    "budget_bytes": 1048576,
+    "domain_end": 10000000,
+    "error": {
+      "limit": 1,
+      "metric": "ulp"
+    },
+    "final_subdivisions": 16,
+    "maximum_degree": 12,
+    "minimum_degree": 1,
+    "offset_neighborhood": 4,
+    "priority_orders": [
+      4,
+      8,
+      12
+    ],
+    "producer": {
+      "gmp": "GMP 6.3.0",
+      "gmpy2": "2.3.2",
+      "mpfr": "MPFR 4.2.2",
+      "python": "3.12.15"
+    },
+    "refinement_rounds": 4,
+    "requested_ranges": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        0,
+        13
+      ],
+      [
+        0,
+        14
+      ],
+      [
+        0,
+        15
+      ],
+      [
+        0,
+        16
+      ],
+      [
+        0,
+        17
+      ],
+      [
+        0,
+        18
+      ],
+      [
+        0,
+        19
+      ],
+      [
+        0,
+        20
+      ],
+      [
+        0,
+        21
+      ],
+      [
+        0,
+        22
+      ],
+      [
+        0,
+        23
+      ],
+      [
+        0,
+        24
+      ]
+    ],
+    "retained_bits": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "screen_subdivisions": 4,
+    "strategy": "paired_budget_guided"
+  },
+  "identity": "8b3bc332afa8b3aa26856e5aab5de3c3aea6fd1d4be3e148fede633f3537d8e2"
+}

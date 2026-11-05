@@ -11,11 +11,22 @@ import subprocess
 
 import gmpy2 as g
 import pytest
-from workflow.additive.headers import (generate, ROOT, TAIL, MAIN_LAYOUT,
+from workflow.additive.headers import (generate, ROOT, MAIN_LAYOUT,
                                        coefficient_word, correction_word, interleaved_rows)
 from workflow.additive.model import Grid, storage, evaluate_order
 from workflow.additive.reference import bits64, from_bits, rn64, add64, mul64, fma64, residual_value, ulp
 from workflow.additive.search import payload_rows
+from workflow.additive.tests.legacy_tail_fixture import record as legacy_tail_record
+
+
+@pytest.fixture(scope='module',autouse=True)
+def legacy_archive(tmp_path_factory):
+    import workflow.additive.headers as headers
+    archive=tmp_path_factory.mktemp('legacy-decoder')/'fixture.json'
+    archive.write_text(json.dumps(legacy_tail_record()))
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(headers,'TAIL',archive)
+        yield archive
 
 
 @pytest.fixture(scope='module')
@@ -179,7 +190,7 @@ for(int i=0;i<12;++i) {{if(O::bits(a[i])!=O::bits(b[i])) return 2; printf("%llu\
 
 
 def tail_oracle(x,last=24):
-    record=json.loads(TAIL.read_text()); words=[int(w,16) for w in record['words']]
+    record=legacy_tail_record(); words=[int(w,16) for w in record['words']]
     exponent=(bits64(x)>>52)-1023; k=exponent//2
     u=from_bits((bits64(x)&((1<<52)-1))|((1023+(exponent&1))<<52))
     key=(bits64(u)+(1<<45))>>46
@@ -326,23 +337,63 @@ def test_bundled_catalog_coverage():
     path=ROOT/'include/manifest.json'
     if not path.exists(): pytest.skip('bundled production catalog not generated')
     manifest=json.loads(path.read_text())
-    summary=json.loads((ROOT/'data/numerical/additive-1ulp-summary.json').read_text())
+    summary=json.loads((ROOT/'data/numerical/paired-1ulp/summary.json').read_text())
     assert manifest['numerical_identity']==summary['identity']
     assert set(manifest['models'])=={f'0-{n}' for n in range(25)}
     for key,model in manifest['models'].items():
         assert model['record']==summary['winners'][key]
         assert (ROOT/'include/fast_boys/models'/model['id']/'data.h').is_file()
-        assert model['payload_layout']==MAIN_LAYOUT
+        combined=manifest.get('combined_table',False)
+        assert model['payload_layout']==('materialized-nextup-main-tail-v3' if combined else MAIN_LAYOUT)
         text=(ROOT/'include/fast_boys/models'/model['id']/'data.h').read_text()
         words=[int(word,16) for word in re.findall(r'0x([0-9a-f]{16})ULL',text)]
         raw=struct.pack('<'+'Q'*len(words),*words)
         assert hashlib.sha256(raw).hexdigest()==model['payload_sha256']
         record=model['record']; row_words=record['storage']['row_bytes']//8
+        if combined:
+            boundary=record['storage']['table_bytes']
+            assert model['tail_row_offset']==record['grid']['row_count']
+            assert model['table_bytes']==boundary+record['tail']['storage']['table_bytes']
+            assert model['table_bytes']<=summary['config']['budget_bytes']
+            assert hashlib.sha256(raw[:boundary]).hexdigest()==model['section_sha256']['main']
+            assert hashlib.sha256(raw[boundary:]).hexdigest()==model['section_sha256']['tail']
+            canonical_tail=hashlib.sha256()
+            tm=record['tail']; tail_words=words[boundary//8:]
+            for start in range(0,len(tail_words),row_words):
+                row=tail_words[start:start+row_words]
+                restored=[row[coefficient_word(tm,n)] for n in range(tm['first'],tm['storage']['highest_reference_order']+1)]
+                restored += [row[correction_word(tm,n)] for n in range(tm['first'],tm['last']+1,8)]
+                canonical_tail.update(struct.pack('<'+'Q'*len(restored),*restored))
+            assert canonical_tail.hexdigest()==tm['payload_sha256']
+            words=words[:boundary//8]
         high=record['storage']['highest_reference_order']
         canonical=hashlib.sha256()
         for start in range(0,len(words),row_words):
             row=words[start:start+row_words]
             restored=[row[coefficient_word(record,n)] for n in range(record['first'],high+1)]
+            restored += [row[correction_word(record,n)] for n in range(record['first'],record['last']+1,8)]
+            canonical.update(struct.pack('<'+'Q'*len(restored),*restored))
+        assert canonical.hexdigest()==record['payload_sha256']
+    if manifest.get('combined_table',False):
+        expected_dirs={e['id'] for e in manifest['models'].values()}
+        assert {p.name for p in (ROOT/'include/fast_boys/models').iterdir() if p.is_dir()}==expected_dirs
+        assert not list((ROOT/'include/fast_boys/models').glob('tail_data*'))
+        return
+    assert set(manifest['tails'])==set(manifest['models'])
+    expected_dirs={e['id'] for group in ('models','tails') for e in manifest[group].values()}
+    assert {p.name for p in (ROOT/'include/fast_boys/models').iterdir() if p.is_dir()}==expected_dirs
+    for key,entry in manifest['tails'].items():
+        record=entry['record']; main=manifest['models'][key]['record']
+        assert record==summary['winners'][key]['tail']
+        assert record['degrees']==main['degrees']
+        assert record['storage']['table_bytes']+main['storage']['table_bytes']<=summary['config']['budget_bytes']
+        text=(ROOT/'include/fast_boys/models'/entry['id']/'data.h').read_text()
+        words=[int(word,16) for word in re.findall(r'0x([0-9a-f]{16})ULL',text)]
+        assert hashlib.sha256(struct.pack('<'+'Q'*len(words),*words)).hexdigest()==entry['payload_sha256']
+        canonical=hashlib.sha256(); stride=record['storage']['row_words']
+        for start in range(0,len(words),stride):
+            row=words[start:start+stride]
+            restored=[row[coefficient_word(record,n)] for n in range(record['first'],record['storage']['highest_reference_order']+1)]
             restored += [row[correction_word(record,n)] for n in range(record['first'],record['last']+1,8)]
             canonical.update(struct.pack('<'+'Q'*len(restored),*restored))
         assert canonical.hexdigest()==record['payload_sha256']

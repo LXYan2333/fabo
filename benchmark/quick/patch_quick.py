@@ -87,11 +87,14 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
             record = model['record']
             if record['first'] != 0 or record['last'] != n or record['status'] != 'qualified':
                 raise ValueError('invalid selected QUICK model')
-        if 'tails' not in numerical and not numerical['tail']['matches_main_target']:
+        combined=numerical.get('combined_table',False)
+        if not combined and 'tails' not in numerical and not numerical['tail']['matches_main_target']:
             raise ValueError('tail target differs from main model')
         manifest['numerical_identity'] = numerical['numerical_identity']
         manifest['models'] = {k: numerical['models'][k] for k in ('0-4', '0-8', '0-12')}
-        if 'tails' in numerical:
+        if combined:
+            manifest['combined_table']=True
+        elif 'tails' in numerical:
             manifest['tails'] = {k:numerical['tails'][k] for k in manifest['models']}
         else:
             manifest['tail'] = numerical['tail']
@@ -123,10 +126,11 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
         for path in base.rglob('*'):
             if path.is_file() and path.suffix in ('.h','.cuh') and 'models' not in path.relative_to(base).parts:
                 copies[Path('src/gpu/fast_boys')/path.relative_to(base)] = path
-        tails=list(numerical['tails'].values()) if 'tails' in numerical else [numerical['tail']]
+        tails=[] if combined else list(numerical['tails'].values()) if 'tails' in numerical else [numerical['tail']]
         selected_tails=list(manifest['tails'].values()) if 'tails' in manifest else tails
         model_files = [f'catalog_{numerical["catalog"]["id"]}.h']
-        model_files += [f'tail_data_0_{n}.h' for n in (4,8,12)] if 'tails' in numerical else ['tail_data.h']
+        if not combined:
+            model_files += [f'tail_data_0_{n}.h' for n in (4,8,12)] if 'tails' in numerical else ['tail_data.h']
         model_files += [f'{m["id"]}/model.h' for m in [*numerical['models'].values(),*tails]]
         model_files += [f'data_0_{n}.h' for n in (4,8,12)]
         model_files += [f'{m["id"]}/data.h' for m in [*manifest['models'].values(),*selected_tails]]

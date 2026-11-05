@@ -21,7 +21,7 @@ def wrap(ident,model,kind,body):
         ' using namespace detail;',*body,' }','};','} } }','HWY_AFTER_NAMESPACE();','#endif',''])
 
 
-def main_kernel(entry):
+def main_kernel(entry,combined=False):
     r=entry['record']; first,last=r['first'],r['last']; degrees=r['degrees']
     body=[
         ' const auto y=RoundedAdd(x,S(M::offset));',
@@ -30,6 +30,10 @@ def main_kernel(entry):
         ' const auto h=RoundedSub(ref,x);',
         ' const auto row=MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,SU(M::key_min)));',
         ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
+    if combined:
+        body=[' U row FAST_BOYS_INDETERMINATE;', ' U k FAST_BOYS_INDETERMINATE;',
+              ' V h FAST_BOYS_INDETERMINATE;', ' PrepareCombinedCoordinates<M>(x,row,h,k);',
+              ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
     high=max(n+p for n,p in zip(range(first,last+1),degrees))
     body += [f' V c{n} FAST_BOYS_INDETERMINATE;' for n in range(first,high+1)]
     body += [f' V a{j} FAST_BOYS_INDETERMINATE;' for j in range(2,max(degrees)+1)]
@@ -48,8 +52,13 @@ def main_kernel(entry):
         body += [f' V q=c{n+p};']
         for j in range(p-1,0,-1):
             body += [f' q=Fma(a{j+1},q,c{n+j});']
-        body += [f' const auto hi=Bits(c{n});',
-                 f' At<{n}-First>(out...)=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{(n-first)%8}>(hi,w{slot})));',' }']
+        expr=f'RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{(n-first)%8}>(hi,w{slot})))'
+        body += [f' const auto hi=Bits(c{n});']
+        if combined:
+            body += [f' const auto value={expr};',f' At<{n}-First>(out...)=Scale(Bits(value),MultiplyConstant<{2*n+1},511>(k));']
+        else:
+            body += [f' At<{n}-First>(out...)={expr};']
+        body += [' }']
     return wrap(entry['id'],entry['cpp_model'],'Kernel',body)
 
 
@@ -58,9 +67,11 @@ def tail_kernel(entry,metadata):
     top=last+p; stride=metadata['storage']['row_words']; shift=52-b
     body=[
         ' const auto bits=Bits(x);',
-        ' const auto exponent=hn::Sub(hn::ShiftRight<52>(bits),SU(1023));',
-        ' const auto k=hn::ShiftRight<1>(exponent);',
-        ' const auto u=Float(hn::Or(hn::And(bits,SU(0xfffffffffffffULL)),hn::ShiftLeft<52>(hn::Add(SU(1023),hn::And(exponent,SU(1))))));',
+        ' const auto x_biased_exponent=hn::ShiftRight<52>(bits);',
+        ' const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,SU(1023));',
+        ' const auto k=hn::ShiftRight<1>(x_unbiased_exponent);',
+        ' const auto u_biased_exponent=hn::Add(SU(1023),hn::And(x_unbiased_exponent,SU(1)));',
+        ' const auto u=Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,SU(0xfffffffffffffULL)));',
         f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Bits(u),SU(1ULL<<{shift-1})));',
         f' const auto row=MultiplyConstant<{stride},{metadata["storage"]["allocated_bytes"]//(8*stride)-1}>(hn::Sub(key,SU({1023<<b})));',
         f' const auto r=Float(hn::ShiftLeft<{shift}>(key)),h=RoundedSub(r,u),t=RoundedAdd(r,r);']
@@ -93,9 +104,11 @@ def paired_tail_kernel(entry,main):
     source=source.replace('struct Kernel<','struct TailKernel<').replace('const V x,Outputs&','const V x,Mask active,Outputs&')
     start=source.index(' const auto y='); end=source.index(' static_assert',start)
     source=source[:start]+''' const auto bits=Bits(x);
- const auto exponent=hn::Sub(hn::ShiftRight<52>(bits),SU(1023));
- const auto k=hn::ShiftRight<1>(exponent);
- const auto u=Float(hn::Or(hn::And(bits,SU(0xfffffffffffffULL)),hn::ShiftLeft<52>(hn::Add(SU(1023),hn::And(exponent,SU(1))))));
+ const auto x_biased_exponent=hn::ShiftRight<52>(bits);
+ const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,SU(1023));
+ const auto k=hn::ShiftRight<1>(x_unbiased_exponent);
+ const auto u_biased_exponent=hn::Add(SU(1023),hn::And(x_unbiased_exponent,SU(1)));
+ const auto u=Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,SU(0xfffffffffffffULL)));
  const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(u),SU(1ULL<<(M::discarded_bits-1))));
  const auto h=RoundedSub(Float(hn::ShiftLeft<M::discarded_bits>(key)),u);
  const auto row=MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,SU(1023ULL<<M::retained_bits)));
@@ -112,23 +125,25 @@ def paired_tail_kernel(entry,main):
 def generate(include):
     include=Path(include)
     manifest=json.loads((include/'manifest.json').read_text())
+    combined=manifest.get('combined_table',False)
     archive=Path(__file__).resolve().parents[2]/'data/numerical/compact-tail-1ulp.json'
-    tail=json.loads(archive.read_text()) if 'tails' not in manifest else None
-    if 'tails' not in manifest and manifest['tail']['archive_definition']!=tail['metadata']['definition_id']:
+    tail=json.loads(archive.read_text()) if not combined and 'tails' not in manifest else None
+    if not combined and 'tails' not in manifest and manifest['tail']['archive_definition']!=tail['metadata']['definition_id']:
         raise ValueError('tail metadata differs from emitted table')
     files={}
     for entry in manifest['models'].values():
-        if entry['payload_layout'] != 'materialized-nextup-interleaved8-v2':
+        expected_layout='materialized-nextup-main-tail-v3' if combined else 'materialized-nextup-interleaved8-v2'
+        if entry['payload_layout'] != expected_layout:
             raise ValueError('unsupported SIMD payload layout')
         if not entry['record']['minimum_order_prebiased']:
             raise ValueError('SIMD requires the next-up minimum-order coefficient')
         if min(entry['record']['degrees']) < 1:
             raise ValueError('SIMD requires positive Taylor degrees')
-        files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=main_kernel(entry)
+        files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=main_kernel(entry,combined)
     if 'tails' in manifest:
         for key,entry in manifest['tails'].items():
             files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=paired_tail_kernel(entry,manifest['models'][key])
-    else:
+    elif not combined:
         entry=manifest['tail']
         files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=tail_kernel(entry,tail['metadata'])
     guard='FAST_BOYS_SELECTED_SIMD_H_'

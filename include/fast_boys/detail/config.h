@@ -13,8 +13,16 @@
 #endif
 #if defined(__CUDACC__)
 #define FAST_BOYS_HD __host__ __device__
+#define FAST_BOYS_INLINE __forceinline__
 #else
 #define FAST_BOYS_HD
+#if defined(_MSC_VER)
+#define FAST_BOYS_INLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+#define FAST_BOYS_INLINE inline __attribute__((always_inline))
+#else
+#define FAST_BOYS_INLINE inline
+#endif
 #endif
 #if defined(_MSC_VER)
 #define FAST_BOYS_RESTRICT __restrict
@@ -32,8 +40,10 @@
 #endif
 #endif
 #if defined(__GNUC__) || defined(__clang__)
+#define FAST_BOYS_LIKELY(x) __builtin_expect(bool(x), true)
 #define FAST_BOYS_UNLIKELY(x) __builtin_expect(bool(x), false)
 #else
+#define FAST_BOYS_LIKELY(x) (x)
 #define FAST_BOYS_UNLIKELY(x) (x)
 #endif
 #endif

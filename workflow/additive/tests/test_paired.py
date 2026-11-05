@@ -2,6 +2,7 @@ import hashlib
 import json
 import math
 import struct
+import re
 import pytest
 from workflow.additive import tail
 from workflow.additive.model import Grid,storage,evaluate_order
@@ -58,33 +59,67 @@ def paired_fixture(tmp_path):
 @pytest.mark.parametrize('cuda',[False,True])
 def test_paired_header_conformance(tmp_path,cuda):
     grid,degrees,r,manifest=paired_fixture(tmp_path)
-    main=manifest['models']['0-3']; tt=manifest['tails']['0-3']
+    main=manifest['models']['0-3']
     source=f'''#include "fast_boys/cuda.cuh"
 #include "fast_boys/models/{main['id']}/data.h"
-#include "fast_boys/models/{tt['id']}/data.h"
 #include <cstdio>
-using M={main['cpp_model']}; using T={tt['cpp_model']};
+using M={main['cpp_model']};
 static constexpr fast_boys::BoysTable<M> m;
-static constexpr fast_boys::BoysTable<T> t;
 #if defined(__CUDACC__)
 __global__ void instantiate(const std::uint64_t* a,const std::uint64_t* b,const double* x,double* out) {{
- auto e=fast_boys::cuda::make_evaluator(fast_boys::TableView<M>::from_pointer(a),fast_boys::TableView<T>::from_pointer(b));
+ auto e=fast_boys::cuda::make_evaluator(fast_boys::TableView<M>::from_pointer(a));
  e.evaluate<0>(x[threadIdx.x],int(threadIdx.x%4),out+threadIdx.x,blockDim.x);
 }}
 #endif
-int main() {{ auto e=fast_boys::cuda::make_evaluator(m.view(),t.view());
+int main() {{ auto e=fast_boys::cuda::make_evaluator(m.view());
 '''
     inputs=[-0.,0.1,40.,math.nextafter(40.,math.inf),1e8,1e100,float.fromhex('0x1.fffffffffffffp1023')]
     expected=[]
     for x in inputs:
         source+=f'{{ double out[4]; e.evaluate<0,3>({x.hex()},out); for(double v:out) std::printf("%a\\n",v); }}\n'
         expected.extend([evaluate_order(grid,x,n,p) for n,p in enumerate(degrees)] if x<=40 else tail.evaluate(r['tail'],x).values())
+        # Runtime endpoints and nonzero starts must not read uninitialized
+        # reused coefficients or write beyond the requested strided outputs.
+        for first in range(4):
+            for last in range(first,4):
+                source+=f'''{{ double full[4],out[9];
+                  for(auto& v:out) v=-1;
+                  e.evaluate<0,3>({x.hex()},full);
+                  e.evaluate<{first},3>({x.hex()},{last},out+1,2);
+                  for(int i=0;i<9;++i) {{
+                    const double want=(i%2 && i/2<={last-first})?full[{first}+i/2]:-1.;
+                    if(fast_boys::detail::Binary64::bits(out[i])!=fast_boys::detail::Binary64::bits(want)) return 2;
+                  }}
+                }}\n'''
     source+='}'
     output=compile_run(tmp_path,source,[tmp_path/'include'],cuda=cuda)
     assert list(map(float.fromhex,output.split()))==expected
     src=(tmp_path/'include/fast_boys/models'/main['id']/'model.h').read_text()
-    assert 'scale_k ? O::scale' in src
-    assert manifest['tails']['0-3']['record']['degrees']==degrees
+    assert 'scale_k ?' not in src
+    assert 'O::scale(result,unsigned(7*scale_k))' in src
+    assert main['record']['tail']['degrees']==degrees
+    assert 'switch(n)' not in src
+    assert 'for(int n=First;n<=last_output;++n)' not in src
+    for n in range(4):
+        assert f'if(last_output=={n}) return;' in src
+    assert main['table_bytes']==r['storage']['table_bytes']+r['tail']['storage']['table_bytes']
+    assert main['tail_row_offset']==grid.metadata()['row_count']
+
+
+def test_combined_payload_preserved(tmp_path):
+    from workflow.additive.headers import interleaved_rows
+    from workflow.additive.paired_headers import rows
+    _,_,record,manifest=paired_fixture(tmp_path)
+    entry=manifest['models']['0-3']
+    text=(tmp_path/'include/fast_boys/models'/entry['id']/'data.h').read_text()
+    words=[int(w,16) for w in re.findall(r'0x([0-9a-f]{16})ULL',text)]
+    actual=struct.pack('<'+'Q'*len(words),*words)
+    main=b''.join(interleaved_rows(record,payload_rows(record)))
+    tail_data=b''.join(rows(record['tail']))
+    assert actual==main+tail_data
+    assert entry['section_sha256']==dict(main=hashlib.sha256(main).hexdigest(),tail=hashlib.sha256(tail_data).hexdigest())
+    assert entry['payload_sha256']==hashlib.sha256(actual).hexdigest()
+    assert not list((tmp_path/'include/fast_boys/models').glob('tail_data*'))
 
 
 @pytest.mark.parametrize('isa,flags',[('avx2',['-march=haswell','-maes']),('avx512',['-march=icelake-server'])])
@@ -97,21 +132,19 @@ def test_paired_simd_conformance(tmp_path,isa,flags):
         pytest.skip('Highway or compiler unavailable')
     require_host_isa(flags,execute=True)
     _,_,_,manifest=paired_fixture(tmp_path)
-    main=manifest['models']['0-3']; tt=manifest['tails']['0-3']
+    main=manifest['models']['0-3']
     source=f'''#include "fast_boys/selected_simd.h"
 #include "fast_boys/cuda.cuh"
 #include "fast_boys/models/{main['id']}/data.h"
-#include "fast_boys/models/{tt['id']}/data.h"
 #include <limits>
 #include <xmmintrin.h>
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 namespace hn=hwy::HWY_NAMESPACE;
-using M={main['cpp_model']}; using T={tt['cpp_model']};
+using M={main['cpp_model']};
 static constexpr fast_boys::BoysTable<M> m;
-static constexpr fast_boys::BoysTable<T> t;
 template<bool Software> int check() {{
- auto simd=fb::make_evaluator<Software>(m.view(),t.view());
- auto scalar=fast_boys::cuda::make_evaluator(m.view(),t.view());
+ auto simd=fb::make_evaluator<Software>(m.view());
+ auto scalar=fast_boys::cuda::make_evaluator(m.view());
  constexpr auto cap=hn::MaxLanes(fb::D());
  HWY_ALIGN_MAX double x[cap],out[4][cap];
  const double points[]={{-0.,0.1,40.,std::nextafter(40.,INFINITY),1e8,1e100,std::numeric_limits<double>::max()}};

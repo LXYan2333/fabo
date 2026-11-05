@@ -111,12 +111,15 @@ def main_source(record,ident,error,payload_sha256):
            '    for(int n=begin;n<end;++n) if(degrees[n-first]>degree) degree=degrees[n-first];',
            '    return degree;', '  }',
            '  template<class O,int First,int Limit>',
-           '  FAST_BOYS_HD static inline void evaluate(const std::uint64_t* FAST_BOYS_RESTRICT row,double h,int last_output,double* FAST_BOYS_RESTRICT out,std::size_t stride) {',
+           '  FAST_BOYS_HD static FAST_BOYS_INLINE void evaluate(const std::uint64_t* FAST_BOYS_RESTRICT row,double h,int last_output,double* FAST_BOYS_RESTRICT out,std::size_t stride) {',
            '    static_assert(first<=First && First<=Limit && Limit<=last,"invalid subset");',
            '    // No dynamic coefficient array: every access below has a fixed index.',
            '    std::uint64_t minimum_up FAST_BOYS_INDETERMINATE;']
     lines += [f'    double c{j} FAST_BOYS_INDETERMINATE;' for j in range(first+1,high+1)]
     lines += [f'    double a{k} FAST_BOYS_INDETERMINATE;' for k in range(2,max(degrees)+1)]
+    paired='tail' in record
+    if paired:
+        lines += [f'    std::uint64_t w{i} FAST_BOYS_INDETERMINATE;' for i in range((last-first+8)//8)]
     for n,p in zip(range(first,last+1),degrees):
         lines += [f'    if constexpr(First<={n} && {n}<=Limit) {{']
         for j in range(n,n+p+1):
@@ -125,14 +128,18 @@ def main_source(record,ident,error,payload_sha256):
             lines += [f'      if constexpr({j}>high_before(First,{n})) {load}']
         for k in range(2,p+1):
             lines += [f'      if constexpr({k}>degree_before(First,{n})) a{k}=O::mul(h,{inv(k)});']
+        slot=(n-first)//8
+        if paired:
+            lines += [f'      if constexpr(First=={n} || {n}=={first+8*slot}) w{slot}=row[{correction_word(record,n)}];']
         lines += [f'      double q=c{n+p};']
         for k in range(p-1,0,-1):
             lines += [f'      q=O::fma(a{k+1},q,c{n+k});']
         hi='minimum_up-1' if n==first else f'O::bits(c{n})'
         up='minimum_up' if n==first else 'hi+1'
         offset=n-first
+        correction=f'w{slot}' if paired else f'row[{correction_word(record,n)}]'
         lines += [f'      const auto hi={hi};',
-                  f'      out[({n}-First)*stride]=O::add(O::value({up}),O::fma(h,q,-O::template correction_from_word<{offset%8}>(hi,row[{correction_word(record,n)}])));',
+                  f'      out[({n}-First)*stride]=O::add(O::value({up}),O::fma(h,q,-O::template correction_from_word<{offset%8}>(hi,{correction})));',
                   f'      if(last_output=={n}) return;', '    }']
     source='\n'.join(lines+['  }','};','}'])+'\n'
     if 'tail' in record:
@@ -141,7 +148,7 @@ def main_source(record,ident,error,payload_sha256):
             prefix=f'      out[({n}-First)*stride]='
             start=source.index(prefix); end=source.index(';',start)
             expr=source[start+len(prefix):end]
-            source=source[:start]+f'      const double result={expr};\n'+prefix+f'scale_k ? O::scale(result,unsigned({2*n+1}*scale_k)) : result'+source[end:]
+            source=source[:start]+f'      const double result={expr};\n'+prefix+f'O::scale(result,unsigned({2*n+1}*scale_k))'+source[end:]
     return source
 
 

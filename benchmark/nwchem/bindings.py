@@ -21,8 +21,8 @@ for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
              'static_assert(SIMINT_SIMD_LEN == 8);']
     if backend == 'fabo':
         lines += ['#include "fast_boys/selected_simd.h"',
-                  f'#include "fast_boys/models/data_0_{n}.h"', '#ifdef FAST_BOYS_RANGE_TAILS',
-                  f'#include "fast_boys/models/tail_data_0_{n}.h"', '#else', '#include "shared_tail.h"', '#endif']
+                  f'#include "fast_boys/models/data_0_{n}.h"', '#ifndef FAST_BOYS_COMBINED_TABLE', '#ifdef FAST_BOYS_RANGE_TAILS',
+                  f'#include "fast_boys/models/tail_data_0_{n}.h"', '#else', '#include "shared_tail.h"', '#endif', '#endif']
     elif backend == 'libintx':
         lines += ['#include <libintx/simd.h>', '#include <libintx/boys/chebyshev.h>', '#include <cstring>']
     else:
@@ -34,12 +34,12 @@ for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
     if backend == 'fabo':
         lines += ['namespace fb=fast_boys::simd::HWY_NAMESPACE;',
                   f'inline constexpr fast_boys::BoysTable<fast_boys::selected::Model<{n}>> table;',
-                  '#ifdef FAST_BOYS_RANGE_TAILS',f'inline constexpr fast_boys::BoysTable<fast_boys::selected::Tail<{n}>> tail;',
-                  '#else','inline constexpr auto& tail = fast_boys_nw_shared_tail::table;','#endif']
+                  '#ifndef FAST_BOYS_COMBINED_TABLE', '#ifdef FAST_BOYS_RANGE_TAILS',f'inline constexpr fast_boys::BoysTable<fast_boys::selected::Tail<{n}>> tail;',
+                  '#else','inline constexpr auto& tail = fast_boys_nw_shared_tail::table;','#endif', '#endif']
     lines += ['HWY_INLINE void evaluate(SIMINT_DBLTYPE x, SIMINT_DBLTYPE* __restrict__ out) {']
     if backend == 'fabo':
         names=','.join(f'f{i}' for i in range(n+1))
-        lines += [f'fb::V {names};', 'const auto e=fb::make_evaluator(table.view(),tail.view());',
+        lines += [f'fb::V {names};', '#ifdef FAST_BOYS_COMBINED_TABLE', 'const auto e=fb::make_evaluator(table.view());', '#else', 'const auto e=fb::make_evaluator(table.view(),tail.view());', '#endif',
                   f'e.template evaluate<0,{n}>(fb::V{{x}},{names});']
         lines += [f'out[{i}]=f{i}.raw;' for i in range(n+1)]
     elif backend == 'libintx':
