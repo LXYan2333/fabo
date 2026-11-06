@@ -283,22 +283,32 @@ HWY_INLINE void PrepareCombinedCoordinates(const V x,U& row,V& h,U& k) {
   const auto main_mask=hn::RebindMask(DU(),in_main);
   const auto main_x=hn::IfThenElseZero(in_main,x);
   const auto y=RoundedAdd(main_x,S(M::offset));
-  const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(y),SU(1ULL<<(M::discarded_bits-1))));
-  const auto ref=RoundedSub(Float(hn::ShiftLeft<M::discarded_bits>(key)),S(M::offset));
-  const auto main_h=RoundedSub(ref,main_x);
-  const auto main_row=hn::Sub(key,SU(M::key_min));
-  const auto bits=Bits(x);
-  const auto x_biased_exponent=hn::ShiftRight<52>(bits);
-  // Unbiased exponent is meaningful only in tail lanes (x > C >= 1).
-  const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,SU(1023));
-  k=hn::IfThenZeroElse(main_mask,hn::ShiftRight<1>(x_unbiased_exponent));
-  const auto u_biased_exponent=hn::Add(SU(1023),hn::And(x_unbiased_exponent,SU(1)));
-  const auto u=Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,SU(0xfffffffffffffULL)));
-  const auto tail_key=hn::ShiftRight<M::tail_discarded_bits>(hn::Add(Bits(u),SU(1ULL<<(M::tail_discarded_bits-1))));
-  const auto tail_h=RoundedSub(Float(hn::ShiftLeft<M::tail_discarded_bits>(tail_key)),u);
-  const auto tail_row=hn::Sub(tail_key,SU(1023ULL<<M::tail_retained_bits));
-  h=hn::IfThenElse(in_main,main_h,tail_h);
-  const auto logical_row=hn::IfThenElse(main_mask,main_row,hn::Add(tail_row,SU(M::tail_row_offset)));
+  const auto exponent_bias=SU(1023ULL<<52);
+  const auto unbiased_bits=hn::Sub(Bits(x),exponent_bias);
+  // Unsigned normalization is harmless in unused main lanes. Addition,
+  // rather than OR, restores exponent 1023 or 1024 including the carry.
+  k=hn::IfThenZeroElse(main_mask,hn::ShiftRight<53>(unbiased_bits));
+  const auto u=Float(hn::Add(hn::And(unbiased_bits,SU((1ULL<<53)-1)),exponent_bias));
+  const auto coordinate=hn::IfThenElse(in_main,y,u);
+  const auto argument=hn::IfThenElse(in_main,x,coordinate);
+  const auto reference_offset=hn::IfThenElseZero(in_main,S(M::offset));
+  const auto key_origin=hn::IfThenElse(main_mask,SU(M::key_min),
+      SU((1023ULL<<M::tail_retained_bits)-M::tail_row_offset));
+  U key FAST_BOYS_INDETERMINATE;
+  U reference_bits FAST_BOYS_INDETERMINATE;
+  if constexpr(M::discarded_bits==M::tail_discarded_bits) {
+    key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(coordinate),SU(1ULL<<(M::discarded_bits-1))));
+    reference_bits=hn::ShiftLeft<M::discarded_bits>(key);
+  } else {
+    // Keep immediate shifts on targets without efficient per-lane shifts.
+    const auto main_key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(coordinate),SU(1ULL<<(M::discarded_bits-1))));
+    const auto tail_key=hn::ShiftRight<M::tail_discarded_bits>(hn::Add(Bits(coordinate),SU(1ULL<<(M::tail_discarded_bits-1))));
+    key=hn::IfThenElse(main_mask,main_key,tail_key);
+    reference_bits=hn::IfThenElse(main_mask,hn::ShiftLeft<M::discarded_bits>(main_key),hn::ShiftLeft<M::tail_discarded_bits>(tail_key));
+  }
+  const auto reference=RoundedSub(Float(reference_bits),reference_offset);
+  h=RoundedSub(reference,argument);
+  const auto logical_row=hn::Sub(key,key_origin);
   row=MultiplyConstant<M::row_words,M::row_count+M::tail_row_count-1>(logical_row);
 }
 HWY_INLINE V Correction(U hi, U code) {

@@ -35,27 +35,34 @@ template<class Model>
 FAST_BOYS_HD FAST_BOYS_INLINE void PrepareCoordinates(
     double x, std::size_t& logical_row, double& h, unsigned& k) {
   using O=fast_boys::detail::Binary64;
-  k=0;
-  if(x<=Model::domain_end) {
-    const double y=O::add(x,Model::offset);
-    const auto key=RoundedMainGridKey<Model::discarded_bits>(y);
-    h=O::sub(O::sub(O::value(key<<Model::discarded_bits),Model::offset),x);
-    logical_row=key-Model::key_min;
+  const bool use_main=x<=Model::domain_end;
+  double coordinate;
+  if(use_main) {
+    coordinate=O::add(x,Model::offset);
+    k=0;
   } else {
-    const auto bits=O::bits(x);
-    const unsigned x_biased_exponent=unsigned(bits>>52);
-    const unsigned x_unbiased_exponent=x_biased_exponent-1023;
-    k=x_unbiased_exponent>>1;
-    const auto mantissa_bits=bits&0xfffffffffffffULL;
-    const unsigned u_biased_exponent=1023+(x_unbiased_exponent&1);
-    const auto u_bits=mantissa_bits|(std::uint64_t(u_biased_exponent)<<52);
-    const double u=O::value(u_bits);
-    constexpr auto rounding_bit=1ULL<<(Model::tail_discarded_bits-1);
-    const auto key=(u_bits+rounding_bit)>>Model::tail_discarded_bits;
-    const double u_ref=O::value(key<<Model::tail_discarded_bits);
-    h=O::sub(u_ref,u);
-    logical_row=Model::tail_row_offset+key-(1023ULL<<Model::tail_retained_bits);
+    constexpr std::uint64_t exponent_bias=1023ULL<<52;
+    const auto unbiased_bits=O::bits(x)-exponent_bias;
+    // Keep mantissa and exponent parity in place; addition restores the
+    // normalized exponent, including its carry from 1023 to 1024.
+    coordinate=O::value((unbiased_bits&((1ULL<<53)-1))+exponent_bias);
+    k=unsigned(unbiased_bits>>53);
   }
+  const double argument=use_main?x:coordinate;
+  const double reference_offset=use_main?Model::offset:0.0;
+  const std::uint64_t key_origin=use_main?Model::key_min:
+      (1023ULL<<Model::tail_retained_bits)-Model::tail_row_offset;
+  std::uint64_t key;
+  if constexpr(Model::discarded_bits==Model::tail_discarded_bits) {
+    key=RoundedMainGridKey<Model::discarded_bits>(coordinate);
+  } else {
+    key=use_main?RoundedMainGridKey<Model::discarded_bits>(coordinate):
+        RoundedMainGridKey<Model::tail_discarded_bits>(coordinate);
+  }
+  const unsigned shift=use_main?Model::discarded_bits:Model::tail_discarded_bits;
+  const double reference=O::sub(O::value(key<<shift),reference_offset);
+  h=O::sub(reference,argument);
+  logical_row=key-key_origin;
 }
 } // namespace detail
 

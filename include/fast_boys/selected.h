@@ -1,3 +1,3 @@
 #pragma once
-#include "fast_boys/models/catalog_cfaeb26b36cdfff6073e64c9d63934bc4efea965ce66421a46da3d82d9304603.h"
-namespace fast_boys { namespace selected=fast_boys::models::catalog_cfaeb26b36cdfff6073e64c9d63934bc4efea965ce66421a46da3d82d9304603; }
+#include "fast_boys/models/catalog_f0bf23f77f9ea2867c9e8465007520192e07e49695b237eb758d303db760e363.h"
+namespace fast_boys { namespace selected=fast_boys::models::catalog_f0bf23f77f9ea2867c9e8465007520192e07e49695b237eb758d303db760e363; }

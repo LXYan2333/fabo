@@ -1,8 +1,10 @@
-"""Main-key union extraction and unchanged tail-coordinate arithmetic."""
+"""Shared key extraction preserves the original main/tail coordinates."""
+import pytest
 from workflow.additive.tests.test_headers import compile_run
 
 
-def test_grid_key_and_coordinates(tmp_path):
+@pytest.mark.parametrize('tail_bits',[9,11,13])
+def test_grid_key_and_coordinates(tmp_path,tail_bits):
     source=r'''
 #include "fast_boys/detail/cuda/evaluator.cuh"
 #include <cstdint>
@@ -33,7 +35,7 @@ template<unsigned S> bool keys() {
 }
 struct Model {
   static constexpr double domain_end=0x1.8122d2dea3c0cp+5,offset=0x1.51e0000000000p+2;
-  static constexpr unsigned discarded_bits=41,tail_discarded_bits=41,tail_retained_bits=11;
+  static constexpr unsigned discarded_bits=41,tail_retained_bits=TAIL_BITS,tail_discarded_bits=52-tail_retained_bits;
   static constexpr std::uint64_t key_min=2099855,tail_row_offset=6861;
 };
 bool coordinate(double x) {
@@ -50,9 +52,9 @@ bool coordinate(double x) {
     const auto exponent=unsigned(bits>>52)-1023;
     expected_k=exponent>>1;
     const auto u=O::value((bits&0xfffffffffffffULL)|(std::uint64_t(1023+(exponent&1))<<52));
-    const auto key=(O::bits(u)+(1ULL<<40))>>41;
-    expected_row=6861+key-(1023ULL<<11);
-    expected_h=O::sub(O::value(key<<41),u);
+    const auto key=(O::bits(u)+(1ULL<<(Model::tail_discarded_bits-1)))>>Model::tail_discarded_bits;
+    expected_row=6861+key-(1023ULL<<Model::tail_retained_bits);
+    expected_h=O::sub(O::value(key<<Model::tail_discarded_bits),u);
   }
   return row==expected_row && O::bits(h)==O::bits(expected_h) && k==expected_k;
 }
@@ -64,6 +66,12 @@ int main() {
   for(unsigned e=0;e<2047;++e)
     for(std::uint64_t m:{0ULL,1ULL,0x7ffffffffffffULL,0xfffffffffffffULL})
       if(!coordinate(O::value((std::uint64_t(e)<<52)|m))) return 3;
+  // Tail ties, adjacent inputs, and exponent parity including finite max.
+  for(unsigned e:{1029U,1030U,2045U,2046U})
+    for(std::uint64_t m=0;m<(1ULL<<52);m+=1ULL<<Model::tail_discarded_bits) {
+      const auto tie=(std::uint64_t(e)<<52)|m|(1ULL<<(Model::tail_discarded_bits-1));
+      for(auto bits:{tie-1,tie,tie+1}) if(!coordinate(O::value(bits))) return 5;
+    }
   // Reference-grid key ties and their neighboring binary64 inputs.
   for(std::uint64_t key=Model::key_min;key<Model::key_min+6861;++key) {
     const auto x=O::sub(O::value((key<<41)+(1ULL<<40)),Model::offset);
@@ -72,4 +80,4 @@ int main() {
   }
 }
 '''
-    compile_run(tmp_path,source,[])
+    compile_run(tmp_path,source.replace('TAIL_BITS',str(tail_bits)),[])

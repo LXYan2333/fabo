@@ -333,6 +333,25 @@ int main(){return table.data()==nullptr;}
     assert generate(summary,tmp_path/'parallel',workers=2)==manifest
 
 
+def test_bundled_combined_sources_match_generator():
+    """Do not ship an older evaluation graph under the current catalog."""
+    from workflow.additive.paired_headers import combined_source, LAYOUT
+    from workflow.additive.headers import digest
+    path=ROOT/'include/manifest.json'
+    if not path.exists(): pytest.skip('bundled production catalog not generated')
+    manifest=json.loads(path.read_text())
+    if not manifest.get('combined_table'): pytest.skip('legacy catalog')
+    summary=json.loads((ROOT/'data/numerical/paired-1ulp/summary.json').read_text())
+    emitter=hashlib.sha256((ROOT/'workflow/additive/paired_headers.py').read_bytes()+
+                          (ROOT/'workflow/additive/headers.py').read_bytes()).hexdigest()
+    assert manifest['generator_sha256']==emitter
+    for entry in manifest['models'].values():
+        record=entry['record']; error=summary['config']['error']
+        assert entry['id']==digest(dict(recipe=record,error=error,layout=LAYOUT,emitter=emitter))
+        expected=combined_source(record,entry['id'],error,entry['payload_sha256'])
+        assert (ROOT/'include/fast_boys/models'/entry['id']/'model.h').read_text()==expected
+
+
 def test_bundled_catalog_coverage():
     path=ROOT/'include/manifest.json'
     if not path.exists(): pytest.skip('bundled production catalog not generated')
