@@ -281,8 +281,7 @@ template<class M>
 HWY_INLINE void PrepareCombinedCoordinates(const V x,U& row,V& h,U& k) {
   const auto in_main=hn::Le(x,S(M::domain_end));
   const auto main_mask=hn::RebindMask(DU(),in_main);
-  const auto main_x=hn::IfThenElseZero(in_main,x);
-  const auto y=RoundedAdd(main_x,S(M::offset));
+  const auto y=RoundedAdd(x,S(M::offset));
   const auto exponent_bias=SU(1023ULL<<52);
   const auto unbiased_bits=hn::Sub(Bits(x),exponent_bias);
   // Unsigned normalization is harmless in unused main lanes. Addition,
@@ -290,7 +289,7 @@ HWY_INLINE void PrepareCombinedCoordinates(const V x,U& row,V& h,U& k) {
   k=hn::IfThenZeroElse(main_mask,hn::ShiftRight<53>(unbiased_bits));
   const auto u=Float(hn::Add(hn::And(unbiased_bits,SU((1ULL<<53)-1)),exponent_bias));
   const auto coordinate=hn::IfThenElse(in_main,y,u);
-  const auto argument=hn::IfThenElse(in_main,x,coordinate);
+  const auto argument=hn::IfThenElse(in_main,x,u);
   const auto reference_offset=hn::IfThenElseZero(in_main,S(M::offset));
   const auto key_origin=hn::IfThenElse(main_mask,SU(M::key_min),
       SU((1023ULL<<M::tail_retained_bits)-M::tail_row_offset));

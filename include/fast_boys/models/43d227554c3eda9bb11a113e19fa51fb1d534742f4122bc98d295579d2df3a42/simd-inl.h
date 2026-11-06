@@ -18,6 +18,8 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  V h FAST_BOYS_INDETERMINATE;
  PrepareCombinedCoordinates<M>(x,row,h,k);
  static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");
+ const auto two_k=hn::Add(k,k);
+ auto scale_power=k;
  V c0 FAST_BOYS_INDETERMINATE;
  V c1 FAST_BOYS_INDETERMINATE;
  V c2 FAST_BOYS_INDETERMINATE;
@@ -60,8 +62,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c1);
  const auto hi=Bits(c0);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<0>(hi,w0)));
- At<0-First>(out...)=Scale(Bits(value),MultiplyConstant<1,511>(k));
+ At<0-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(0<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=1 && 1<=Last) {
  if constexpr(1>M::high_before(First,1)) c1=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(2))));
  if constexpr(2>M::high_before(First,1)) c2=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(3))));
@@ -81,8 +84,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c2);
  const auto hi=Bits(c1);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<1>(hi,w0)));
- At<1-First>(out...)=Scale(Bits(value),MultiplyConstant<3,511>(k));
+ At<1-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(1<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=2 && 2<=Last) {
  if constexpr(2>M::high_before(First,2)) c2=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(3))));
  if constexpr(3>M::high_before(First,2)) c3=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(4))));
@@ -102,8 +106,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c3);
  const auto hi=Bits(c2);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<2>(hi,w0)));
- At<2-First>(out...)=Scale(Bits(value),MultiplyConstant<5,511>(k));
+ At<2-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(2<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=3 && 3<=Last) {
  if constexpr(3>M::high_before(First,3)) c3=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(4))));
  if constexpr(4>M::high_before(First,3)) c4=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(5))));
@@ -123,8 +128,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c4);
  const auto hi=Bits(c3);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<3>(hi,w0)));
- At<3-First>(out...)=Scale(Bits(value),MultiplyConstant<7,511>(k));
+ At<3-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(3<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=4 && 4<=Last) {
  if constexpr(4>M::high_before(First,4)) c4=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(5))));
  if constexpr(5>M::high_before(First,4)) c5=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(6))));
@@ -144,8 +150,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c5);
  const auto hi=Bits(c4);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<4>(hi,w0)));
- At<4-First>(out...)=Scale(Bits(value),MultiplyConstant<9,511>(k));
+ At<4-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(4<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=5 && 5<=Last) {
  if constexpr(5>M::high_before(First,5)) c5=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(6))));
  if constexpr(6>M::high_before(First,5)) c6=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(7))));
@@ -165,8 +172,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c6);
  const auto hi=Bits(c5);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<5>(hi,w0)));
- At<5-First>(out...)=Scale(Bits(value),MultiplyConstant<11,511>(k));
+ At<5-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(5<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=6 && 6<=Last) {
  if constexpr(6>M::high_before(First,6)) c6=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(7))));
  if constexpr(7>M::high_before(First,6)) c7=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(8))));
@@ -186,8 +194,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c7);
  const auto hi=Bits(c6);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<6>(hi,w0)));
- At<6-First>(out...)=Scale(Bits(value),MultiplyConstant<13,511>(k));
+ At<6-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(6<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=7 && 7<=Last) {
  if constexpr(7>M::high_before(First,7)) c7=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(8))));
  if constexpr(8>M::high_before(First,7)) c8=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(10))));
@@ -207,8 +216,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c8);
  const auto hi=Bits(c7);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<7>(hi,w0)));
- At<7-First>(out...)=Scale(Bits(value),MultiplyConstant<15,511>(k));
+ At<7-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(7<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=8 && 8<=Last) {
  if constexpr(8>M::high_before(First,8)) c8=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(10))));
  if constexpr(9>M::high_before(First,8)) c9=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(11))));
@@ -231,8 +241,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c9);
  const auto hi=Bits(c8);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<0>(hi,w1)));
- At<8-First>(out...)=Scale(Bits(value),MultiplyConstant<17,511>(k));
+ At<8-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(8<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=9 && 9<=Last) {
  if constexpr(9>M::high_before(First,9)) c9=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(11))));
  if constexpr(10>M::high_before(First,9)) c10=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(12))));
@@ -255,8 +266,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c10);
  const auto hi=Bits(c9);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<1>(hi,w1)));
- At<9-First>(out...)=Scale(Bits(value),MultiplyConstant<19,511>(k));
+ At<9-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(9<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=10 && 10<=Last) {
  if constexpr(10>M::high_before(First,10)) c10=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(12))));
  if constexpr(11>M::high_before(First,10)) c11=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(13))));
@@ -279,8 +291,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c11);
  const auto hi=Bits(c10);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<2>(hi,w1)));
- At<10-First>(out...)=Scale(Bits(value),MultiplyConstant<21,511>(k));
+ At<10-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(10<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=11 && 11<=Last) {
  if constexpr(11>M::high_before(First,11)) c11=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(13))));
  if constexpr(12>M::high_before(First,11)) c12=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(14))));
@@ -303,8 +316,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c12);
  const auto hi=Bits(c11);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<3>(hi,w1)));
- At<11-First>(out...)=Scale(Bits(value),MultiplyConstant<23,511>(k));
+ At<11-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(11<Last) scale_power=hn::Add(scale_power,two_k);
  if constexpr(First<=12 && 12<=Last) {
  if constexpr(12>M::high_before(First,12)) c12=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(14))));
  if constexpr(13>M::high_before(First,12)) c13=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU(15))));
@@ -327,8 +341,9 @@ template<> struct Kernel<fast_boys::models::m_43d227554c3eda9bb11a113e19fa51fb1d
  q=Fma(a2,q,c13);
  const auto hi=Bits(c12);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<4>(hi,w1)));
- At<12-First>(out...)=Scale(Bits(value),MultiplyConstant<25,511>(k));
+ At<12-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(12<Last) scale_power=hn::Add(scale_power,two_k);
  }
 };
 } } }

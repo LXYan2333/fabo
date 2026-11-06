@@ -18,6 +18,8 @@ template<> struct Kernel<fast_boys::models::m_d73bc44739ced7223bd843168001203c05
  V h FAST_BOYS_INDETERMINATE;
  PrepareCombinedCoordinates<M>(x,row,h,k);
  static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");
+ const auto two_k=hn::Add(k,k);
+ auto scale_power=k;
  V c0 FAST_BOYS_INDETERMINATE;
  V c1 FAST_BOYS_INDETERMINATE;
  V c2 FAST_BOYS_INDETERMINATE;
@@ -43,8 +45,9 @@ template<> struct Kernel<fast_boys::models::m_d73bc44739ced7223bd843168001203c05
  q=Fma(a2,q,c1);
  const auto hi=Bits(c0);
  const auto value=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<0>(hi,w0)));
- At<0-First>(out...)=Scale(Bits(value),MultiplyConstant<1,511>(k));
+ At<0-First>(out...)=Scale(Bits(value),scale_power);
  }
+ if constexpr(0<Last) scale_power=hn::Add(scale_power,two_k);
  }
 };
 } } }

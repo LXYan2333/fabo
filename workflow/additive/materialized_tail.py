@@ -7,7 +7,7 @@ from pathlib import Path
 import struct
 
 from .headers import tail_source, write_model
-from .simd_headers import wrap
+from .simd_headers import scale_power_next, scale_power_setup, wrap
 
 
 def bits(x):
@@ -87,6 +87,7 @@ def simd_source(record, ident, stride):
         f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Bits(u),SU(1ULL<<{shift-1})));',
         f' const auto row=MultiplyConstant<{stride},{m["storage"]["row_count"]-1}>(hn::Sub(key,SU({1023<<m["retained_bits"]})));',
         f' const auto r=Float(hn::ShiftLeft<{shift}>(key)),h=RoundedSub(r,u);']
+    body += scale_power_setup(0)
     body += [f' V g{n} FAST_BOYS_INDETERMINATE;' for n in range(top+1)]
     body += [f' U w{i} FAST_BOYS_INDETERMINATE;' for i in range((last+8)//8)]
     body += [f' const auto a{j}=RoundedMul(h,S({float(1/j).hex()}));' for j in range(2,p+1)]
@@ -98,7 +99,7 @@ def simd_source(record, ident, stride):
         body += [f' q=Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
         body += [f' const auto hi=Bits(g{n});',
                  f' const auto v=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{n%8}>(hi,w{n//8})));',
-                 f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),MultiplyConstant<{2*n+1},511>(k)),At<{n}-First>(out...));',' }']
+                 f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),scale_power),At<{n}-First>(out...));',' }',scale_power_next(n)]
     return wrap(ident,f'fast_boys::models::m_{ident}::Model','TailKernel',body)
 
 

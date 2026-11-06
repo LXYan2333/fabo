@@ -7,6 +7,17 @@ from pathlib import Path
 from .headers import coefficient_word, correction_word
 
 
+def scale_power_setup(first):
+    # Advance outside the output guards so nonzero-start subsets retain the
+    # absolute-order scale. All additions are exact unsigned integer arithmetic.
+    return [' const auto two_k=hn::Add(k,k);', ' auto scale_power=k;'] + [
+        ' scale_power=hn::Add(scale_power,two_k);' for _ in range(first)]
+
+
+def scale_power_next(n):
+    return f' if constexpr({n}<Last) scale_power=hn::Add(scale_power,two_k);'
+
+
 def wrap(ident,model,kind,body):
     guard='FAST_BOYS_SIMD_'+ident.upper()+'_H_'
     return '\n'.join([
@@ -34,6 +45,7 @@ def main_kernel(entry,combined=False):
         body=[' U row FAST_BOYS_INDETERMINATE;', ' U k FAST_BOYS_INDETERMINATE;',
               ' V h FAST_BOYS_INDETERMINATE;', ' PrepareCombinedCoordinates<M>(x,row,h,k);',
               ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
+        body += scale_power_setup(first)
     high=max(n+p for n,p in zip(range(first,last+1),degrees))
     body += [f' V c{n} FAST_BOYS_INDETERMINATE;' for n in range(first,high+1)]
     body += [f' V a{j} FAST_BOYS_INDETERMINATE;' for j in range(2,max(degrees)+1)]
@@ -55,10 +67,12 @@ def main_kernel(entry,combined=False):
         expr=f'RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{(n-first)%8}>(hi,w{slot})))'
         body += [f' const auto hi=Bits(c{n});']
         if combined:
-            body += [f' const auto value={expr};',f' At<{n}-First>(out...)=Scale(Bits(value),MultiplyConstant<{2*n+1},511>(k));']
+            body += [f' const auto value={expr};',f' At<{n}-First>(out...)=Scale(Bits(value),scale_power);']
         else:
             body += [f' At<{n}-First>(out...)={expr};']
         body += [' }']
+        if combined:
+            body += [scale_power_next(n)]
     return wrap(entry['id'],entry['cpp_model'],'Kernel',body)
 
 
@@ -75,6 +89,7 @@ def tail_kernel(entry,metadata):
         f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Bits(u),SU(1ULL<<{shift-1})));',
         f' const auto row=MultiplyConstant<{stride},{metadata["storage"]["allocated_bytes"]//(8*stride)-1}>(hn::Sub(key,SU({1023<<b})));',
         f' const auto r=Float(hn::ShiftLeft<{shift}>(key)),h=RoundedSub(r,u),t=RoundedAdd(r,r);']
+    body += scale_power_setup(first)
     for i in range(stride):
         body += [f' const auto w{i}=Gather<Software,M::word_count-1>(data,hn::Add(row,SU({i})));']
     body += [f' const auto g{top}=Float(w0);']
@@ -93,7 +108,7 @@ def tail_kernel(entry,metadata):
         body += [f' q=Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
         body += [f' const auto hi=Bits(g{n});',
                  f' const auto v=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{i%8}>(hi,w{1+i//8})));',
-                 f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),MultiplyConstant<{2*n+1},511>(k)),At<{n}-First>(out...));',' }']
+                 f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),scale_power),At<{n}-First>(out...));',' }',scale_power_next(n)]
     return wrap(entry['id'],entry['cpp_model'],'TailKernel',body)
 
 
@@ -114,11 +129,14 @@ def paired_tail_kernel(entry,main):
  const auto row=MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,SU(1023ULL<<M::retained_bits)));
 '''+source[end:]
     r=main['record']
+    source=source.replace(' static_assert', '\n'.join(scale_power_setup(r['first']))+'\n static_assert',1)
     for n in range(r['first'],r['last']+1):
         prefix=f' At<{n}-First>(out...)='
         start=source.index(prefix); end=source.index(';',start)
         expr=source[start+len(prefix):end]
-        source=source[:start]+f' const auto value={expr};\n'+prefix+f'hn::IfThenElse(active,Scale(Bits(value),MultiplyConstant<{2*n+1},511>(k)),At<{n}-First>(out...))'+source[end:]
+        source=source[:start]+f' const auto value={expr};\n'+prefix+f'hn::IfThenElse(active,Scale(Bits(value),scale_power),At<{n}-First>(out...))'+source[end:]
+        end=source.index('\n }',start)+len('\n }')
+        source=source[:end]+'\n'+scale_power_next(n)+source[end:]
     return source
 
 
