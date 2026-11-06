@@ -47,7 +47,11 @@ def conformance(root, saved, scratch):
     for variant in spec['variants']:
         if variant=='official': continue
         if variant=='fabo_additive':
-            source=src/'additive_conformance.cu'
+            # Quoted includes search the source directory before -I paths.
+            # Stage the checker away from the bundled (possibly older) binding
+            # so it checks the same adapter as the actual QUICK variant.
+            source=scratch/'additive_conformance.cu'
+            shutil.copyfile(src/source.name,source)
             extra=[root/'variants/fabo_additive/source/src/gpu/additive_host.cc']
             includes=[root/'variants/fabo_additive/source/src/gpu']; args=[]; strict=[]
         elif variant=='libintx_gpu':
@@ -62,9 +66,10 @@ def conformance(root, saved, scratch):
         for mode,flags in [('strict',['--fmad=false',*strict]),('fast',['--use_fast_math'])]:
             name=variant+'-'+mode; executable=scratch/name
             standard='-std=c++20' if variant=='libintx_gpu' else '-std=c++17'
+            search_paths=includes+[src] if variant=='fabo_additive' else [src,*includes]
             cmd=[config['cuda']+'/bin/nvcc','-ccbin',config['cxx'],standard,'-O3',
-                 '-arch='+spec['cuda_arch'],*flags,'-I'+str(src),
-                 *['-I'+str(p) for p in includes]]
+                 '-arch='+spec['cuda_arch'],*flags,
+                 *['-I'+str(p) for p in search_paths]]
             if config['enable_f'] and variant=='fabo_additive': cmd+=['-DENABLEF']
             cmd += [source,*extra,'-o',executable]
             command(cmd,out/(name+'-build.log'),env=clean_environment())
