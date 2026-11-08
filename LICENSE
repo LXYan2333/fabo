@@ -1,0 +1,46 @@
+FABO licensing
+==============
+
+SPDX-License-Identifier: MPL-2.0 OR LGPL-3.0-only
+
+Except for third-party material and files or directories carrying their own
+license terms, the original FABO source code, generated headers, scripts,
+tests, documentation, and project-generated data in this repository are
+dual-licensed, at your option, under either:
+
+  * the Mozilla Public License, version 2.0 (MPL-2.0); or
+  * the GNU Lesser General Public License, version 3.0 (LGPL-3.0-only).
+
+You may choose either license; you do not need to comply with both.
+
+The complete license texts are supplied in:
+
+  LICENSES/MPL-2.0.txt
+  LICENSES/LGPL-3.0-only.txt
+  LICENSES/GPL-3.0-only.txt
+
+LGPL version 3 incorporates GPL version 3, supplemented by the LGPL's
+additional permissions. The GPL text is included for that purpose, not as
+a third independently offered license option.
+
+This repository-level notice applies to the covered files even when they
+do not repeat a license header. Under the MPL option:
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this file,
+You can obtain one at https://mozilla.org/MPL/2.0/.
+
+Third-party material
+--------------------
+
+Third-party code, dependencies, submodules, coefficients, datasets, and
+publications retain their respective copyright and license terms. This
+includes upstream material under third_party/ and upstream material copied
+or adapted elsewhere in the repository. This notice does not relicense
+those contributions or grant rights that their owners have not granted.
+Preserve their existing notices and consult their accompanying licenses
+and provenance records. The licenses of combined or linked works also
+depend on the applicable dependency licenses.
+
+The covered material is provided without warranty, as specified in the
+applicable license.
