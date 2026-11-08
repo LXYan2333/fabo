@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/usr/bin/g++",
+    "-std=c++17",
+    "-O2",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-fno-lto",
+    "-I/export/home/lxyan2/miniconda3/pkgs/mpfr-4.2.2-ha2cb11d_1/include",
+    "-I/export/home/lxyan2/miniconda3/pkgs/gmp-6.3.0-h6a678d5_0/include",
+    "/export/home/lxyan2/fast-boys-additive/library-accuracy-full-20261107/repo/benchmark/library_accuracy/scan.cc",
+    "-L/export/home/lxyan2/miniconda3/pkgs/mpfr-4.2.2-ha2cb11d_1/lib",
+    "-L/export/home/lxyan2/miniconda3/pkgs/gmp-6.3.0-h6a678d5_0/lib",
+    "-Wl,-rpath,/export/home/lxyan2/miniconda3/pkgs/mpfr-4.2.2-ha2cb11d_1/lib",
+    "-Wl,-rpath,/export/home/lxyan2/miniconda3/pkgs/gmp-6.3.0-h6a678d5_0/lib",
+    "-lmpfr",
+    "-lgmp",
+    "-lquadmath",
+    "-ldl",
+    "-pthread",
+    "-o",
+    "/export/home/lxyan2/fast-boys-additive/library-accuracy-full-20261107/results/scan"
+  ],
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "sha256": "16b5cb694e51c432496c8568cffd8d0976024a42147a4a6a7c07c72870b8ad5e"
+}

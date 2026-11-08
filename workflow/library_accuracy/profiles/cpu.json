@@ -1,0 +1,15 @@
+{
+  "platform": "cpu",
+  "cxx": "x86_64-conda-linux-gnu-g++",
+  "cc": "x86_64-conda-linux-gnu-gcc",
+  "architecture": "sapphirerapids",
+  "highway": "/path/to/pinned-highway-checkout",
+  "simint": "/path/to/simint-generator-checkout",
+  "libintx": "/path/to/pinned-libintx-checkout",
+  "libmvec": "/usr/lib/x86_64-linux-gnu/libmvec.so",
+  "scanner": "/path/to/strict/scan",
+  "reference_table": "/path/to/reference.bin",
+  "workers": 4,
+  "batch": 1024,
+  "shard_size": 1000000
+}

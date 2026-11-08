@@ -1,0 +1,18 @@
+{
+  "denominator": 1000000,
+  "execution": "e02ea22edbe782086b2d6926dc053cbd6485e671782e9a32fbe79ec63f06b389",
+  "files": {
+    "accuracy-cpu-fast-absolute.pdf": "680fc1cdeeafcac7d9f368716467b80c448b4adf00016e1d909739757bb51038",
+    "accuracy-cpu-fast-relative.pdf": "841dd5bce9f7d4d967a328be84ad8a4917ad54d812b16243f8a9323b031c9a97",
+    "accuracy-cpu-fast-ulp.pdf": "cad6f615d34338d335198561054a478ba1e8fbf80d8f1f3537a918f0a74daa74",
+    "accuracy-cpu-strict-absolute.pdf": "cde6192c9a9c9c29d8a7a9f5e9863f607aa8a6575bb4f89d6f5e0207cf825fbb",
+    "accuracy-cpu-strict-relative.pdf": "c7580b6774231bf0a0da15f193c0603b1168aa6ec3474c1894d533bbfb3069d8",
+    "accuracy-cpu-strict-ulp.pdf": "4724ee2ae30e78c3a0f458a44c72491740c3026d58b0516418399840103f9de5",
+    "accuracy.csv": "786343d332621dce45229adb694cad8fbaa1194cc3328642eb7b2cf5a7f650a6",
+    "accuracy.json": "231f7c21d3afa7aff70d1726869ff83f82f2c4db5b7162855932d3f797a3a0f9",
+    "accuracy.tex": "349bac7868d03f982d64dbac1b7b5cbc0669e65347d9c8a60c6bc172213840b8"
+  },
+  "identity": "f2956a42604689eb5c57cd7dbbe717075983f1cc509b2e9a261955bfe2c0f82a",
+  "inputs": 1000000001,
+  "sampled_only": true
+}

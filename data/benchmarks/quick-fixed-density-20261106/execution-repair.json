@@ -1,0 +1,11 @@
+{
+  "failed_job": "2129611",
+  "files": {
+    "gpu-retry.sbatch": "a18846228f22a0b922aa18b7627eeeae0d93bf7bd3c59adfaec8cb67493556c8",
+    "repair/comparators.py": "2ecc7a4908e5ffef32e151bd1a1162d9b211d32a97737244b7f1d49f827d46c5",
+    "retry_gpu.py": "c6cb9a6b451a61e8f714b6966eca0268061d0de8444ccf67e18f91f0962c33dc"
+  },
+  "prepared_run_sha256": "4b282c8107d6029ca6c6b3c06d2e72a89e9143397bc6a3302aeeb880fa9eb927",
+  "reason": "Quoted includes selected an old adjacent FABO binding",
+  "scope": "Conformance source staging and include order only; unchanged timing binaries, initial states, reference outputs"
+}

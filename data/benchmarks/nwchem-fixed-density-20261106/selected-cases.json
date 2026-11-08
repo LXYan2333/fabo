@@ -1,0 +1,182 @@
+[
+  {
+    "atoms": 48,
+    "basis": "6-31G*",
+    "copies": 8,
+    "geometry": "geometries/01-stack-8.xyz",
+    "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+    "id": "01-stack-8-6-31gs",
+    "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+    "system": 1,
+    "translation": [
+      0.0,
+      4.696648656,
+      0.0
+    ]
+  },
+  {
+    "atoms": 48,
+    "basis": "def2-SVP",
+    "copies": 8,
+    "geometry": "geometries/01-stack-8.xyz",
+    "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+    "id": "01-stack-8-def2-svp",
+    "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+    "system": 1,
+    "translation": [
+      0.0,
+      4.696648656,
+      0.0
+    ]
+  },
+  {
+    "atoms": 48,
+    "basis": "cc-pVDZ",
+    "copies": 8,
+    "geometry": "geometries/01-stack-8.xyz",
+    "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+    "id": "01-stack-8-cc-pvdz",
+    "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+    "system": 1,
+    "translation": [
+      0.0,
+      4.696648656,
+      0.0
+    ]
+  },
+  {
+    "atoms": 24,
+    "basis": "6-31G*",
+    "copies": 1,
+    "geometry": "geometries/17-stack-1.xyz",
+    "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+    "id": "17-stack-1-6-31gs",
+    "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+    "system": 17,
+    "translation": [
+      0.0,
+      0.0,
+      3.4053361829999997
+    ]
+  },
+  {
+    "atoms": 24,
+    "basis": "def2-SVP",
+    "copies": 1,
+    "geometry": "geometries/17-stack-1.xyz",
+    "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+    "id": "17-stack-1-def2-svp",
+    "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+    "system": 17,
+    "translation": [
+      0.0,
+      0.0,
+      3.4053361829999997
+    ]
+  },
+  {
+    "atoms": 24,
+    "basis": "cc-pVDZ",
+    "copies": 1,
+    "geometry": "geometries/17-stack-1.xyz",
+    "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+    "id": "17-stack-1-cc-pvdz",
+    "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+    "system": 17,
+    "translation": [
+      0.0,
+      0.0,
+      3.4053361829999997
+    ]
+  },
+  {
+    "atoms": 24,
+    "basis": "6-31G*",
+    "copies": 1,
+    "geometry": "geometries/24-stack-1.xyz",
+    "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+    "id": "24-stack-1-6-31gs",
+    "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+    "system": 24,
+    "translation": [
+      0.0,
+      0.0,
+      7.448800621
+    ]
+  },
+  {
+    "atoms": 24,
+    "basis": "def2-SVP",
+    "copies": 1,
+    "geometry": "geometries/24-stack-1.xyz",
+    "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+    "id": "24-stack-1-def2-svp",
+    "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+    "system": 24,
+    "translation": [
+      0.0,
+      0.0,
+      7.448800621
+    ]
+  },
+  {
+    "atoms": 24,
+    "basis": "cc-pVDZ",
+    "copies": 1,
+    "geometry": "geometries/24-stack-1.xyz",
+    "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+    "id": "24-stack-1-cc-pvdz",
+    "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+    "system": 24,
+    "translation": [
+      0.0,
+      0.0,
+      7.448800621
+    ]
+  },
+  {
+    "atoms": 34,
+    "basis": "6-31G*",
+    "copies": 1,
+    "geometry": "geometries/34-stack-1.xyz",
+    "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+    "id": "34-stack-1-6-31gs",
+    "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+    "system": 34,
+    "translation": [
+      0.0,
+      5.913242621,
+      0.0
+    ]
+  },
+  {
+    "atoms": 34,
+    "basis": "def2-SVP",
+    "copies": 1,
+    "geometry": "geometries/34-stack-1.xyz",
+    "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+    "id": "34-stack-1-def2-svp",
+    "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+    "system": 34,
+    "translation": [
+      0.0,
+      5.913242621,
+      0.0
+    ]
+  },
+  {
+    "atoms": 34,
+    "basis": "cc-pVDZ",
+    "copies": 1,
+    "geometry": "geometries/34-stack-1.xyz",
+    "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+    "id": "34-stack-1-cc-pvdz",
+    "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+    "system": 34,
+    "translation": [
+      0.0,
+      5.913242621,
+      0.0
+    ]
+  }
+]

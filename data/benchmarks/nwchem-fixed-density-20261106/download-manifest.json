@@ -1,0 +1,11 @@
+{
+  "source": "Heitler:/export/home/yanlongxiang/fast-boys-nwchem/full-library-simd-additions-20261106/run",
+  "benchmark_job": "177804",
+  "node": "c021",
+  "verification": "Local SHA256 matched remote sha256sum on 2026-11-07",
+  "files": {
+    "results.json": "e5c01b7ef756a386c5e1db8cf2cf09d9704899ee6c13884297ed24c215992bd2",
+    "selected-cases.json": "6346c44ef8f27fc14f23bc7a445001b2f8e152713401cecf28613ef966dc6a3f",
+    "config.json": "43403e467e5258df9f328389d4f32e969f1011ac310585131fa871929002544c"
+  }
+}

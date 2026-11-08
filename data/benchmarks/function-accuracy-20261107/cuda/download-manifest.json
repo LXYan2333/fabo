@@ -1,0 +1,10 @@
+{
+  "source": "Slater2:/export/home/lxyan2/fast-boys-additive/library-accuracy-full-20261107/results",
+  "verification": "Matched remote sha256sum on 2026-11-08",
+  "files": {
+    "run.json": "dccdc520f93c8a5081f634ff377eca78e712b0fe28fcc8240b3fd6cd525b6e7c",
+    "execution.json": "45a9211f99114235110d2dc299a0e1a278707fb90b48a858b0268f0a101ed4a7",
+    "built.json": "304d1e3dcaabb849ad035cf167213d5a6d68a23de9a6288be69147c66f453969",
+    "scan.build.json": "9d1f39d74e3dbc9fd1a8656e2909b1c74ad1d791da54ebcf269312a280d6caba"
+  }
+}

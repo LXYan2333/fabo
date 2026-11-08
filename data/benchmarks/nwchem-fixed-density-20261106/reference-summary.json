@@ -1,0 +1,2093 @@
+{
+  "reference": "Correctly-rounded Boys substitution, not exact molecular observables",
+  "results": [
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 6.652720092656553e-12,
+        "max_absolute": 4.923839114212569e-13
+      },
+      "energy_difference": 5.002220859751105e-12,
+      "energy_hartree": -1215.7102284543432,
+      "fock": {
+        "frobenius": 1.0698340605800219e-10,
+        "max_absolute": 1.219646605932212e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.692426977567629e-13,
+        "max_absolute": 3.275157922644212e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1215.7102284543482,
+      "fock": {
+        "frobenius": 2.7596915315661063e-14,
+        "max_absolute": 3.552713678800501e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.60086317682573e-13,
+        "max_absolute": 3.419486915845482e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1215.7102284543482,
+      "fock": {
+        "frobenius": 3.796682302362882e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.2610665683459425e-11,
+        "max_absolute": 2.396582932107094e-12
+      },
+      "energy_difference": 1.3642420526593924e-11,
+      "energy_hartree": -1215.7102284543346,
+      "fock": {
+        "frobenius": 1.1464413173490099e-11,
+        "max_absolute": 1.8616219676914625e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.777765420379243e-13,
+        "max_absolute": 3.863576125695545e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1215.7102284543482,
+      "fock": {
+        "frobenius": 3.9580511386126855e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1215.7102284543482,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.114171401902278e-12,
+        "max_absolute": 2.2898349882893854e-13
+      },
+      "energy_difference": 1.3642420526593924e-12,
+      "energy_hartree": -1214.9451430441115,
+      "fock": {
+        "frobenius": 1.6181756703130053e-11,
+        "max_absolute": 1.9699797348948778e-12
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.1472737272224432e-13,
+        "max_absolute": 2.7200464103316335e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1214.945143044113,
+      "fock": {
+        "frobenius": 3.5743603650736715e-14,
+        "max_absolute": 3.552713678800501e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.292740036581503e-13,
+        "max_absolute": 4.3520742565306136e-14
+      },
+      "energy_difference": 4.547473508864641e-13,
+      "energy_hartree": -1214.9451430441125,
+      "fock": {
+        "frobenius": 4.589250306904333e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.0598880926331591e-11,
+        "max_absolute": 9.40553190886817e-13
+      },
+      "energy_difference": 5.9117155615240335e-12,
+      "energy_hartree": -1214.945143044107,
+      "fock": {
+        "frobenius": 4.874520969028102e-12,
+        "max_absolute": 8.597567102697212e-13
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.28453679285706e-13,
+        "max_absolute": 4.9404924595819466e-14
+      },
+      "energy_difference": 4.547473508864641e-13,
+      "energy_hartree": -1214.9451430441125,
+      "fock": {
+        "frobenius": 5.383990729292956e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1214.945143044113,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.38073647291956e-12,
+        "max_absolute": 2.6201263381153694e-13
+      },
+      "energy_difference": 9.094947017729282e-13,
+      "energy_hartree": -1216.0116066864205,
+      "fock": {
+        "frobenius": 9.700271367743093e-12,
+        "max_absolute": 1.177724584522366e-12
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.859484634869005e-13,
+        "max_absolute": 2.6423307986078726e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1216.0116066864214,
+      "fock": {
+        "frobenius": 3.740185076255799e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.037839171074018e-13,
+        "max_absolute": 3.2529534621517087e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1216.0116066864214,
+      "fock": {
+        "frobenius": 4.9178322808368897e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.3551564075464111e-11,
+        "max_absolute": 1.2956302697375577e-12
+      },
+      "energy_difference": 5.4569682106375694e-12,
+      "energy_hartree": -1216.011606686416,
+      "fock": {
+        "frobenius": 5.391035692566032e-12,
+        "max_absolute": 9.07718344933528e-13
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.9730520774206957e-13,
+        "max_absolute": 3.042011087472929e-14
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1216.0116066864214,
+      "fock": {
+        "frobenius": 5.073421918705808e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -1216.0116066864214,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 6.828578246482574e-11,
+        "max_absolute": 8.819500685319781e-12
+      },
+      "energy_difference": 9.777068044058979e-12,
+      "energy_hartree": -824.5094898937459,
+      "fock": {
+        "frobenius": 2.2122661412574571e-10,
+        "max_absolute": 4.766675942846632e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.4871867214094393e-12,
+        "max_absolute": 3.93574062229618e-13
+      },
+      "energy_difference": 2.2737367544323206e-13,
+      "energy_hartree": -824.5094898937555,
+      "fock": {
+        "frobenius": 5.761036054035275e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.2038021079946856e-12,
+        "max_absolute": 4.130584763117895e-13
+      },
+      "energy_difference": 2.2737367544323206e-13,
+      "energy_hartree": -824.5094898937555,
+      "fock": {
+        "frobenius": 7.175159218985591e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.042555119287597e-10,
+        "max_absolute": 1.3536616272347146e-11
+      },
+      "energy_difference": 6.366462912410498e-12,
+      "energy_hartree": -824.5094898937493,
+      "fock": {
+        "frobenius": 3.8328409454567384e-11,
+        "max_absolute": 9.052314453583676e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.43017985134173e-12,
+        "max_absolute": 3.3639757646142243e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -824.5094898937557,
+      "fock": {
+        "frobenius": 1.020439833238225e-13,
+        "max_absolute": 2.1316282072803006e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -824.5094898937557,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 6.705581152454472e-11,
+        "max_absolute": 1.0703826713864828e-11
+      },
+      "energy_difference": 8.185452315956354e-12,
+      "energy_hartree": -823.9007871237825,
+      "fock": {
+        "frobenius": 1.634344359637997e-10,
+        "max_absolute": 3.501554601825774e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 4.342603825405588e-12,
+        "max_absolute": 1.216471368081784e-12
+      },
+      "energy_difference": 2.2737367544323206e-13,
+      "energy_hartree": -823.9007871237905,
+      "fock": {
+        "frobenius": 5.770809039739154e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 4.046540539469067e-12,
+        "max_absolute": 8.243405957841787e-13
+      },
+      "energy_difference": 4.547473508864641e-13,
+      "energy_hartree": -823.9007871237902,
+      "fock": {
+        "frobenius": 7.639383397872582e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.2761983755239292e-10,
+        "max_absolute": 1.0891024193604437e-11
+      },
+      "energy_difference": 6.821210263296962e-12,
+      "energy_hartree": -823.9007871237839,
+      "fock": {
+        "frobenius": 2.7125948978692395e-11,
+        "max_absolute": 1.4107826018516789e-11
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 4.397065973956306e-12,
+        "max_absolute": 8.125722317231521e-13
+      },
+      "energy_difference": 2.2737367544323206e-13,
+      "energy_hartree": -823.9007871237905,
+      "fock": {
+        "frobenius": 9.804566256728123e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -823.9007871237907,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 7.06986850389587e-11,
+        "max_absolute": 7.273126545470632e-12
+      },
+      "energy_difference": 7.048583938740194e-12,
+      "energy_hartree": -824.599403520087,
+      "fock": {
+        "frobenius": 1.8417095015534627e-10,
+        "max_absolute": 5.101341571389639e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.3849999924279633e-12,
+        "max_absolute": 4.3154368967179835e-13
+      },
+      "energy_difference": 2.2737367544323206e-13,
+      "energy_hartree": -824.5994035200938,
+      "fock": {
+        "frobenius": 6.011119122515744e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 3.721615515788968e-12,
+        "max_absolute": 1.1730061366677091e-12
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -824.599403520094,
+      "fock": {
+        "frobenius": 7.882509978865394e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.0338631700931248e-10,
+        "max_absolute": 1.0074885370414677e-11
+      },
+      "energy_difference": 6.139089236967266e-12,
+      "energy_hartree": -824.5994035200879,
+      "fock": {
+        "frobenius": 2.679525110639846e-11,
+        "max_absolute": 1.0306422382200253e-11
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.5798874069214297e-12,
+        "max_absolute": 4.862221736345873e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -824.599403520094,
+      "fock": {
+        "frobenius": 9.99535091126663e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -824.599403520094,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 3.059242497500958e-11,
+        "max_absolute": 2.822186928597148e-12
+      },
+      "energy_difference": 4.092726157978177e-12,
+      "energy_hartree": -461.2701989433481,
+      "fock": {
+        "frobenius": 8.05202658839023e-11,
+        "max_absolute": 1.3081091765343444e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 3.2851009787665665e-12,
+        "max_absolute": 2.50938159140901e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.27019894335217,
+      "fock": {
+        "frobenius": 4.4301108084280335e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 3.2799103115835292e-12,
+        "max_absolute": 3.402000903207636e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.27019894335217,
+      "fock": {
+        "frobenius": 5.225516663807557e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 7.347924308800653e-11,
+        "max_absolute": 4.916067553040193e-12
+      },
+      "energy_difference": 2.9558577807620168e-12,
+      "energy_hartree": -461.2701989433492,
+      "fock": {
+        "frobenius": 2.618317727992954e-11,
+        "max_absolute": 7.890577080615913e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 3.989707482800813e-12,
+        "max_absolute": 4.926337116017976e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.27019894335217,
+      "fock": {
+        "frobenius": 7.707494685881025e-14,
+        "max_absolute": 1.7763568394002505e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.27019894335217,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 7.78544801349153e-11,
+        "max_absolute": 8.695294484439842e-12
+      },
+      "energy_difference": 5.002220859751105e-12,
+      "energy_hartree": -460.9358460552994,
+      "fock": {
+        "frobenius": 8.269405039003207e-11,
+        "max_absolute": 1.20543575121701e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 9.171889616370506e-12,
+        "max_absolute": 9.737766148987248e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -460.9358460553044,
+      "fock": {
+        "frobenius": 4.5620545549527495e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.7720021755506896e-11,
+        "max_absolute": 2.2652990594451694e-12
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -460.9358460553044,
+      "fock": {
+        "frobenius": 5.747763083600272e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.5119539661122892e-10,
+        "max_absolute": 1.644118174937148e-11
+      },
+      "energy_difference": 3.183231456205249e-12,
+      "energy_hartree": -460.9358460553012,
+      "fock": {
+        "frobenius": 2.0295792710079873e-11,
+        "max_absolute": 7.190692485892214e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.464474684449712e-11,
+        "max_absolute": 1.6016354908998665e-12
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -460.9358460553044,
+      "fock": {
+        "frobenius": 7.925925991589705e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -460.9358460553044,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 9.268707706176091e-11,
+        "max_absolute": 9.999390204740166e-12
+      },
+      "energy_difference": 6.59383658785373e-12,
+      "energy_hartree": -461.306787815834,
+      "fock": {
+        "frobenius": 1.8881908044074942e-10,
+        "max_absolute": 3.113598268100759e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 6.043586349982936e-12,
+        "max_absolute": 5.339062525422378e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.3067878158406,
+      "fock": {
+        "frobenius": 4.771765113624303e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 6.054200015124851e-12,
+        "max_absolute": 7.499834087099089e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.3067878158406,
+      "fock": {
+        "frobenius": 6.310661147136746e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.4446468982296157e-10,
+        "max_absolute": 1.2411682792645706e-11
+      },
+      "energy_difference": 2.9558577807620168e-12,
+      "energy_hartree": -461.30678781583765,
+      "fock": {
+        "frobenius": 2.051845128488137e-11,
+        "max_absolute": 3.5491609651217004e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 5.770831314712482e-12,
+        "max_absolute": 6.684652831268068e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.3067878158406,
+      "fock": {
+        "frobenius": 8.436759236510067e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -461.3067878158406,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.269232213077171e-11,
+        "max_absolute": 1.8022805470252479e-12
+      },
+      "energy_difference": 2.1600499167107046e-12,
+      "energy_hartree": -392.5483178505192,
+      "fock": {
+        "frobenius": 1.4307232296584805e-10,
+        "max_absolute": 2.4979129875646322e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 7.039187383173246e-13,
+        "max_absolute": 1.350586309456503e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.54831785052136,
+      "fock": {
+        "frobenius": 3.376700549751883e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 6.82053618327205e-13,
+        "max_absolute": 1.811328864675943e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.54831785052136,
+      "fock": {
+        "frobenius": 4.3457755923829615e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.9832199164703325e-11,
+        "max_absolute": 2.0018431357016198e-12
+      },
+      "energy_difference": 3.296918293926865e-12,
+      "energy_hartree": -392.54831785051806,
+      "fock": {
+        "frobenius": 2.133720916328083e-11,
+        "max_absolute": 6.59383658785373e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 8.667324686854478e-13,
+        "max_absolute": 1.8640644583456378e-13
+      },
+      "energy_difference": -1.1368683772161603e-13,
+      "energy_hartree": -392.54831785052147,
+      "fock": {
+        "frobenius": 5.657864733974923e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.54831785052136,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.2484672568989595e-11,
+        "max_absolute": 2.4183988145409785e-12
+      },
+      "energy_difference": 2.2737367544323206e-12,
+      "energy_hartree": -392.2681316750344,
+      "fock": {
+        "frobenius": 1.5229459267163143e-10,
+        "max_absolute": 2.7124968937641825e-11
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.95828279987994e-12,
+        "max_absolute": 2.5998647679159603e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.26813167503667,
+      "fock": {
+        "frobenius": 4.402915316949232e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.5109744242381718e-12,
+        "max_absolute": 3.3084646133829665e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.26813167503667,
+      "fock": {
+        "frobenius": 5.1891332692789335e-14,
+        "max_absolute": 1.0658141036401503e-14
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 5.036896072467584e-11,
+        "max_absolute": 6.181909151248277e-12
+      },
+      "energy_difference": 2.8421709430404007e-12,
+      "energy_hartree": -392.2681316750338,
+      "fock": {
+        "frobenius": 9.318587651462142e-12,
+        "max_absolute": 1.3784529073745944e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 1.9846767563186313e-12,
+        "max_absolute": 3.0159208463942377e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.26813167503667,
+      "fock": {
+        "frobenius": 6.709574932611504e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.26813167503667,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    },
+    {
+      "backend": "original",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 2.170090621935085e-11,
+        "max_absolute": 2.876254789896393e-12
+      },
+      "energy_difference": 1.5916157281026244e-12,
+      "energy_hartree": -392.5701080964237,
+      "fock": {
+        "frobenius": 5.258796923049693e-11,
+        "max_absolute": 6.988187806200585e-12
+      }
+    },
+    {
+      "backend": "fabo",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 8.017574853512876e-13,
+        "max_absolute": 1.0724754417879012e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.5701080964253,
+      "fock": {
+        "frobenius": 4.364858303110765e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "libintx",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 9.439504168061561e-13,
+        "max_absolute": 1.0791367799356522e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.5701080964253,
+      "fock": {
+        "frobenius": 4.92125387056615e-14,
+        "max_absolute": 7.105427357601002e-15
+      }
+    },
+    {
+      "backend": "vsr",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 3.4188239284005056e-11,
+        "max_absolute": 5.063172103803026e-12
+      },
+      "energy_difference": 2.6147972675971687e-12,
+      "energy_hartree": -392.5701080964227,
+      "fock": {
+        "frobenius": 2.4837227856603466e-11,
+        "max_absolute": 7.58682006107847e-12
+      }
+    },
+    {
+      "backend": "laikov",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 9.02997369261569e-13,
+        "max_absolute": 1.065536547883994e-13
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.5701080964253,
+      "fock": {
+        "frobenius": 7.118745666514043e-14,
+        "max_absolute": 1.4210854715202004e-14
+      }
+    },
+    {
+      "backend": "reference",
+      "bitwise_reproducible": true,
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "density-out": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "energy_difference": 0.0,
+      "energy_hartree": -392.5701080964253,
+      "fock": {
+        "frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    }
+  ]
+}

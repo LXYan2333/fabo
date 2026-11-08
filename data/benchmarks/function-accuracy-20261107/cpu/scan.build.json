@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/bin/x86_64-conda-linux-gnu-g++",
+    "-std=c++17",
+    "-O2",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-fno-lto",
+    "-I/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/include",
+    "/export/home/yanlongxiang/fast-boys-additive/library-accuracy-full-20261107/repo/benchmark/library_accuracy/scan.cc",
+    "-L/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/lib",
+    "-Wl,-rpath,/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/lib",
+    "-lmpfr",
+    "-lgmp",
+    "-lquadmath",
+    "-ldl",
+    "-pthread",
+    "-o",
+    "/export/home/yanlongxiang/fast-boys-additive/library-accuracy-full-20261107/results/scan"
+  ],
+  "compiler": "x86_64-conda-linux-gnu-g++ (conda-forge gcc 14.4.0-7) 14.4.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "sha256": "cb6a2099bca41f752528be01035e8a91fed1d77cecdeec4dcb860ef829dc798c"
+}

@@ -1,0 +1,2850 @@
+{
+  "cases": [
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "6-31GD.BAS",
+        "name": "6-31G*",
+        "sha256": "6100c60d37228a04773b529bbf62c81d89fb210cf890e0318dbd50cfb46c11db"
+      },
+      "case": {
+        "atoms": 768,
+        "basis": "6-31G*",
+        "copies": 128,
+        "geometry": "workloads/s66-01-stack-128.xyz",
+        "id": "s66-01-stack-128--6-31gstar",
+        "name": "Water-Water",
+        "original_geometry": "original-geometries/01_Water-Water_1.00.xyz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "sha256": "079ed6426eddac36ec9c2e7f56d6f8d11839b8766b75e6e53ccbca916f736573",
+        "system": 1,
+        "translation_angstrom": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "dimensions": [
+        4864,
+        4864,
+        2560
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 1.674186050232751e-11,
+        "fock": 1.8630587706705476e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": 70918.76218545409,
+          "energy_mean_difference": 1.4551915228366852e-11,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 1.4551915228366852e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 7.540521096416341e-10,
+            "fock": 2.8705926524708046e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.00556896037851285,
+              "mad_over_median": 0.0030558933755668433,
+              "median": 2.107093806989724,
+              "samples": [
+                2.0978504059894476,
+                2.1135328609962016,
+                2.1105116859835107,
+                2.084608640987426,
+                2.107093806989724
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.005587884444136367,
+              "mad_over_median": 0.001282308963938768,
+              "median": 3.5855727029847912,
+              "samples": [
+                3.5653194909973536,
+                3.5887923869886436,
+                3.590170515002683,
+                3.5438470160006545,
+                3.5855727029847912
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": 70918.76218545425,
+          "energy_mean_difference": 1.6880221664905548e-10,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 7.970412225479465e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.7462298274040222e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.880977482775051e-10,
+            "fock": 1.6571632954764936e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.003411721589344841,
+              "mad_over_median": 0.0011087588444484717,
+              "median": 2.2327605489990674,
+              "samples": [
+                2.2319818309915718,
+                2.2465667389915325,
+                2.2443090680171736,
+                2.2327605489990674,
+                2.230284955992829
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.003315674628821079,
+              "mad_over_median": 0.001610516608993126,
+              "median": 3.716540374007309,
+              "samples": [
+                3.716540374007309,
+                3.7199442310084123,
+                3.722525924007641,
+                3.6959548379818443,
+                3.6993488089938182
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": 70918.76218545409,
+          "energy_mean_difference": 1.1641532182693482e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.507814330688531e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.4551915228366852e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 8.150024655151355e-10,
+            "fock": 2.1600499167107045e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.005549787669231859,
+              "mad_over_median": 0.0023945844791705036,
+              "median": 2.1259654980094638,
+              "samples": [
+                2.1259654980094638,
+                2.1289061189745553,
+                2.1205781780008692,
+                2.101808619016083,
+                2.1310563019942492
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.006077637704593482,
+              "mad_over_median": 0.0025970897734462588,
+              "median": 3.603463028994156,
+              "samples": [
+                3.604763634997653,
+                3.603463028994156,
+                3.5941045120125636,
+                3.5603424970177002,
+                3.618439528014278
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": 70918.76218576153,
+          "energy_mean_difference": 3.0745286494493484e-07,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 3.0745286494493484e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 3.305246995495281e-05,
+            "fock": 4.917213408894838e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.010550959740137623,
+              "mad_over_median": 0.0010229185540181385,
+              "median": 2.33334412399563,
+              "samples": [
+                2.349552614003187,
+                2.3891941890178714,
+                2.33334412399563,
+                2.332093895995058,
+                2.3309573029982857
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.007695867104410528,
+              "mad_over_median": 0.002471796966709529,
+              "median": 3.8022180319821928,
+              "samples": [
+                3.821958755986998,
+                3.8626647570054047,
+                3.792819720983971,
+                3.8022180319821928,
+                3.7932654870091937
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": 70918.76218545408,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.659135134308599e-11,
+            "fock": 2.7000623958883806e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": 70918.76218545432,
+          "energy_mean_difference": 2.444721758365631e-10,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.507814330688531e-12,
+          "max_abs_energy_difference_from_reference_mean": 2.473825588822365e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 3.9662069184487337e-10,
+            "fock": 1.6486256804171262e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0017840428877000766,
+              "mad_over_median": 0.0007050792326105112,
+              "median": 2.2217772279982455,
+              "samples": [
+                2.2217772279982455,
+                2.220210699015297,
+                2.2253248049819376,
+                2.223329347994877,
+                2.2148759639821947
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.001764447181394618,
+              "mad_over_median": 0.001159536594552944,
+              "median": 3.6941930250031874,
+              "samples": [
+                3.698017696995521,
+                3.689909473003354,
+                3.7038927749963477,
+                3.6941930250031874,
+                3.6875392789952457
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "DEF2-SVP.BAS",
+        "name": "DEF2-SVP",
+        "sha256": "7ea100ba05fd41bc51edf33054dede6fe9ae318a5ecb67ebfed61f2d047993eb"
+      },
+      "case": {
+        "atoms": 768,
+        "basis": "def2-SVP",
+        "copies": 128,
+        "geometry": "workloads/s66-01-stack-128.xyz",
+        "id": "s66-01-stack-128--def2-svp",
+        "name": "Water-Water",
+        "original_geometry": "original-geometries/01_Water-Water_1.00.xyz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "sha256": "079ed6426eddac36ec9c2e7f56d6f8d11839b8766b75e6e53ccbca916f736573",
+        "system": 1,
+        "translation_angstrom": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "dimensions": [
+        6400,
+        6400,
+        2560
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 5.681721933121475e-12,
+        "fock": 1.5768606702104754e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": 42883.959810565735,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.5251657714543398e-10,
+            "fock": 2.0250467969162855e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0069722303235591355,
+              "mad_over_median": 0.005503829997346585,
+              "median": 2.41077322899946,
+              "samples": [
+                2.4196719800238498,
+                2.3855053189909086,
+                2.397504742984893,
+                2.41077322899946,
+                2.4271731399931014
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.005930337918988528,
+              "mad_over_median": 0.002782679113866446,
+              "median": 5.503015750000486,
+              "samples": [
+                5.503015750000486,
+                5.436070216994267,
+                5.518328876991291,
+                5.479759239999112,
+                5.506172402005177
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": 42883.9598105658,
+          "energy_mean_difference": 6.693881005048751e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.087502890543514e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.210763293599484e-10,
+            "fock": 1.0793144156195922e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.009545450595828233,
+              "mad_over_median": 0.008029792249042657,
+              "median": 2.49226722001913,
+              "samples": [
+                2.510789546009619,
+                2.4722548320132773,
+                2.49226722001913,
+                2.4591719429881778,
+                2.5136037250049412
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.00613602975495941,
+              "mad_over_median": 0.0037166303148799965,
+              "median": 5.556806095002685,
+              "samples": [
+                5.607777766999789,
+                5.536153501016088,
+                5.556806095002685,
+                5.517333996976959,
+                5.565023254021071
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": 42883.959810565735,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.5575309930682124e-10,
+            "fock": 1.8545165403338616e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.006612775440778085,
+              "mad_over_median": 0.006484790153576234,
+              "median": 2.407604813022772,
+              "samples": [
+                2.406156524986727,
+                2.3866663340013474,
+                2.4266225649917033,
+                2.407604813022772,
+                2.4232176250079647
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.003955835936713456,
+              "mad_over_median": 0.0037120018694172217,
+              "median": 5.474615782004548,
+              "samples": [
+                5.474615782004548,
+                5.454293997987406,
+                5.508161714009475,
+                5.469641834002687,
+                5.4971183979942
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": 42883.959838399736,
+          "energy_mean_difference": 2.7834001230075955e-05,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 2.7834001230075955e-05,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 0.0001549465864274069,
+            "fock": 3.604450943495152e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.007011494462963649,
+              "mad_over_median": 0.006952643213673964,
+              "median": 2.552676507009892,
+              "samples": [
+                2.5706674389948603,
+                2.539892510016216,
+                2.552676507009892,
+                2.530774287006352,
+                2.570424356003059
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.004879638555937542,
+              "mad_over_median": 0.0043434133682567,
+              "median": 5.613455799990334,
+              "samples": [
+                5.645814843999688,
+                5.5890742410265375,
+                5.613455799990334,
+                5.593926795001607,
+                5.646207636978943
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": 42883.959810565735,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 7.435119186993689e-12,
+            "fock": 2.3447910280083305e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": 42883.95981056579,
+          "energy_mean_difference": 5.820766091346741e-11,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 5.820766091346741e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.506272440110479e-10,
+            "fock": 9.059419880941277e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.007989679070350168,
+              "mad_over_median": 0.004509024804875317,
+              "median": 2.4562559540208895,
+              "samples": [
+                2.487417750991881,
+                2.4456222580047324,
+                2.4451806349970866,
+                2.4799612310016528,
+                2.4562559540208895
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.005920711854275376,
+              "mad_over_median": 0.00338736762241675,
+              "median": 5.548419634986203,
+              "samples": [
+                5.567214172013337,
+                5.486289107997436,
+                5.529520675976528,
+                5.548419634986203,
+                5.562427358003333
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "CC-PVDZ.BAS",
+        "name": "CC-PVDZ",
+        "sha256": "91c9939cb1942161d07862575b66c69cd9e4fc8d7f4fa346de9b08c958ffea77"
+      },
+      "case": {
+        "atoms": 768,
+        "basis": "cc-pVDZ",
+        "copies": 128,
+        "geometry": "workloads/s66-01-stack-128.xyz",
+        "id": "s66-01-stack-128--cc-pvdz",
+        "name": "Water-Water",
+        "original_geometry": "original-geometries/01_Water-Water_1.00.xyz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "sha256": "079ed6426eddac36ec9c2e7f56d6f8d11839b8766b75e6e53ccbca916f736573",
+        "system": 1,
+        "translation_angstrom": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "dimensions": [
+        6400,
+        6400,
+        2560
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 6.044698494618865e-12,
+        "fock": 1.5768606702104754e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": 42936.247349423626,
+          "energy_mean_difference": 5.820766091346741e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.1641532182693482e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 6.513616312986415e-11,
+            "fock": 1.5987211554602254e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.005722911610546813,
+              "mad_over_median": 0.004465622361987513,
+              "median": 3.2893721900181845,
+              "samples": [
+                3.2893721900181845,
+                3.2746830960095394,
+                3.287684178998461,
+                3.313519452989567,
+                3.319541983975796
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.005108102910226957,
+              "mad_over_median": 0.002178609093239796,
+              "median": 6.344735747989034,
+              "samples": [
+                6.338680921006016,
+                6.330913048994262,
+                6.344735747989034,
+                6.394719303003512,
+                6.398688592977123
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": 42936.24734942369,
+          "energy_mean_difference": 6.83940015733242e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 6.984919309616089e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.1509442288115679e-10,
+            "fock": 1.1731060567399254e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.003978798629481581,
+              "mad_over_median": 0.0017541709466390738,
+              "median": 3.5235802050156053,
+              "samples": [
+                3.5403499779931735,
+                3.5173992429918144,
+                3.5495606409967877,
+                3.5200210270122625,
+                3.5235802050156053
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.004600428728377218,
+              "mad_over_median": 0.0010465298330129724,
+              "median": 6.573632979008835,
+              "samples": [
+                6.623898744001053,
+                6.566753475985024,
+                6.6278365579782985,
+                6.571846026025014,
+                6.573632979008835
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": 42936.24734942362,
+          "energy_mean_difference": -1.4551915228366857e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 4.365574568510055e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 9.366445397063217e-11,
+            "fock": 1.6129320101754274e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0064300574035569946,
+              "mad_over_median": 0.0024628147830985892,
+              "median": 3.356507791002514,
+              "samples": [
+                3.3482413339952473,
+                3.314262220985256,
+                3.3711177009972744,
+                3.359346340992488,
+                3.356507791002514
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.005161436884469436,
+              "mad_over_median": 0.0003906073034523332,
+              "median": 6.4438861010130495,
+              "samples": [
+                6.428847506002057,
+                6.369008280977141,
+                6.44640312998672,
+                6.446326407982269,
+                6.4438861010130495
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": 42936.2473489923,
+          "energy_mean_difference": -4.3132167775183917e-07,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 4.3132167775183917e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 7.930218978202674e-06,
+            "fock": 7.981532172074423e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.004414869061835125,
+              "mad_over_median": 0.0026697164872116126,
+              "median": 3.695785328018246,
+              "samples": [
+                3.6930500529997516,
+                3.685918628994841,
+                3.723768479016144,
+                3.7169646069814917,
+                3.695785328018246
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.004840344984177161,
+              "mad_over_median": 0.0013389952413998718,
+              "median": 6.760073315992486,
+              "samples": [
+                6.7510216099908575,
+                6.760073315992486,
+                6.79602178602363,
+                6.828017887979513,
+                6.757230584014906
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": 42936.247349423626,
+          "energy_mean_difference": 0.0,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 4.365574568510055e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 9.024425651205093e-12,
+            "fock": 2.3447910280083305e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": 42936.24734942372,
+          "energy_mean_difference": 9.895302355289459e-11,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 9.895302355289459e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.3547989397011405e-10,
+            "fock": 1.2548184713523369e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.004141935301601064,
+              "mad_over_median": 0.002975750213598795,
+              "median": 3.4626545409846585,
+              "samples": [
+                3.4660132199933287,
+                3.4523505459947046,
+                3.4626545409846585,
+                3.4471233249932993,
+                3.4841997390030883
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.004118546491456072,
+              "mad_over_median": 0.002456744755212037,
+              "median": 6.5183035240042955,
+              "samples": [
+                6.534317331999773,
+                6.502464941993821,
+                6.5183035240042955,
+                6.493813785986276,
+                6.561302287998842
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "6-31GD.BAS",
+        "name": "6-31G*",
+        "sha256": "6100c60d37228a04773b529bbf62c81d89fb210cf890e0318dbd50cfb46c11db"
+      },
+      "case": {
+        "atoms": 192,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "workloads/s66-17-stack-8.xyz",
+        "id": "s66-17-stack-8--6-31gstar",
+        "name": "Uracil-Uracil_BP",
+        "original_geometry": "original-geometries/17_Uracil-Uracil_BP_1.00.xyz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "sha256": "69939745b7370916a6073cf39d8452b359925c84fa60f6bf2603db213e6b3081",
+        "system": 17,
+        "translation_angstrom": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "dimensions": [
+        2048,
+        2048,
+        928
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 3.1710192239139146e-12,
+        "fock": 4.425945548518211e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -6650.6745467699875,
+          "energy_mean_difference": 2.1827872842550278e-11,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 2.1827872842550278e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.6259616703327993e-11,
+            "fock": 6.139089236967266e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0010547884559360843,
+              "mad_over_median": 0.0011859717001577329,
+              "median": 3.3493902269983664,
+              "samples": [
+                3.3493902269983664,
+                3.344751716009341,
+                3.349470179004129,
+                3.3452621219912544,
+                3.3533625090203714
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.001210782500559865,
+              "mad_over_median": 0.0008468077451643317,
+              "median": 3.5407753720064647,
+              "samples": [
+                3.5407753720064647,
+                3.5361067540070508,
+                3.5418930510059,
+                3.5377770159975626,
+                3.5472161270154174
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -6650.674546769849,
+          "energy_mean_difference": 1.6007106751203537e-10,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 5.1448789686149945e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.673470251262188e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.4200154647455745e-11,
+            "fock": 2.2725998860551045e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.001281274558862834,
+              "mad_over_median": 0.0007501454130705767,
+              "median": 3.670712305000052,
+              "samples": [
+                3.666497920989059,
+                3.661859721993096,
+                3.6718876310042106,
+                3.6734658729983494,
+                3.670712305000052
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0015772916234237004,
+              "mad_over_median": 0.0009501733624578549,
+              "median": 3.8634854999836534,
+              "samples": [
+                3.857732281991048,
+                3.8517057049903087,
+                3.86715648099198,
+                3.8637331779755186,
+                3.8634854999836534
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -6650.674546769992,
+          "energy_mean_difference": 1.746229827404022e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 2.1827872842550278e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 3.051476848980883e-11,
+            "fock": 6.139089236967266e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.00033941109330255526,
+              "mad_over_median": 0.00030204004842652944,
+              "median": 3.4397624190023635,
+              "samples": [
+                3.4410999509855174,
+                3.4397624190023635,
+                3.4387234729947522,
+                3.4398299409949686,
+                3.4380470640026033
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.00037409273598647236,
+              "mad_over_median": 0.0002925253236638396,
+              "median": 3.630981313996017,
+              "samples": [
+                3.633482428995194,
+                3.632060171017656,
+                3.630981313996017,
+                3.629919160011923,
+                3.630886789993383
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -6650.67454653453,
+          "energy_mean_difference": 2.354790922254324e-07,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 2.354790922254324e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 6.195007546067055e-06,
+            "fock": 6.998788308010262e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0013621995843589197,
+              "mad_over_median": 0.0011910694088269032,
+              "median": 3.6737514609994832,
+              "samples": [
+                3.6704682249983307,
+                3.668842126004165,
+                3.6737514609994832,
+                3.678127153980313,
+                3.6806889830040745
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.001542328073710155,
+              "mad_over_median": 0.0015036852901809607,
+              "median": 3.8668297219846863,
+              "samples": [
+                3.860330060997512,
+                3.8610152270121034,
+                3.8668297219846863,
+                3.8704496839782223,
+                3.874142493994441
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -6650.674546770009,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.451727957961339e-12,
+            "fock": 6.252776074688882e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -6650.674546769864,
+          "energy_mean_difference": 1.4551915228366852e-10,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 1.4551915228366852e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.301399319534994e-11,
+            "fock": 2.2725998860551045e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0009363160629023804,
+              "mad_over_median": 0.00033229613159813315,
+              "median": 3.6243455270014238,
+              "samples": [
+                3.623141171003226,
+                3.6201691259921063,
+                3.6243455270014238,
+                3.625171023013536,
+                3.6294996309734415
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0010167386762826513,
+              "mad_over_median": 0.000626614173071579,
+              "median": 3.816373931011185,
+              "samples": [
+                3.8139825370162725,
+                3.811416102980729,
+                3.8163932169845793,
+                3.816373931011185,
+                3.821902402996784
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "DEF2-SVP.BAS",
+        "name": "DEF2-SVP",
+        "sha256": "7ea100ba05fd41bc51edf33054dede6fe9ae318a5ecb67ebfed61f2d047993eb"
+      },
+      "case": {
+        "atoms": 192,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "workloads/s66-17-stack-8.xyz",
+        "id": "s66-17-stack-8--def2-svp",
+        "name": "Uracil-Uracil_BP",
+        "original_geometry": "original-geometries/17_Uracil-Uracil_BP_1.00.xyz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "sha256": "69939745b7370916a6073cf39d8452b359925c84fa60f6bf2603db213e6b3081",
+        "system": 17,
+        "translation_angstrom": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "dimensions": [
+        2240,
+        2240,
+        928
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 4.081466047930925e-12,
+        "fock": 2.946825553824471e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -6643.172627064589,
+          "energy_mean_difference": -7.275957614183426e-12,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.654098300666988e-11,
+            "fock": 6.451728040701709e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0018854684350631812,
+              "mad_over_median": 0.0011908570469190993,
+              "median": 2.0890962940175086,
+              "samples": [
+                2.0890962940175086,
+                2.094313109992072,
+                2.095301613007905,
+                2.087759863003157,
+                2.0866084789740853
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0033586239209934168,
+              "mad_over_median": 0.001433071902219337,
+              "median": 2.321420869004214,
+              "samples": [
+                2.321420869004214,
+                2.336622664995957,
+                2.3285202820261475,
+                2.3189797670056578,
+                2.3180941059836186
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -6643.172627064448,
+          "energy_mean_difference": 1.3387762010097503e-10,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.382431946694851e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.577900476945615e-10,
+            "fock": 1.4139800441625994e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0005971005785564457,
+              "mad_over_median": 0.0005138914685393759,
+              "median": 2.2515707540151197,
+              "samples": [
+                2.2525216460053343,
+                2.2515707540151197,
+                2.2503992940182798,
+                2.249616146000335,
+                2.252727817016421
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0009025471943761592,
+              "mad_over_median": 0.000669284366787579,
+              "median": 2.482409693999216,
+              "samples": [
+                2.4847512420092244,
+                2.482409693999216,
+                2.4807482559990603,
+                2.4815330099954735,
+                2.486083508003503
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -6643.172627064583,
+          "energy_mean_difference": -1.4551915228366853e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.0007720187039695e-11,
+            "fock": 6.025402399245649e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0012178143098189101,
+              "mad_over_median": 0.0008189842205759247,
+              "median": 2.1282998289971147,
+              "samples": [
+                2.13171812298242,
+                2.1265567850205116,
+                2.125175410998054,
+                2.129845358984312,
+                2.1282998289971147
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0014982238424517996,
+              "mad_over_median": 0.0010842567062821185,
+              "median": 2.357578213006491,
+              "samples": [
+                2.363580834993627,
+                2.355814245005604,
+                2.3548321690177545,
+                2.3601344329945277,
+                2.357578213006491
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -6643.172567249434,
+          "energy_mean_difference": 5.981514696031809e-05,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 5.981515278108418e-05,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 9.717976743079393e-05,
+            "fock": 1.783642122177298e-06
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007650862800483025,
+              "mad_over_median": 0.0008018802589393532,
+              "median": 2.2362303889822215,
+              "samples": [
+                2.2385672369855456,
+                2.238306448998628,
+                2.2344371999788564,
+                2.2362303889822215,
+                2.2361407869902905
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0012974058886401055,
+              "mad_over_median": 0.0004325523876469811,
+              "median": 2.4672318329976406,
+              "samples": [
+                2.471225446992321,
+                2.4733508689969312,
+                2.466164625977399,
+                2.4672318329976406,
+                2.4665424099948723
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -6643.172627064581,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.849287720849361e-12,
+            "fock": 4.5474735088646414e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -6643.17262706444,
+          "energy_mean_difference": 1.4115357771515845e-10,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.4551915228366852e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 8.83992767874986e-11,
+            "fock": 1.4139800441625994e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0009113101872002534,
+              "mad_over_median": 0.0008020175446459405,
+              "median": 2.2125799969944637,
+              "samples": [
+                2.2147094829997513,
+                2.2095662179926876,
+                2.2131689559901133,
+                2.2108054690179415,
+                2.2125799969944637
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0012847805338642786,
+              "mad_over_median": 0.00030417052829418225,
+              "median": 2.4452138179913163,
+              "samples": [
+                2.447171781997895,
+                2.4389839579816908,
+                2.44574173699948,
+                2.4444700560125057,
+                2.4452138179913163
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "CC-PVDZ.BAS",
+        "name": "CC-PVDZ",
+        "sha256": "91c9939cb1942161d07862575b66c69cd9e4fc8d7f4fa346de9b08c958ffea77"
+      },
+      "case": {
+        "atoms": 192,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "workloads/s66-17-stack-8.xyz",
+        "id": "s66-17-stack-8--cc-pvdz",
+        "name": "Uracil-Uracil_BP",
+        "original_geometry": "original-geometries/17_Uracil-Uracil_BP_1.00.xyz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "sha256": "69939745b7370916a6073cf39d8452b359925c84fa60f6bf2603db213e6b3081",
+        "system": 17,
+        "translation_angstrom": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "dimensions": [
+        2240,
+        2240,
+        928
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 4.027588590676136e-12,
+        "fock": 4.094107535731818e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -6644.3066867265425,
+          "energy_mean_difference": -2.91038304567337e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 4.365574568510055e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.6131263819451078e-11,
+            "fock": 4.916955731459893e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0010442682523300725,
+              "mad_over_median": 0.00044919652530405976,
+              "median": 3.369180134002818,
+              "samples": [
+                3.3754441459896043,
+                3.369944189005764,
+                3.369180134002818,
+                3.3676667099935003,
+                3.366225736011984
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0012468164813653454,
+              "mad_over_median": 0.0005608602704543147,
+              "median": 3.60125526599586,
+              "samples": [
+                3.6090747449779883,
+                3.6006869460106827,
+                3.6032750669983216,
+                3.60125526599586,
+                3.5968065269989893
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -6644.306686726406,
+          "energy_mean_difference": 1.3387762010097503e-10,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 1.3387762010097503e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.5446646446123395e-11,
+            "fock": 1.1905854080396238e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0004619224796543175,
+              "mad_over_median": 0.0003705551696219233,
+              "median": 3.759966476005502,
+              "samples": [
+                3.7599690979986917,
+                3.757944246986881,
+                3.758573200990213,
+                3.759966476005502,
+                3.762457317992812
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0005197712347895307,
+              "mad_over_median": 0.00041387530072654975,
+              "median": 3.9923523030010983,
+              "samples": [
+                3.9944545479957014,
+                3.98927824900602,
+                3.99156036999193,
+                3.9923523030010983,
+                3.9940046390111092
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -6644.306686726544,
+          "energy_mean_difference": -4.365574568510055e-12,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 4.365574568510055e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.8931801399068036e-11,
+            "fock": 5.087485988042317e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0010736138874931037,
+              "mad_over_median": 3.6317640236581935e-05,
+              "median": 3.474289551988477,
+              "samples": [
+                3.474289551988477,
+                3.4743939389882144,
+                3.4767116909788456,
+                3.47416337399045,
+                3.466892155993264
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0016465738044008557,
+              "mad_over_median": 0.0005259111872970701,
+              "median": 3.707799042982515,
+              "samples": [
+                3.707799042982515,
+                3.705849069985561,
+                3.7138449189951643,
+                3.709626681986265,
+                3.697337567980867
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -6644.306638667547,
+          "energy_mean_difference": 4.805899225175381e-05,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 4.80589980725199e-05,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.6163408048548466e-05,
+            "fock": 1.3157229261651082e-06
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007369451226958393,
+              "mad_over_median": 0.00033108527587063743,
+              "median": 3.8183727849973366,
+              "samples": [
+                3.8183727849973366,
+                3.8211195710173342,
+                3.817108577990439,
+                3.813668296992546,
+                3.819499210017966
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0007360837198553007,
+              "mad_over_median": 0.00022048499120372368,
+              "median": 4.050820008007577,
+              "samples": [
+                4.05147503700573,
+                4.05185397202149,
+                4.050820008007577,
+                4.044556922017364,
+                4.049926862993743
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -6644.30668672654,
+          "energy_mean_difference": 0.0,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.507814330688531e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.0186340659856796e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.2974624686896735e-12,
+            "fock": 6.252776074688882e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -6644.306686726419,
+          "energy_mean_difference": 1.2078089639544485e-10,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.266016624867916e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 3.846228890935777e-11,
+            "fock": 1.1829115464934148e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.00042187715655563605,
+              "mad_over_median": 0.00032166590322070223,
+              "median": 3.666014918999281,
+              "samples": [
+                3.667606375995092,
+                3.6648356869991403,
+                3.6686229309998453,
+                3.666014918999281,
+                3.665583547001006
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0013486379959273154,
+              "mad_over_median": 0.0005712633250779931,
+              "median": 3.898778217000654,
+              "samples": [
+                3.9010054460086394,
+                3.898778217000654,
+                3.9093085789936595,
+                3.897593383997446,
+                3.8958710209990386
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "6-31GD.BAS",
+        "name": "6-31G*",
+        "sha256": "6100c60d37228a04773b529bbf62c81d89fb210cf890e0318dbd50cfb46c11db"
+      },
+      "case": {
+        "atoms": 384,
+        "basis": "6-31G*",
+        "copies": 16,
+        "geometry": "workloads/s66-24-stack-16.xyz",
+        "id": "s66-24-stack-16--6-31gstar",
+        "name": "Benzene-Benzene_pi-pi",
+        "original_geometry": "original-geometries/24_Benzene-Benzene_pi-pi_1.00.xyz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "sha256": "adcf2e7e6e9612f9ca78c28cf5967d1ab9cd023d7d33a7ac8b1611cdc3706fbd",
+        "system": 24,
+        "translation_angstrom": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "dimensions": [
+        3264,
+        3264,
+        1344
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 1.989451416407718e-12,
+        "fock": 3.49540808777216e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -7464.081701455425,
+          "energy_mean_difference": -1.1641532182693482e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.6007106751203538e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.1692692087071918e-11,
+            "fock": 3.055333763768431e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007705017718807211,
+              "mad_over_median": 0.0002245201046689866,
+              "median": 5.288087697001174,
+              "samples": [
+                5.289274979004404,
+                5.288087697001174,
+                5.296890849014744,
+                5.288005790003808,
+                5.286678767995909
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0017121656261131321,
+              "mad_over_median": 0.0003469855003923256,
+              "median": 5.816969344014069,
+              "samples": [
+                5.837680082011502,
+                5.8149509399954695,
+                5.827930731000379,
+                5.815423271997133,
+                5.816969344014069
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -7464.081701455344,
+          "energy_mean_difference": 6.98491930961609e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 7.970412225479465e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.8580342233181e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.833915324629288e-11,
+            "fock": 1.2164491636212915e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0005781608960849905,
+              "mad_over_median": 0.0004124066091600272,
+              "median": 5.765053062001243,
+              "samples": [
+                5.761471538018668,
+                5.762675516016316,
+                5.770133693993557,
+                5.765483112016227,
+                5.765053062001243
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0009535164799192127,
+              "mad_over_median": 0.0006447902393906297,
+              "median": 6.294571081001777,
+              "samples": [
+                6.294571081001777,
+                6.290512403007597,
+                6.3039269159780815,
+                6.294049941003323,
+                6.303318666003179
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -7464.081701455425,
+          "energy_mean_difference": -1.1641532182693482e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.6007106751203538e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.4700674838840086e-11,
+            "fock": 2.8421709430404007e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007658723043579126,
+              "mad_over_median": 0.00023522055239778592,
+              "median": 5.379810628975974,
+              "samples": [
+                5.381076071003918,
+                5.3749890709877945,
+                5.38651583599858,
+                5.379810628975974,
+                5.379737717972603
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.002140415931878089,
+              "mad_over_median": 0.0022114096336333404,
+              "median": 5.91483042598702,
+              "samples": [
+                5.931000915996265,
+                5.901750313001685,
+                5.930037863989128,
+                5.91483042598702,
+                5.910630200989544
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -7464.081700980239,
+          "energy_mean_difference": 4.7517532948404555e-07,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 4.7517678467556836e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.635844059015404e-06,
+            "fock": 4.83714075905084e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0011392251782100227,
+              "mad_over_median": 0.0007451459068373873,
+              "median": 5.915519279980799,
+              "samples": [
+                5.924718652997399,
+                5.925197536998894,
+                5.915519279980799,
+                5.912389686011011,
+                5.911111355002504
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0010828045381678251,
+              "mad_over_median": 0.0006414894531509511,
+              "median": 6.4478877460060176,
+              "samples": [
+                6.459081481007161,
+                6.452023997990182,
+                6.4478877460060176,
+                6.440739221026888,
+                6.445153920998564
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -7464.081701455414,
+          "energy_mean_difference": 0.0,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 7.970412225479465e-12,
+          "max_abs_energy_difference_from_reference_mean": 8.73114913702011e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.540945231999103e-12,
+            "fock": 5.5422333389287813e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -7464.081701455344,
+          "energy_mean_difference": 6.98491930961609e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.130438461899758e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 3.138928006407582e-11,
+            "fock": 1.2192913345643319e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0005604353883607737,
+              "mad_over_median": 0.0005103892225018632,
+              "median": 5.701572183985263,
+              "samples": [
+                5.704482204979286,
+                5.701572183985263,
+                5.704221539024729,
+                5.698295039997902,
+                5.697682929981966
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0016939610990056387,
+              "mad_over_median": 0.0007974821698649753,
+              "median": 6.2367074840003625,
+              "samples": [
+                6.252531100995839,
+                6.2367074840003625,
+                6.241681147017516,
+                6.232455210993066,
+                6.2241929610027
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "DEF2-SVP.BAS",
+        "name": "DEF2-SVP",
+        "sha256": "7ea100ba05fd41bc51edf33054dede6fe9ae318a5ecb67ebfed61f2d047993eb"
+      },
+      "case": {
+        "atoms": 384,
+        "basis": "def2-SVP",
+        "copies": 16,
+        "geometry": "workloads/s66-24-stack-16.xyz",
+        "id": "s66-24-stack-16--def2-svp",
+        "name": "Benzene-Benzene_pi-pi",
+        "original_geometry": "original-geometries/24_Benzene-Benzene_pi-pi_1.00.xyz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "sha256": "adcf2e7e6e9612f9ca78c28cf5967d1ab9cd023d7d33a7ac8b1611cdc3706fbd",
+        "system": 24,
+        "translation_angstrom": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "dimensions": [
+        3840,
+        3840,
+        1344
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 5.408884815900715e-12,
+        "fock": 3.1776437161565096e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -7448.816624188505,
+          "energy_mean_difference": -1.6007106751203535e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 2.037268131971359e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 8.978126020409149e-11,
+            "fock": 4.888534022029489e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0024781574313066795,
+              "mad_over_median": 0.0006720109182424215,
+              "median": 4.237359738006489,
+              "samples": [
+                4.2155383650097065,
+                4.2384186450217385,
+                4.234512185998028,
+                4.242311408976093,
+                4.237359738006489
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0035799735240331356,
+              "mad_over_median": 0.0014397834717598925,
+              "median": 5.013588600995718,
+              "samples": [
+                4.986565285013057,
+                5.020807082997635,
+                5.011315907002427,
+                5.035974223981611,
+                5.013588600995718
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -7448.816624188342,
+          "energy_mean_difference": 1.4551915228366852e-10,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.469743438065052e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 9.252723032204812e-11,
+            "fock": 1.3638157270179364e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0015470255094730317,
+              "mad_over_median": 0.00046836350561387777,
+              "median": 4.472630771982949,
+              "samples": [
+                4.463131719006924,
+                4.4824120120028965,
+                4.472630771982949,
+                4.471406792989001,
+                4.474725589010632
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0028590932916934906,
+              "mad_over_median": 0.001635762841752336,
+              "median": 5.252571949007688,
+              "samples": [
+                5.234879349009134,
+                5.274414151004748,
+                5.243979986989871,
+                5.252571949007688,
+                5.258813054999337
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -7448.816624188507,
+          "energy_mean_difference": -1.8917489796876905e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 2.037268131971359e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 8.848896060342781e-11,
+            "fock": 4.149569576838985e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0014977894208201713,
+              "mad_over_median": 0.000987506647567828,
+              "median": 4.263391070009675,
+              "samples": [
+                4.2745451950177085,
+                4.2587380619952455,
+                4.263391070009675,
+                4.264890321006533,
+                4.259180942986859
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.002117594831573974,
+              "mad_over_median": 0.002194677911934097,
+              "median": 5.045235086989123,
+              "samples": [
+                5.056307752995053,
+                5.032235907012364,
+                5.051660606986843,
+                5.045235086989123,
+                5.033685731003061
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -7448.816614439906,
+          "energy_mean_difference": 9.74858266999945e-06,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 9.748584125190973e-06,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.304571749854323e-05,
+            "fock": 2.1024639664801726e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0011077813259892265,
+              "mad_over_median": 0.0008819619642881135,
+              "median": 4.540423678990919,
+              "samples": [
+                4.536419198004296,
+                4.540423678990919,
+                4.5450718849897385,
+                4.54318594301003,
+                4.5327030300104525
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0008832188736307947,
+              "mad_over_median": 0.0006524871048793875,
+              "median": 5.320574074983597,
+              "samples": [
+                5.317102469009114,
+                5.320574074983597,
+                5.326371915987693,
+                5.321381725021638,
+                5.313904054986779
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -7448.816624188487,
+          "energy_mean_difference": 0.0,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 5.820766091346741e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 8.256761940828028e-12,
+            "fock": 4.5474735088646414e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -7448.8166241884,
+          "energy_mean_difference": 8.876668289303779e-11,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 8.876668289303779e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.0879096512539377e-10,
+            "fock": 1.3737633253185778e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0020653880555325985,
+              "mad_over_median": 0.0022772822402203252,
+              "median": 4.42224543201155,
+              "samples": [
+                4.410802531987429,
+                4.421671915013576,
+                4.432316132995766,
+                4.433062809985131,
+                4.42224543201155
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0013901335695456214,
+              "mad_over_median": 0.0007922909405766737,
+              "median": 5.199895380996168,
+              "samples": [
+                5.195775550993858,
+                5.199895380996168,
+                5.210093467991101,
+                5.212084894999862,
+                5.199082030012505
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "CC-PVDZ.BAS",
+        "name": "CC-PVDZ",
+        "sha256": "91c9939cb1942161d07862575b66c69cd9e4fc8d7f4fa346de9b08c958ffea77"
+      },
+      "case": {
+        "atoms": 384,
+        "basis": "cc-pVDZ",
+        "copies": 16,
+        "geometry": "workloads/s66-24-stack-16.xyz",
+        "id": "s66-24-stack-16--cc-pvdz",
+        "name": "Benzene-Benzene_pi-pi",
+        "original_geometry": "original-geometries/24_Benzene-Benzene_pi-pi_1.00.xyz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "sha256": "adcf2e7e6e9612f9ca78c28cf5967d1ab9cd023d7d33a7ac8b1611cdc3706fbd",
+        "system": 24,
+        "translation_angstrom": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "dimensions": [
+        3840,
+        3840,
+        1344
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 4.3325777817771906e-12,
+        "fock": 3.495408087772161e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -7452.773140799941,
+          "energy_mean_difference": 1.4551915228366853e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.2828240953696195e-11,
+            "fock": 3.836930773104541e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0012875254022583725,
+              "mad_over_median": 0.0012681167644404522,
+              "median": 6.983555630024057,
+              "samples": [
+                6.983555630024057,
+                6.97680995601695,
+                6.993672737007728,
+                6.992411593993893,
+                6.9736451729841065
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0016953597343906566,
+              "mad_over_median": 0.0009164164863649638,
+              "median": 7.764191356021911,
+              "samples": [
+                7.764191356021911,
+                7.747652846999699,
+                7.770560817007208,
+                7.771306588983862,
+                7.743123343010666
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -7452.773140799874,
+          "energy_mean_difference": 6.693881005048751e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.6473602743901665e-11,
+            "fock": 1.2055068054905859e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0008384523354311136,
+              "mad_over_median": 0.00042185463645744343,
+              "median": 7.664244315994438,
+              "samples": [
+                7.664244315994438,
+                7.661011118994793,
+                7.675507984007709,
+                7.666186401009327,
+                7.65891227699467
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0011289712310369683,
+              "mad_over_median": 0.00036942059409739267,
+              "median": 8.444751248985995,
+              "samples": [
+                8.444241292978404,
+                8.429995958984364,
+                8.456409197999164,
+                8.444751248985995,
+                8.4478709140094
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -7452.773140799944,
+          "energy_mean_difference": -1.4551915228366853e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.3858250364792184e-11,
+            "fock": 3.907985046680551e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0012476221718066376,
+              "mad_over_median": 0.00018066076528117946,
+              "median": 7.116857779998099,
+              "samples": [
+                7.118252802989446,
+                7.097278597007971,
+                7.11733425501734,
+                7.116857779998099,
+                7.115572043025168
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0017107049871003075,
+              "mad_over_median": 0.0006137507629586612,
+              "median": 7.894388573011383,
+              "samples": [
+                7.898068092996255,
+                7.868897950014798,
+                7.894388573011383,
+                7.9042989859881345,
+                7.8895433860016055
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -7452.773140488699,
+          "energy_mean_difference": 3.112436388619244e-07,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 3.112436388619244e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 6.176095948035032e-06,
+            "fock": 7.01142779213626e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0015428666400079346,
+              "mad_over_median": 0.0009723743351320143,
+              "median": 7.9541589400032535,
+              "samples": [
+                7.948537020012736,
+                7.940434052987257,
+                7.972366864007199,
+                7.9618933600140736,
+                7.9541589400032535
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.002625574591416537,
+              "mad_over_median": 0.0015692395163139107,
+              "median": 8.72320500598289,
+              "samples": [
+                8.716839042986976,
+                8.709516207978595,
+                8.765610052010743,
+                8.744654130015988,
+                8.72320500598289
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -7452.773140799941,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 5.493716592752662e-12,
+            "fock": 5.684341886080802e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -7452.773140799848,
+          "energy_mean_difference": 9.313225746154786e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 9.458744898438454e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 7.316081074293379e-11,
+            "fock": 5.74260639041313e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0005723338322100298,
+              "mad_over_median": 0.0002664159393332339,
+              "median": 7.502340097009437,
+              "samples": [
+                7.502340097009437,
+                7.50086074200226,
+                7.4992179879918694,
+                7.504338839993579,
+                7.510315829014871
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0007120258993719505,
+              "mad_over_median": 0.00015817964645286505,
+              "median": 8.271873376012081,
+              "samples": [
+                8.271873376012081,
+                8.27056493400596,
+                8.271069549984531,
+                8.282281563006109,
+                8.281480252015172
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "6-31GD.BAS",
+        "name": "6-31G*",
+        "sha256": "6100c60d37228a04773b529bbf62c81d89fb210cf890e0318dbd50cfb46c11db"
+      },
+      "case": {
+        "atoms": 544,
+        "basis": "6-31G*",
+        "copies": 16,
+        "geometry": "workloads/s66-34-stack-16.xyz",
+        "id": "s66-34-stack-16--6-31gstar",
+        "name": "Pentane-Pentane",
+        "original_geometry": "original-geometries/34_Pentane-Pentane_1.00.xyz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "sha256": "5fcd30a4608691a371a08fcb07075a2044260d588efc8e23d7763d3e05ea5a82",
+        "system": 34,
+        "translation_angstrom": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "dimensions": [
+        3168,
+        3168,
+        1344
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 1.125952476024764e-12,
+        "fock": 3.84613048331754e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -6337.212198937386,
+          "energy_mean_difference": 5.820766091346741e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.5966239441667086e-11,
+            "fock": 3.439026841078885e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0009907496646491861,
+              "mad_over_median": 0.0007650869751844315,
+              "median": 4.566697813017527,
+              "samples": [
+                4.5729971939872485,
+                4.563203892001184,
+                4.56146692999755,
+                4.566697813017527,
+                4.568354221002664
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0011393378833798578,
+              "mad_over_median": 0.0003975367755776628,
+              "median": 5.066590431990335,
+              "samples": [
+                5.073562148987548,
+                5.057627234025858,
+                5.066590431990335,
+                5.068604588013841,
+                5.066001008992316
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -6337.212198937332,
+          "energy_mean_difference": 5.966285243630409e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 6.548361852765083e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.9609380785823306e-11,
+            "fock": 1.3186252090235939e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0004958749756837134,
+              "mad_over_median": 0.0002477457410754603,
+              "median": 5.036143147008261,
+              "samples": [
+                5.036143147008261,
+                5.0355037819826975,
+                5.034895463992143,
+                5.040681638987735,
+                5.0390839419851545
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0005833852604066422,
+              "mad_over_median": 0.0002427910660593913,
+              "median": 5.533238889009226,
+              "samples": [
+                5.530289543996332,
+                5.539129909971962,
+                5.53458230997785,
+                5.533150523988297,
+                5.533238889009226
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -6337.212198937387,
+          "energy_mean_difference": 4.365574568510055e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.688178485892422e-11,
+            "fock": 3.311129148642067e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007120955541867325,
+              "mad_over_median": 0.0007163095521712226,
+              "median": 4.667604924004991,
+              "samples": [
+                4.663958893012023,
+                4.670948373997817,
+                4.667604924004991,
+                4.671891119010979,
+                4.666021391982213
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0013585096593143847,
+              "mad_over_median": 0.0009105388302715046,
+              "median": 5.166093770007137,
+              "samples": [
+                5.163714104011888,
+                5.170797698985552,
+                5.166093770007137,
+                5.178645698004402,
+                5.160651184996823
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -6337.2121983155685,
+          "energy_mean_difference": 6.218237103894353e-07,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 6.218251655809581e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.844030033507307e-06,
+            "fock": 4.855188915797725e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007246685098335671,
+              "mad_over_median": 0.0003810726450668571,
+              "median": 5.19279995499528,
+              "samples": [
+                5.194778789009433,
+                5.19279995499528,
+                5.195231563004199,
+                5.185863110003993,
+                5.191583685984369
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0008562871568879525,
+              "mad_over_median": 0.0005783526045897816,
+              "median": 5.687357474991586,
+              "samples": [
+                5.690646773000481,
+                5.687357474991586,
+                5.695368402026361,
+                5.68285206600558,
+                5.685323043988319
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -6337.212198937392,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.6211032516366686e-12,
+            "fock": 5.2580162446247416e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -6337.212198937328,
+          "energy_mean_difference": 6.402842700481415e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.087502890543514e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.977286112619936e-11,
+            "fock": 8.066081136348658e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007155710649350633,
+              "mad_over_median": 0.0007544423841211752,
+              "median": 4.916759825980989,
+              "samples": [
+                4.918599932978395,
+                4.91293102200143,
+                4.912389281002106,
+                4.920469237986254,
+                4.916759825980989
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0009599708898530783,
+              "mad_over_median": 0.00037085937174010324,
+              "median": 5.414068420010153,
+              "samples": [
+                5.414611571992282,
+                5.406841424002778,
+                5.414068420010153,
+                5.421274213003926,
+                5.41206056199735
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "DEF2-SVP.BAS",
+        "name": "DEF2-SVP",
+        "sha256": "7ea100ba05fd41bc51edf33054dede6fe9ae318a5ecb67ebfed61f2d047993eb"
+      },
+      "case": {
+        "atoms": 544,
+        "basis": "def2-SVP",
+        "copies": 16,
+        "geometry": "workloads/s66-34-stack-16.xyz",
+        "id": "s66-34-stack-16--def2-svp",
+        "name": "Pentane-Pentane",
+        "original_geometry": "original-geometries/34_Pentane-Pentane_1.00.xyz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "sha256": "5fcd30a4608691a371a08fcb07075a2044260d588efc8e23d7763d3e05ea5a82",
+        "system": 34,
+        "translation_angstrom": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "dimensions": [
+        4320,
+        4320,
+        1344
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 2.4265259542838358e-12,
+        "fock": 4.713207304057789e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -6335.681562747489,
+          "energy_mean_difference": 1.1641532182693482e-11,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.9852061127397324e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.4551915228366852e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.8293167808612908e-11,
+            "fock": 4.050093593832571e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0012480976929607345,
+              "mad_over_median": 0.0010620110807123928,
+              "median": 5.6988237900077365,
+              "samples": [
+                5.690578699985053,
+                5.6988237900077365,
+                5.708035782008665,
+                5.692771575995721,
+                5.702468559000408
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0013076251524099273,
+              "mad_over_median": 0.0008505985173163169,
+              "median": 6.768381159025012,
+              "samples": [
+                6.754591673990944,
+                6.768381159025012,
+                6.776974281005096,
+                6.764021726994542,
+                6.77413833400351
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -6335.681562747397,
+          "energy_mean_difference": 1.0331859812140464e-10,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.0913936421275139e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 6.891916481954752e-11,
+            "fock": 2.1458390619955026e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.001052032670512815,
+              "mad_over_median": 0.000675653884390587,
+              "median": 6.0826010259916075,
+              "samples": [
+                6.089412819012068,
+                6.0731720159819815,
+                6.0826010259916075,
+                6.079079918999923,
+                6.086710759002017
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0013360543085311435,
+              "mad_over_median": 0.0012116270329420769,
+              "median": 7.153219409985468,
+              "samples": [
+                7.161886443995172,
+                7.140907805995084,
+                7.1564152280043345,
+                7.140446958976099,
+                7.153219409985468
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -6335.681562747499,
+          "energy_mean_difference": 1.4551915228366853e-12,
+          "energy_range": 7.275957614183426e-12,
+          "energy_sd": 3.2539071653442656e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.275957614183426e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.835767176634363e-11,
+            "fock": 4.149569576838985e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0011540288164444456,
+              "mad_over_median": 0.0007292568974295671,
+              "median": 5.765205678995699,
+              "samples": [
+                5.765205678995699,
+                5.7641136620077305,
+                5.769409995002206,
+                5.772064610006055,
+                5.754660245002015
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0014625354132568806,
+              "mad_over_median": 0.0005974166309730308,
+              "median": 6.842052639985923,
+              "samples": [
+                6.842238725017523,
+                6.828778107010294,
+                6.846140196023043,
+                6.842052639985923,
+                6.822950859990669
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -6335.681558829259,
+          "energy_mean_difference": 3.918241418432444e-06,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 5.1448789686149945e-12,
+          "max_abs_energy_difference_from_reference_mean": 3.9182486943900585e-06,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.0084072534666255e-05,
+            "fock": 1.5313097039282298e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0007551986116618256,
+              "mad_over_median": 9.709413646488296e-05,
+              "median": 6.1904459389916155,
+              "samples": [
+                6.187527054018574,
+                6.1997204500075895,
+                6.1904459389916155,
+                6.189844882988837,
+                6.190860487986356
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0010203890902904782,
+              "mad_over_median": 0.000395867637487092,
+              "median": 7.260717299010139,
+              "samples": [
+                7.247979459003545,
+                7.268100212997524,
+                7.2624329940008465,
+                7.257843016006518,
+                7.260717299010139
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -6335.681562747501,
+          "energy_mean_difference": 0.0,
+          "energy_range": 0.0,
+          "energy_sd": 0.0,
+          "max_abs_energy_difference_from_reference_mean": 0.0,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.245870321994971e-12,
+            "fock": 5.826450433232821e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -6335.681562747409,
+          "energy_mean_difference": 9.167706593871116e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.507814330688531e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.0186340659856796e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 4.8814691178122874e-11,
+            "fock": 1.9312551557959524e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0012162678118344773,
+              "mad_over_median": 0.0007433727312888745,
+              "median": 5.977991688007023,
+              "samples": [
+                5.982435564015759,
+                5.977991688007023,
+                5.984661352995317,
+                5.966113686998142,
+                5.975009045010665
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0017726781387609968,
+              "mad_over_median": 0.0011686965601687624,
+              "median": 7.0416729809949175,
+              "samples": [
+                7.060467060015071,
+                7.040227388992207,
+                7.060611505992711,
+                7.033443402004195,
+                7.0416729809949175
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "basis": {
+        "basis_link_sha256": "e2dde37d303c0586f5b176082e3c06580f391e8b2d3433756666cccf73dcff57",
+        "file": "CC-PVDZ.BAS",
+        "name": "CC-PVDZ",
+        "sha256": "91c9939cb1942161d07862575b66c69cd9e4fc8d7f4fa346de9b08c958ffea77"
+      },
+      "case": {
+        "atoms": 544,
+        "basis": "cc-pVDZ",
+        "copies": 16,
+        "geometry": "workloads/s66-34-stack-16.xyz",
+        "id": "s66-34-stack-16--cc-pvdz",
+        "name": "Pentane-Pentane",
+        "original_geometry": "original-geometries/34_Pentane-Pentane_1.00.xyz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "sha256": "5fcd30a4608691a371a08fcb07075a2044260d588efc8e23d7763d3e05ea5a82",
+        "system": 34,
+        "translation_angstrom": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "dimensions": [
+        4320,
+        4320,
+        1344
+      ],
+      "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+      "initial_guess": "official SAD",
+      "reference_matrix_sd_max": {
+        "density": 9.159995464670606e-13,
+        "fock": 3.232774237766684e-14
+      },
+      "reference_note": "Mean of correctly-rounded-Boys updates; remaining integral, accumulation and eigensolver rounding is not removed. Not an exact molecular solution.",
+      "reference_status": "complete",
+      "rounds": 5,
+      "variants": {
+        "fabo_additive": {
+          "energy_mean": -6352.75375713472,
+          "energy_mean_difference": 1.3096723705530167e-11,
+          "energy_range": 2.1827872842550278e-11,
+          "energy_sd": 8.911191772433732e-12,
+          "max_abs_energy_difference_from_reference_mean": 2.7648638933897017e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 9.722206373297127e-12,
+            "fock": 3.055333763768431e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0009889090291804229,
+              "mad_over_median": 0.0005086948501772436,
+              "median": 7.79988435600535,
+              "samples": [
+                7.79042348000803,
+                7.79988435600535,
+                7.811333604011452,
+                7.795916595001472,
+                7.801199025998358
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0009625768015916617,
+              "mad_over_median": 0.0004702946469646638,
+              "median": 8.868316990003223,
+              "samples": [
+                8.868316990003223,
+                8.86629195700516,
+                8.883250387007138,
+                8.860338068014244,
+                8.872487712011207
+              ]
+            }
+          }
+        },
+        "gansu": {
+          "energy_mean": -6352.753757134638,
+          "energy_mean_difference": 9.458744898438454e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.087502890543514e-12,
+          "max_abs_energy_difference_from_reference_mean": 1.0040821507573128e-10,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.434736218719479e-11,
+            "fock": 1.1243628250667826e-11
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.001024526087097555,
+              "mad_over_median": 0.00039662074814685895,
+              "median": 8.533255097980145,
+              "samples": [
+                8.549357723008143,
+                8.5306033710076,
+                8.536639564001234,
+                8.533255097980145,
+                8.526342619996285
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0017314961581590903,
+              "mad_over_median": 0.0008683355474611456,
+              "median": 9.599078443017788,
+              "samples": [
+                9.623937363998266,
+                9.599078443017788,
+                9.626943329989444,
+                9.59715403598966,
+                9.590743221982848
+              ]
+            }
+          }
+        },
+        "libintx_gpu": {
+          "energy_mean": -6352.753757134708,
+          "energy_mean_difference": 2.473825588822365e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.507814330688531e-12,
+          "max_abs_energy_difference_from_reference_mean": 3.492459654808044e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.0596534760765053e-11,
+            "fock": 3.339550858072471e-13
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0006985670634628069,
+              "mad_over_median": 0.000303889141721884,
+              "median": 7.945752772007836,
+              "samples": [
+                7.948167399998056,
+                7.95553096398362,
+                7.944869961007498,
+                7.945752772007836,
+                7.940438413002994
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.001046103292277197,
+              "mad_over_median": 0.0004945286491144224,
+              "median": 9.02241765600047,
+              "samples": [
+                9.023084162996383,
+                9.02241765600047,
+                9.026879500015639,
+                9.013807387003908,
+                9.00336345701362
+              ]
+            }
+          }
+        },
+        "official": {
+          "energy_mean": -6352.753756710947,
+          "energy_mean_difference": 4.237866960465908e-07,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 5.1448789686149945e-12,
+          "max_abs_energy_difference_from_reference_mean": 4.23793972004205e-07,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 6.170219997897464e-06,
+            "fock": 7.077500692176386e-07
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.0009442481414089571,
+              "mad_over_median": 0.0008174420114165587,
+              "median": 8.824989269021899,
+              "samples": [
+                8.832203186000697,
+                8.811803512973711,
+                8.82886984301149,
+                8.824989269021899,
+                8.817595814005472
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.001263820497715574,
+              "mad_over_median": 0.0007993995386705088,
+              "median": 9.899190120020648,
+              "samples": [
+                9.913193326996407,
+                9.881344023975544,
+                9.906456711003557,
+                9.899190120020648,
+                9.891276712005492
+              ]
+            }
+          }
+        },
+        "reference": {
+          "energy_mean": -6352.753757134733,
+          "energy_mean_difference": 0.0,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 7.970412225479465e-12,
+          "max_abs_energy_difference_from_reference_mean": 8.73114913702011e-12,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 1.2440659613588422e-12,
+            "fock": 5.400124791776761e-14
+          }
+        },
+        "vsr": {
+          "energy_mean": -6352.753757134671,
+          "energy_mean_difference": 6.257323548197746e-11,
+          "energy_range": 1.4551915228366852e-11,
+          "energy_sd": 6.087502890543514e-12,
+          "max_abs_energy_difference_from_reference_mean": 7.130438461899758e-11,
+          "max_matrix_difference_from_reference_mean": {
+            "density": 2.0212115314777178e-11,
+            "fock": 8.398615136684384e-12
+          },
+          "timing": {
+            "fock_seconds": {
+              "cv": 0.001158816694986173,
+              "mad_over_median": 0.0005231046974085267,
+              "median": 8.293886497995118,
+              "samples": [
+                8.31395293600508,
+                8.293105342017952,
+                8.299750133999623,
+                8.293886497995118,
+                8.289547927008243
+              ]
+            },
+            "iteration_seconds": {
+              "cv": 0.0015905799188061422,
+              "mad_over_median": 0.0008412209491658842,
+              "median": 9.364986729022348,
+              "samples": [
+                9.388281965017086,
+                9.359489120019134,
+                9.38611994299572,
+                9.357108705997234,
+                9.364986729022348
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "identity": "613674703e51e70d27b74c76c72ded488ff7566c8cce082ed0d5d2f8b6bcf015",
+  "reference_status": "complete"
+}

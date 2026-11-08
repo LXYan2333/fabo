@@ -1,0 +1,59 @@
+{
+  "fixtures": {
+    "01-stack-8-6-31gs/fixture": "25078a5bfc9360178b57d4e596dae9f8f887ef97cf525d55cc8ff6c39454f82a",
+    "01-stack-8-cc-pvdz/fixture": "54f29ac9c5c6a99cb81e01679f0652c402999eaa891c45d67ae9a60c58e3a8c3",
+    "01-stack-8-def2-svp/fixture": "5ce8c1a62968bb7a3d1de8b08a05b1db4bbae524827baf4303e5aec678386936",
+    "17-stack-1-6-31gs/fixture": "20938e1f3fc8972a5ecf5cf8a0f9cd95838a9ed1fcc2aff00c856f3e50f56160",
+    "17-stack-1-cc-pvdz/fixture": "3bb8b37accdad3e29bea2d17172ebf368ce7f0da93478f78214fa40ed747be9f",
+    "17-stack-1-def2-svp/fixture": "4cf769e99dc7e20249e68e1590e1fde9ba27168b821f2bfdb319f1631fe2bfa9",
+    "24-stack-1-6-31gs/fixture": "931da1a8f702fd2bd53d742b2cde7a256c7eac5fd3befdadd1a6ee1b2ff7f8f7",
+    "24-stack-1-cc-pvdz/fixture": "f68d6a671600dc1892f1ebfeb27afb84eae1d8da7071575b797b0cc0c6ee4b33",
+    "24-stack-1-def2-svp/fixture": "975901f0857a6b54920801b9f6bd878a8f93dc4a6ff915f69b9b50bda2d5a46e",
+    "34-stack-1-6-31gs/fixture": "34c1a83afa5bdd5c8c07ca421a92978e0f4205cf0600b9b07bfcf77570dc5bfe",
+    "34-stack-1-cc-pvdz/fixture": "37e49142e667014014c8dc7f92dfbae82517e657870465720f6d69b43feb3c20",
+    "34-stack-1-def2-svp/fixture": "e7c0627955967570b73d5ee243d5e68128ed9609381a4779a2a6ee94722f769e"
+  },
+  "parent": "/export/home/yanlongxiang/fast-boys-nwchem/full-library-20261106/run",
+  "parent_inputs_sha256": "af07eda780ef97a3ad5f7ce7e70280fe430342003280a29b2804d92a7c552dc4",
+  "parent_reference_summary_sha256": "e3f996d4ae46ee4e7d80992da7f39ef252bcdad7b37ac2f25f969f41d0b4bd83",
+  "policy": "Reuse fixed density and reference observations; all timed samples are new",
+  "references": {
+    "01-stack-8-6-31gs/0-reference": "8f31390f11385093a9c20c8f08270f637909d863c95ec06262e62a07bcb151c9",
+    "01-stack-8-6-31gs/1-reference": "dd129df0db08a90c9cd01307ffda872221673077cbfd02d930329dad64676b7d",
+    "01-stack-8-cc-pvdz/0-reference": "fab354886f57cb16229ab5a6b8a2e841980c075713ee01a5e463eddd84f610bc",
+    "01-stack-8-cc-pvdz/1-reference": "73bf06888da2352770205d2d4d2a01a63d8d31af50f1e781154b3d62b6023647",
+    "01-stack-8-def2-svp/0-reference": "58b082c6071355795bb2b556ce17949bb61b0ad4a34f97f8b1304f7bd060aa4e",
+    "01-stack-8-def2-svp/1-reference": "3b29dffb60edb458969b92419bff9ad5ce458a2f35126200bf3616588fab75d7",
+    "17-stack-1-6-31gs/0-reference": "503c7ad85bfb83648b29f5c60f55db75655d40fc195bbbc8fb556941c9c5c049",
+    "17-stack-1-6-31gs/1-reference": "579fa52ed98a6a1fee40d049ea193cb3c8814977ef055af3515d6b38223ce6a9",
+    "17-stack-1-cc-pvdz/0-reference": "b19602d445b6bfb1aca61928e1082ba674a7fa537d0fbb53d02410a3dbfd7156",
+    "17-stack-1-cc-pvdz/1-reference": "eb1f8f6a204f050ae6ce945f720139ba1e43cb9612418184406424862867b483",
+    "17-stack-1-def2-svp/0-reference": "064718bee84f962badbfa5cba44eff01c58a63443ec9a7537a481e767b7962ed",
+    "17-stack-1-def2-svp/1-reference": "f03cd045d847d299ec9b4f9df1941951e1b347a2028a2e884ad567e00e5dc755",
+    "24-stack-1-6-31gs/0-reference": "2b63e91ec97c7061cf7d6ebab1dda51683ecfdd7fcd4ae38daa41b7a0c14a8f8",
+    "24-stack-1-6-31gs/1-reference": "396fa56a2fe7c22f78c0da90a2d4195a840556cec5e40cdc977e27eab2ce825a",
+    "24-stack-1-cc-pvdz/0-reference": "88a594a2a65b3d2d4052f329ea9403a3938489b12d3822f3b8c731dacd61c0d8",
+    "24-stack-1-cc-pvdz/1-reference": "1631895d2d5bcb5b552ffcd80cd4ee57e3069673b68aa55f42ebc8fe41f2cf8c",
+    "24-stack-1-def2-svp/0-reference": "657e675e060afb2934ced290e1b7af8d53c237cebb912bda8410083c205022f8",
+    "24-stack-1-def2-svp/1-reference": "e0afebcf2552afa36b887d37aec01bd2995e82f92902e2d38311c905db1e47b7",
+    "34-stack-1-6-31gs/0-reference": "6e31065a8e474ee2506044e46b5d9bb7906a3648426dec0864c3ccd6846dc480",
+    "34-stack-1-6-31gs/1-reference": "8580b16f96fb67bd5d82b1d72b359aabc14ed94b1474165dc9fc5887b121fb7e",
+    "34-stack-1-cc-pvdz/0-reference": "1ace1460a37f74ab0d71e0947e7f2aea6e0dc2a01ee768047ef6630010cdd45f",
+    "34-stack-1-cc-pvdz/1-reference": "927171338037d49d7a2d4b6c3b9ef1ecd5ed511d2d11b218d5a95beb64a7fe8a",
+    "34-stack-1-def2-svp/0-reference": "6bce62f429ec9e90d3aa3cb4eaaffa1c615c37634c088d44290ee8d04744b4ed",
+    "34-stack-1-def2-svp/1-reference": "22c0df653b589c8e016b60ffb567eabe3704c5df1a4a8f0c54c958262daad47e"
+  },
+  "source_snapshot": {
+    "base_commit": "82da96a0b0dd356ecc316b96785b659cfcd0f5d0",
+    "changes": [
+      "Incremental tail powers k,3k,5k using two_k=k+k",
+      "Remove main input zeroing before coordinate add",
+      "Select argument directly from x/u"
+    ],
+    "includes_uncommitted_changes": true,
+    "numerical_manifest_sha256": "42fa07e2210f6f33094904425fd40a9c08081fc7777aedb53535906ced8bbcf1",
+    "protocol": "Same 12 cases, five timed backends, five repetitions, one fixed-density update, no warmup; prior fixtures/reference observations reused",
+    "repo_archive_sha256": "d09c3c5bb60dabcfc9aca7a9c6da6e63a77c52bf6a574b78d92e8a59879e4cfe",
+    "simd_manifest_sha256": "97cd9a07b9bbb6a968cf9654062290e013eaea29f037dd335c4df5fb8ffa9b3d"
+  }
+}

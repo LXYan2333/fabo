@@ -1,0 +1,52 @@
+{
+  "architecture": "sapphirerapids",
+  "bases": [
+    "6-31G*",
+    "def2-SVP",
+    "cc-pVDZ"
+  ],
+  "build_node": "c023",
+  "build_workers": 8,
+  "cc": "x86_64-conda-linux-gnu-gcc",
+  "copies": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "core": 0,
+  "cxx": "x86_64-conda-linux-gnu-g++",
+  "environment": {
+    "LD_LIBRARY_PATH": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/lib",
+    "PATH": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/bin:/usr/bin:/bin"
+  },
+  "fc": "x86_64-conda-linux-gnu-gfortran",
+  "ga_archive": "/media/lxyan/data/fast_boys/work/nwchem-setup/ga-5.9.2.tar.gz",
+  "highway_revision": "9ca61efcab7f54c244cc211e573324e6a29ffa17",
+  "highway_source": "/home/lxyan/Code/cpp/highway",
+  "legacy_revision": "728ec72",
+  "libintx_revision": "dd5bb8b9536c913afea3260a1ef68dae4ce1dc0e",
+  "libintx_source": "/home/lxyan/Code/fast_boys/third_party/libintx",
+  "minimum_fock_seconds": 2,
+  "mkl_root": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem",
+  "mpicc": "mpicc",
+  "mpifort": "mpifort",
+  "nwchem_source": "/media/lxyan/data/fast_boys/work/nwchem-setup/dependencies/nwchem",
+  "partition": "6526Y",
+  "python": "/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/bin/python",
+  "reference_rounds": 2,
+  "rounds": 5,
+  "s66x8": "/home/lxyan/Code/cpp/simd_eri/benchmark/s66x8/dimers",
+  "scratch": "/tmp",
+  "simint_source": "/media/lxyan/data/fast_boys/work/nwchem-setup/dependencies/simint-generator",
+  "spacing_angstrom": 3.4,
+  "systems": [
+    1,
+    17,
+    24,
+    34
+  ],
+  "timing_node": "c021"
+}

@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "files": {
+    "molecular-means.json": "ee7e7f10f1755bbe1e0458d4f411e060924ea1370cb257d1d6ecd79190ff3296"
+  },
+  "source": "Slater2:/export/home/lxyan2/fast-boys-additive/matrix-absolute-20261107/molecular-means.json",
+  "verification": "Matched remote sha256sum on 2026-11-08; no measurements were recomputed."
+}

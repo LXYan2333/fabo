@@ -1,0 +1,2414 @@
+{
+  "schema": 2,
+  "reference_summary_sha256": "e3f996d4ae46ee4e7d80992da7f39ef252bcdad7b37ac2f25f969f41d0b4bd83",
+  "generator_sha256": "974f70050f82d2a4126e27f9f8103ee3b242ae84b9d45e794d8acb531a1a6d84",
+  "metrics_source_sha256": "68e6faf632cb09c4d7ddc19a822f821f40079eba757e5c5bb6b171c9ed5e1205",
+  "metric_definition": {
+    "averaging": "equal weight to every n*n entry, including both symmetric halves",
+    "accumulation": "NumPy longdouble for absolute-error sums; binary64 exported statistics"
+  },
+  "numpy_version": "2.2.6",
+  "longdouble_bits": 64,
+  "results": [
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 5.002220859751105e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "8ac82bb5b882508a37458c76e0a961b22b86b8c103e3b4a233dbc1a3222fdaf1",
+          "backend": "11e18a50d4dff6461579d0f1b023749971451feb40d00f906e331feae49c2f66"
+        },
+        "density-out": {
+          "reference": "793bb30ab0c795b4b3839c04474e6282948c6c7fa319064747954bbe9d236ac8",
+          "backend": "8d8316be0ee7cbda0073c70178f4a5dbec7b15669a5deea0a763e8f35f33042f"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.219646605932212e-11,
+        "mean_absolute": 1.205153893125931e-14,
+        "elements": 82944
+      },
+      "density": {
+        "max_absolute": 4.923839114212569e-13,
+        "mean_absolute": 4.223295670700825e-15,
+        "elements": 82944
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "8ac82bb5b882508a37458c76e0a961b22b86b8c103e3b4a233dbc1a3222fdaf1",
+          "backend": "6d5beca0eb26bef747c03d356a92a76e8a95a284cd09ef774ecb941320b33c0f"
+        },
+        "density-out": {
+          "reference": "793bb30ab0c795b4b3839c04474e6282948c6c7fa319064747954bbe9d236ac8",
+          "backend": "2e4034e6172bc0c55cd15c1288840a0d1b399f4ef2a6bc0e7dceabd29f56402a"
+        }
+      },
+      "fock": {
+        "max_absolute": 3.552713678800501e-15,
+        "mean_absolute": 6.3319402315396936e-18,
+        "elements": 82944
+      },
+      "density": {
+        "max_absolute": 3.275157922644212e-14,
+        "mean_absolute": 4.9205962789736405e-16,
+        "elements": 82944
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "8ac82bb5b882508a37458c76e0a961b22b86b8c103e3b4a233dbc1a3222fdaf1",
+          "backend": "640ed739ffc41ae873e68a3323fa228aaacdd922d49a9fe055a351e9db443099"
+        },
+        "density-out": {
+          "reference": "793bb30ab0c795b4b3839c04474e6282948c6c7fa319064747954bbe9d236ac8",
+          "backend": "7b05b374df0c70da00d68da15bb3fc786028be2e566ccd9af474c1073d62d7b1"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 1.0378934381732889e-17,
+        "elements": 82944
+      },
+      "density": {
+        "max_absolute": 3.419486915845482e-14,
+        "mean_absolute": 4.825832029412885e-16,
+        "elements": 82944
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 1.3642420526593924e-11,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "8ac82bb5b882508a37458c76e0a961b22b86b8c103e3b4a233dbc1a3222fdaf1",
+          "backend": "60f6d08fdab8beab26aa65bba5df536419f9e5345f4b89a1ac185d2a1d98bbf9"
+        },
+        "density-out": {
+          "reference": "793bb30ab0c795b4b3839c04474e6282948c6c7fa319064747954bbe9d236ac8",
+          "backend": "fee11fb40e2284d8ea1505f87380320ab2e0e5bcec8ac8284d5c2b0c6e1c7333"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.8616219676914625e-12,
+        "mean_absolute": 3.038981155265815e-15,
+        "elements": 82944
+      },
+      "density": {
+        "max_absolute": 2.396582932107094e-12,
+        "mean_absolute": 1.0640482048371967e-14,
+        "elements": 82944
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "6-31G*",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-6-31gs",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "8ac82bb5b882508a37458c76e0a961b22b86b8c103e3b4a233dbc1a3222fdaf1",
+          "backend": "39698838dca93dc203695d31a07637b97d048140baada300f7fcfd2ca9031f60"
+        },
+        "density-out": {
+          "reference": "793bb30ab0c795b4b3839c04474e6282948c6c7fa319064747954bbe9d236ac8",
+          "backend": "8e97a737274a573d82c230465c4bc168973d02a9817e9c3c04a48e102e6e8d96"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 1.0736416399909276e-17,
+        "elements": 82944
+      },
+      "density": {
+        "max_absolute": 3.863576125695545e-14,
+        "mean_absolute": 5.044289837699368e-16,
+        "elements": 82944
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 1.3642420526593924e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fe91e54a8b3dc18b0d2d0c0f51af415993c4eda082f1ef27ebb76b9fa4a538c6",
+          "backend": "34ecd15df3dd70accdd9649eca61e5f0fc577a02db4371b9061852e0fef68b46"
+        },
+        "density-out": {
+          "reference": "1ab872e65f70cc15ec32e25be69fd63e0f566cdc744925f0ec18b518cfd6dc2a",
+          "backend": "ec41617efac999bdebdc5f4a92388df7933cb6e55b67b0bb3cc96da0f07d8058"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.9699797348948778e-12,
+        "mean_absolute": 2.1293757480056053e-15,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 2.2898349882893854e-13,
+        "mean_absolute": 9.46955461633318e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fe91e54a8b3dc18b0d2d0c0f51af415993c4eda082f1ef27ebb76b9fa4a538c6",
+          "backend": "1c345116a0822eed9f7397a044dea5ea6e1a4f1ea8816cc38d96beefa7fae337"
+        },
+        "density-out": {
+          "reference": "1ab872e65f70cc15ec32e25be69fd63e0f566cdc744925f0ec18b518cfd6dc2a",
+          "backend": "aad7e7c7722ade2655040320c1aa6885569f1c473db55c02a77a5af56a17d2a3"
+        }
+      },
+      "fock": {
+        "max_absolute": 3.552713678800501e-15,
+        "mean_absolute": 6.94585191816875e-18,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 2.7200464103316335e-14,
+        "mean_absolute": 2.3921008090623244e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 4.547473508864641e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fe91e54a8b3dc18b0d2d0c0f51af415993c4eda082f1ef27ebb76b9fa4a538c6",
+          "backend": "102388d64eb0f4f5934bac3c63d2cac300fdfa405d18cdc7fd7b261601d15207"
+        },
+        "density-out": {
+          "reference": "1ab872e65f70cc15ec32e25be69fd63e0f566cdc744925f0ec18b518cfd6dc2a",
+          "backend": "75f6ac7ea780efa36a3f82d4220bd6c2ef63bafe8ffa7b8ee56b4aecf4f37c82"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 1.0237415733222918e-17,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 4.3520742565306136e-14,
+        "mean_absolute": 2.410527012082003e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 5.9117155615240335e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fe91e54a8b3dc18b0d2d0c0f51af415993c4eda082f1ef27ebb76b9fa4a538c6",
+          "backend": "dfcaf0731292fafdf128f97168b373e5699ce1036504a9404632d39049dabe11"
+        },
+        "density-out": {
+          "reference": "1ab872e65f70cc15ec32e25be69fd63e0f566cdc744925f0ec18b518cfd6dc2a",
+          "backend": "42eba9b79ef967f7e487a28bdde98b0d46bea3da92c419f3420aa8ac9f268ce0"
+        }
+      },
+      "fock": {
+        "max_absolute": 8.597567102697212e-13,
+        "mean_absolute": 1.053098186288598e-15,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 9.40553190886817e-13,
+        "mean_absolute": 3.5086956435740676e-15,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "def2-SVP",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-def2-svp",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 4.547473508864641e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fe91e54a8b3dc18b0d2d0c0f51af415993c4eda082f1ef27ebb76b9fa4a538c6",
+          "backend": "580122eb39cb10ccd1acadf7b88e65c7da411d377d82e1709cd4c2e9b57cfa07"
+        },
+        "density-out": {
+          "reference": "1ab872e65f70cc15ec32e25be69fd63e0f566cdc744925f0ec18b518cfd6dc2a",
+          "backend": "5f7bd94d3a47d2d91d9de8cf3245a7b84577935ef867c2ed185b3eef4f1a138e"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 1.1756366104455594e-17,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 4.9404924595819466e-14,
+        "mean_absolute": 2.410739452488285e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 9.094947017729282e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fcf8dbc88c4b164c3ac83af952dbd2a49f389a838ca820d0c763b7e7d0893eb4",
+          "backend": "f14ef465281e9981e34d01f6fdf724bab4ddb89e849b5b03e455e798376df15e"
+        },
+        "density-out": {
+          "reference": "b0e3521af35e9018f1c11315c296366c85bb45035ad1350629d6fccb0d478a51",
+          "backend": "1e02886229b9638cab3eed0f839c241c1bb5f57840e120084a3043d0707e1dfd"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.177724584522366e-12,
+        "mean_absolute": 1.0695372562361276e-15,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 2.6201263381153694e-13,
+        "mean_absolute": 1.0040569099333765e-15,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fcf8dbc88c4b164c3ac83af952dbd2a49f389a838ca820d0c763b7e7d0893eb4",
+          "backend": "610de1406ad97ec23dc30e4e1a59eb0bd71a82fe3f424e10d51030eb0e3bd156"
+        },
+        "density-out": {
+          "reference": "b0e3521af35e9018f1c11315c296366c85bb45035ad1350629d6fccb0d478a51",
+          "backend": "a2a1948b556e3fa547ffee6838291c76c80b6a435c2b39f4add377b523352dcb"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 7.208650206828452e-18,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 2.6423307986078726e-14,
+        "mean_absolute": 2.2096667622230743e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fcf8dbc88c4b164c3ac83af952dbd2a49f389a838ca820d0c763b7e7d0893eb4",
+          "backend": "f7e7a228d2e106815060dac33e2b94cdf9da224385bddd0cf0d60adb3bfcc7a6"
+        },
+        "density-out": {
+          "reference": "b0e3521af35e9018f1c11315c296366c85bb45035ad1350629d6fccb0d478a51",
+          "backend": "a9369a7c78ce8a5008ad560f10208ff89d2d7d12d0611417a51a813e8bef2f92"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 1.1177613834268791e-17,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 3.2529534621517087e-14,
+        "mean_absolute": 2.306902805367777e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 5.4569682106375694e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fcf8dbc88c4b164c3ac83af952dbd2a49f389a838ca820d0c763b7e7d0893eb4",
+          "backend": "770a52282acf3d662c031458756ac88bba0333f343a42dc32bdec2b40990a3fa"
+        },
+        "density-out": {
+          "reference": "b0e3521af35e9018f1c11315c296366c85bb45035ad1350629d6fccb0d478a51",
+          "backend": "b98cf8cfc4ab71961a7fcaabbddb072e05625a4c921acc33364d3c5be107898a"
+        }
+      },
+      "fock": {
+        "max_absolute": 9.07718344933528e-13,
+        "mean_absolute": 9.900652647308592e-16,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 1.2956302697375577e-12,
+        "mean_absolute": 3.922597756927403e-15,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 48,
+        "basis": "cc-pVDZ",
+        "copies": 8,
+        "geometry": "geometries/01-stack-8.xyz",
+        "geometry_sha256": "09bd6ea1df10f0846052cd4edad40568a46deaf0495cbdbffc7c32ba510cfb96",
+        "id": "01-stack-8-cc-pvdz",
+        "original_sha256": "609c495401f5130263b3e897ae586569936676eb2894a37f2577037f42e81d7a",
+        "system": 1,
+        "translation": [
+          0.0,
+          4.696648656,
+          0.0
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "fcf8dbc88c4b164c3ac83af952dbd2a49f389a838ca820d0c763b7e7d0893eb4",
+          "backend": "6d39584e8d199d0d9df8667a7648b0937127af5b57eece2e7a993a6ab209300e"
+        },
+        "density-out": {
+          "reference": "b0e3521af35e9018f1c11315c296366c85bb45035ad1350629d6fccb0d478a51",
+          "backend": "ecef1fb44dba3f768516dde937a2d407825ae14b846726ff869f2cb5f9492d4c"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 1.1563035875645303e-17,
+        "elements": 147456
+      },
+      "density": {
+        "max_absolute": 3.042011087472929e-14,
+        "mean_absolute": 2.2688985066426615e-16,
+        "elements": 147456
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 9.777068044058979e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "11a98b4c7a5e19d3be12d22de8631e3f4b22e75970c5948090a72c5be9d30362",
+          "backend": "a1842c6ae533a8c02d2df1ab2711c4b6903c8fd23ca40ef934bd9227b9e4929d"
+        },
+        "density-out": {
+          "reference": "faed4dabf46c68598777f6351cd1efbe4c9e47e34558227f06b71d4b9e26527d",
+          "backend": "cfff6d7b4dfea05e96727d505b994a6f0e626769278f0003826227e80c1acf17"
+        }
+      },
+      "fock": {
+        "max_absolute": 4.766675942846632e-11,
+        "mean_absolute": 4.909845669982055e-14,
+        "elements": 57600
+      },
+      "density": {
+        "max_absolute": 8.819500685319781e-12,
+        "mean_absolute": 7.57867560980492e-14,
+        "elements": 57600
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 2.2737367544323206e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "11a98b4c7a5e19d3be12d22de8631e3f4b22e75970c5948090a72c5be9d30362",
+          "backend": "bdf09200180827cec79339be7d58257149c49ad13bd93355105dbbb7c8e5dba3"
+        },
+        "density-out": {
+          "reference": "faed4dabf46c68598777f6351cd1efbe4c9e47e34558227f06b71d4b9e26527d",
+          "backend": "a22c00c5834bb6880e9ce1873995a9a26598257c5cd0b547f2cde3a84b67ef09"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 3.422788098793781e-17,
+        "elements": 57600
+      },
+      "density": {
+        "max_absolute": 3.93574062229618e-13,
+        "mean_absolute": 2.8034860009541013e-15,
+        "elements": 57600
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 2.2737367544323206e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "11a98b4c7a5e19d3be12d22de8631e3f4b22e75970c5948090a72c5be9d30362",
+          "backend": "a3c9f9229fb05d21020f30e41f39808b648842745b289a305eb00556a897fab2"
+        },
+        "density-out": {
+          "reference": "faed4dabf46c68598777f6351cd1efbe4c9e47e34558227f06b71d4b9e26527d",
+          "backend": "1584ad196875c16eedfe65accd51339aa2273ca98d07ac6512f10bd8b1e4a222"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 5.031410495600049e-17,
+        "elements": 57600
+      },
+      "density": {
+        "max_absolute": 4.130584763117895e-13,
+        "mean_absolute": 2.5450535423654877e-15,
+        "elements": 57600
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 6.366462912410498e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "11a98b4c7a5e19d3be12d22de8631e3f4b22e75970c5948090a72c5be9d30362",
+          "backend": "be644795811a40918db1392d496feeb0bc72af33850ee6f1298924c18fe9b6cd"
+        },
+        "density-out": {
+          "reference": "faed4dabf46c68598777f6351cd1efbe4c9e47e34558227f06b71d4b9e26527d",
+          "backend": "ef62d2fc36fcd723708f7f9a5f2bea9fea743731dfea6b9b045317e42cf4105e"
+        }
+      },
+      "fock": {
+        "max_absolute": 9.052314453583676e-12,
+        "mean_absolute": 1.3894169258516916e-14,
+        "elements": 57600
+      },
+      "density": {
+        "max_absolute": 1.3536616272347146e-11,
+        "mean_absolute": 1.0697467674282972e-13,
+        "elements": 57600
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-6-31gs",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "11a98b4c7a5e19d3be12d22de8631e3f4b22e75970c5948090a72c5be9d30362",
+          "backend": "69d3e360a442028337a2e1fa455be305bf47c1c31fb597b121920ea9c344dd4e"
+        },
+        "density-out": {
+          "reference": "faed4dabf46c68598777f6351cd1efbe4c9e47e34558227f06b71d4b9e26527d",
+          "backend": "09da8741ec749790d7f07eb240e785933ead055a3f2148a14b8dca669a257c05"
+        }
+      },
+      "fock": {
+        "max_absolute": 2.1316282072803006e-14,
+        "mean_absolute": 6.283090156399473e-17,
+        "elements": 57600
+      },
+      "density": {
+        "max_absolute": 3.3639757646142243e-13,
+        "mean_absolute": 2.8188771407231148e-15,
+        "elements": 57600
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 8.185452315956354e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "d6427ca8f1cdac4d74e275430c1eb4322a3594ec970f89cb36c43cbd98e1426a",
+          "backend": "67e43f63b1c78d96edc0e67fd5fa9e927e16a685242c4c958f8373da887a13ea"
+        },
+        "density-out": {
+          "reference": "695ffb910f950336512868c34f22fe5c5122609a4f42f14accf14d302d1e96b2",
+          "backend": "c7bbafad20b85eaa73e416e0c9e7158d4b1a685afcb40964dea6eaf38e93d168"
+        }
+      },
+      "fock": {
+        "max_absolute": 3.501554601825774e-11,
+        "mean_absolute": 3.372853694115446e-14,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 1.0703826713864828e-11,
+        "mean_absolute": 5.4906016772974175e-14,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 2.2737367544323206e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "d6427ca8f1cdac4d74e275430c1eb4322a3594ec970f89cb36c43cbd98e1426a",
+          "backend": "2917ccb47d6b2fcc671bcc535d4d572c37b46e7b2cbde3f7d8b7a6f7046a155f"
+        },
+        "density-out": {
+          "reference": "695ffb910f950336512868c34f22fe5c5122609a4f42f14accf14d302d1e96b2",
+          "backend": "1b9388538146a3d680f25adb07ceb9cc623a3d23805914b7ddba1cd48bb250c3"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 2.8517965038536776e-17,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 1.216471368081784e-12,
+        "mean_absolute": 2.8830981131342306e-15,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 4.547473508864641e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "d6427ca8f1cdac4d74e275430c1eb4322a3594ec970f89cb36c43cbd98e1426a",
+          "backend": "d16bd24e04fd1bb8e3bf39c44b37a9e01fe573dc68478ed2a1068f4ba5bf0f6d"
+        },
+        "density-out": {
+          "reference": "695ffb910f950336512868c34f22fe5c5122609a4f42f14accf14d302d1e96b2",
+          "backend": "89e8de6d224de6a77760b6d3cc53e64e764b8bd8a8566846518c25c2e74d6950"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 4.509233919252137e-17,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 8.243405957841787e-13,
+        "mean_absolute": 3.18295794622878e-15,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 6.821210263296962e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "d6427ca8f1cdac4d74e275430c1eb4322a3594ec970f89cb36c43cbd98e1426a",
+          "backend": "0595f4ef70e4de18d9f6b42698a9a73b9d7284042951a89bd6e07c0419639d66"
+        },
+        "density-out": {
+          "reference": "695ffb910f950336512868c34f22fe5c5122609a4f42f14accf14d302d1e96b2",
+          "backend": "d78d4ac45e0803013dc2b200b1f3d309c236192e8a0fc3cec812c25ba0b632ae"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4107826018516789e-11,
+        "mean_absolute": 9.006467262130408e-15,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 1.0891024193604437e-11,
+        "mean_absolute": 1.067613911738042e-13,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-def2-svp",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 2.2737367544323206e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "d6427ca8f1cdac4d74e275430c1eb4322a3594ec970f89cb36c43cbd98e1426a",
+          "backend": "17140fe15823f76777f62fd8c2da7d8d50f45b0f0ef3b835f5037142dccc3aaa"
+        },
+        "density-out": {
+          "reference": "695ffb910f950336512868c34f22fe5c5122609a4f42f14accf14d302d1e96b2",
+          "backend": "2f7ed17d16452b0e2a7178acea2bd8d4edb5865afa353e7daa19eed1588e6144"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 5.574423488037125e-17,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 8.125722317231521e-13,
+        "mean_absolute": 3.563884318990825e-15,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 7.048583938740194e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "e78ee606d64b16e8ed7a9be83e3e7a025dc1b6be8b3e9f61d79433fd56c184a9",
+          "backend": "5017daaff17a11fe67679b71b63568929f7f3663c149d5762b65d900055b644e"
+        },
+        "density-out": {
+          "reference": "efa51b26df626e674a29b6f302055ff3327beb05337761bf417e1ff400edd1d9",
+          "backend": "4a454c3d118b81053690fea13613c34b5768dcc0e999908a1cc0edeeed240a16"
+        }
+      },
+      "fock": {
+        "max_absolute": 5.101341571389639e-11,
+        "mean_absolute": 3.447234922931032e-14,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 7.273126545470632e-12,
+        "mean_absolute": 6.469555269926501e-14,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 2.2737367544323206e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "e78ee606d64b16e8ed7a9be83e3e7a025dc1b6be8b3e9f61d79433fd56c184a9",
+          "backend": "aea3b2f07b83e8ea55fb0a7dd7b04525df82f7afa3f222b68aff44bae83c8aed"
+        },
+        "density-out": {
+          "reference": "efa51b26df626e674a29b6f302055ff3327beb05337761bf417e1ff400edd1d9",
+          "backend": "93784dfd4b06656f0652a347b66186c336f99ab26de15faead9a8aa138ed3359"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 3.226564087270291e-17,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 4.3154368967179835e-13,
+        "mean_absolute": 2.074890709329389e-15,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "e78ee606d64b16e8ed7a9be83e3e7a025dc1b6be8b3e9f61d79433fd56c184a9",
+          "backend": "814ed13494fc869d919162530f7f0b475bbed518e1599da35ab68d2ee52d4355"
+        },
+        "density-out": {
+          "reference": "efa51b26df626e674a29b6f302055ff3327beb05337761bf417e1ff400edd1d9",
+          "backend": "6f5fc496cbbcfc5480539ab19bc1209b0ae62e88b7c5a6183fd2641ef201bb60"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 4.6105455564169485e-17,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 1.1730061366677091e-12,
+        "mean_absolute": 2.6484845203289128e-15,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 6.139089236967266e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "e78ee606d64b16e8ed7a9be83e3e7a025dc1b6be8b3e9f61d79433fd56c184a9",
+          "backend": "164b9e000eec8e9ee31a04d32a21d2bc4f88df83f94358d6f400487ac5b49d1c"
+        },
+        "density-out": {
+          "reference": "efa51b26df626e674a29b6f302055ff3327beb05337761bf417e1ff400edd1d9",
+          "backend": "c76b606b1622e57ce9ca9bc2bf3f69b470ebaf00f0f58a66df6b1be5961138a3"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0306422382200253e-11,
+        "mean_absolute": 9.58754385587028e-15,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 1.0074885370414677e-11,
+        "mean_absolute": 9.15154371087154e-14,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/17-stack-1.xyz",
+        "geometry_sha256": "d36123b65c86aa68bf6abad9a09cdb65c887dc6dc83bdd1ed5fe14513625a6ad",
+        "id": "17-stack-1-cc-pvdz",
+        "original_sha256": "5885caf507582ce05a546f315cb55a7786010a348f77508e4e1cdda01664d94f",
+        "system": 17,
+        "translation": [
+          0.0,
+          0.0,
+          3.4053361829999997
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "e78ee606d64b16e8ed7a9be83e3e7a025dc1b6be8b3e9f61d79433fd56c184a9",
+          "backend": "5372cc10717e59a76fa741f4329c36d9abe665ecb56ff873d0e89b3ffac10e04"
+        },
+        "density-out": {
+          "reference": "efa51b26df626e674a29b6f302055ff3327beb05337761bf417e1ff400edd1d9",
+          "backend": "d26fe21456770bbd76e32b96f862f5308fbe76fe7f21770e4ec37f2439f01109"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 5.986710873377592e-17,
+        "elements": 69696
+      },
+      "density": {
+        "max_absolute": 4.862221736345873e-13,
+        "mean_absolute": 2.26437147909807e-15,
+        "elements": 69696
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 4.092726157978177e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "7fd6da47e26de7014ce0a58ce4d67a77c523641d69d0d8ddb3eab20dc6291c80",
+          "backend": "eee116b2dfbdc71caf74554695fc92e18ae7ed8263c2dc6a6a65d8b867387eff"
+        },
+        "density-out": {
+          "reference": "e7a1df32cf05b6829f808005d286e50e0c07178d412e7851b09a74409187508b",
+          "backend": "bffe035b5a387093955e07345dbd443f2838305ed2b94b5ddc302b73c23867bf"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.3081091765343444e-11,
+        "mean_absolute": 3.8386437824881814e-14,
+        "elements": 36864
+      },
+      "density": {
+        "max_absolute": 2.822186928597148e-12,
+        "mean_absolute": 4.788005713680121e-14,
+        "elements": 36864
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "7fd6da47e26de7014ce0a58ce4d67a77c523641d69d0d8ddb3eab20dc6291c80",
+          "backend": "cf6a9e12b150e1c85a30dc95ada395592cc2976696dbdfa67582aafd4f2d6b7f"
+        },
+        "density-out": {
+          "reference": "e7a1df32cf05b6829f808005d286e50e0c07178d412e7851b09a74409187508b",
+          "backend": "6677ae7295fa9582fffe44ba31a2ee2d3dcff17f1aeaff24fb4d42c15849dd0a"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 3.7753266437579735e-17,
+        "elements": 36864
+      },
+      "density": {
+        "max_absolute": 2.50938159140901e-13,
+        "mean_absolute": 5.6290126857979666e-15,
+        "elements": 36864
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "7fd6da47e26de7014ce0a58ce4d67a77c523641d69d0d8ddb3eab20dc6291c80",
+          "backend": "ed8ec3d8d869c750d29ed4746971773cb258bc575c4bd96f5f979888bb7cf1c4"
+        },
+        "density-out": {
+          "reference": "e7a1df32cf05b6829f808005d286e50e0c07178d412e7851b09a74409187508b",
+          "backend": "dcf08f71f157a34cd334ead17e609acc0f0131592d9f4a0eb6aab9057a619139"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 5.781723581987021e-17,
+        "elements": 36864
+      },
+      "density": {
+        "max_absolute": 3.402000903207636e-13,
+        "mean_absolute": 5.474595393125021e-15,
+        "elements": 36864
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 2.9558577807620168e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "7fd6da47e26de7014ce0a58ce4d67a77c523641d69d0d8ddb3eab20dc6291c80",
+          "backend": "fc2947d90274554c76994d862c888df75574e728894e3f389879fa9c70124c72"
+        },
+        "density-out": {
+          "reference": "e7a1df32cf05b6829f808005d286e50e0c07178d412e7851b09a74409187508b",
+          "backend": "517e7de7323fab85fa9ed64f288e059f78eb0d93f89274434da2ea48a0caf476"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.890577080615913e-12,
+        "mean_absolute": 1.6635804642761793e-14,
+        "elements": 36864
+      },
+      "density": {
+        "max_absolute": 4.916067553040193e-12,
+        "mean_absolute": 1.2731715703754873e-13,
+        "elements": 36864
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-6-31gs",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "7fd6da47e26de7014ce0a58ce4d67a77c523641d69d0d8ddb3eab20dc6291c80",
+          "backend": "8a1b0a2d6a28554beee596b22c7fbd7bef0bf3933c4a042ba24409ab0eeab2d3"
+        },
+        "density-out": {
+          "reference": "e7a1df32cf05b6829f808005d286e50e0c07178d412e7851b09a74409187508b",
+          "backend": "ac95dc193202b347a1eb964cfc328e6130ef34520f9ebc3962a51476f0724a9d"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.7763568394002505e-14,
+        "mean_absolute": 7.554688646488042e-17,
+        "elements": 36864
+      },
+      "density": {
+        "max_absolute": 4.926337116017976e-13,
+        "mean_absolute": 6.2888459492767474e-15,
+        "elements": 36864
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 5.002220859751105e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "a923834b910bcb656f7dc3deed6dd0e6f529f84ba00d711045c74c5a6aff8991",
+          "backend": "4aacb8c7991c599bb50df8fcbd0a3a72467b7426b2f1af2c8a02e01dfa7e9690"
+        },
+        "density-out": {
+          "reference": "78b845a1a04c2f7a71ff71653f059c323260751a2092f2e674da4defb0f82f68",
+          "backend": "7cd5f8ddb05f27131a03304c22651ab7d8d0eb0c27f928e573aff1a292913143"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.20543575121701e-11,
+        "mean_absolute": 3.1439393006203613e-14,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 8.695294484439842e-12,
+        "mean_absolute": 7.341058376913856e-14,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "a923834b910bcb656f7dc3deed6dd0e6f529f84ba00d711045c74c5a6aff8991",
+          "backend": "acf3ce20a9b9bf2276f4bf132376ac64bf879573aa522d692cee8bcd3f7a33fe"
+        },
+        "density-out": {
+          "reference": "78b845a1a04c2f7a71ff71653f059c323260751a2092f2e674da4defb0f82f68",
+          "backend": "c6f5cbd1b2e157e19affc993a35616a2f11dd92216ece62428d6d165dc9c4d2d"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 3.502328365008491e-17,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 9.737766148987248e-13,
+        "mean_absolute": 9.273966412830526e-15,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "a923834b910bcb656f7dc3deed6dd0e6f529f84ba00d711045c74c5a6aff8991",
+          "backend": "b4f0f9e372d103088b498ea3e6e09c032c911ab4c9416f873702d4656b336870"
+        },
+        "density-out": {
+          "reference": "78b845a1a04c2f7a71ff71653f059c323260751a2092f2e674da4defb0f82f68",
+          "backend": "84bb85066b5f3996069aa84958ac2c2dd60004f66dfef713448e6634f28c2fac"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 5.2770846776580617e-17,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 2.2652990594451694e-12,
+        "mean_absolute": 1.489782503236273e-14,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 3.183231456205249e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "a923834b910bcb656f7dc3deed6dd0e6f529f84ba00d711045c74c5a6aff8991",
+          "backend": "52f010e14a10d2101430b885d54145499a725f3000f80a98714f8d3931562a35"
+        },
+        "density-out": {
+          "reference": "78b845a1a04c2f7a71ff71653f059c323260751a2092f2e674da4defb0f82f68",
+          "backend": "a8991f08b474375c77f421a19dadbc3895719551a716e01277a0d5961194219f"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.190692485892214e-12,
+        "mean_absolute": 1.1792954710204281e-14,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 1.644118174937148e-11,
+        "mean_absolute": 1.5786900615449817e-13,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-def2-svp",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "a923834b910bcb656f7dc3deed6dd0e6f529f84ba00d711045c74c5a6aff8991",
+          "backend": "0d3b442711efcfd342fbbf3ba53a99d99268738a7375ab12c5ec89e6de4f599a"
+        },
+        "density-out": {
+          "reference": "78b845a1a04c2f7a71ff71653f059c323260751a2092f2e674da4defb0f82f68",
+          "backend": "bc8e120be1ded5149d7e8197e206af2108755c258c5625d1bc40108386ff350e"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 6.704024783805554e-17,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 1.6016354908998665e-12,
+        "mean_absolute": 1.4169974827900672e-14,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 6.59383658785373e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "0b774ef712ba39b78bb9c1404fe6652a887a83c30a938c930217cb6e71b15037",
+          "backend": "524d968e2685b67c69d0b304985fa635ec7bff82b4439a7f952c19d5b31216c7"
+        },
+        "density-out": {
+          "reference": "8b65b828a5cf63dca1bbb17ebb44a1dd84ddffe0989cb3f3537a05de5fa0a242",
+          "backend": "8f2ea6b2677de4f4d1605f97e8a605d36823e2681fe5a8122b9d07e6232d2f6c"
+        }
+      },
+      "fock": {
+        "max_absolute": 3.113598268100759e-11,
+        "mean_absolute": 5.563885429213202e-14,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 9.999390204740166e-12,
+        "mean_absolute": 1.114115972173055e-13,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "0b774ef712ba39b78bb9c1404fe6652a887a83c30a938c930217cb6e71b15037",
+          "backend": "31e875beee8296c545935791b73fc1481d9733626e9e50965e49728b04c8a535"
+        },
+        "density-out": {
+          "reference": "8b65b828a5cf63dca1bbb17ebb44a1dd84ddffe0989cb3f3537a05de5fa0a242",
+          "backend": "5b00532f925b399261380a13ac80ac1ed8c334e0cdd9cc3882db52ad56d121d6"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 3.7133960324936035e-17,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 5.339062525422378e-13,
+        "mean_absolute": 7.0455052280772585e-15,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "0b774ef712ba39b78bb9c1404fe6652a887a83c30a938c930217cb6e71b15037",
+          "backend": "35c3eafa8fef969423c8dec40e593d1da93dd36c73068be440d1e084fdd82ea4"
+        },
+        "density-out": {
+          "reference": "8b65b828a5cf63dca1bbb17ebb44a1dd84ddffe0989cb3f3537a05de5fa0a242",
+          "backend": "8713ecda478fe17465a2a809c29f6a69e763375e0de4e66cf3d58f12b17a2af6"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 5.953182771492245e-17,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 7.499834087099089e-13,
+        "mean_absolute": 7.224791609456633e-15,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 2.9558577807620168e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "0b774ef712ba39b78bb9c1404fe6652a887a83c30a938c930217cb6e71b15037",
+          "backend": "0ea03b0d761dce08cfe08e608b6c93b819ed7b63db225cfd4d8827182a81b233"
+        },
+        "density-out": {
+          "reference": "8b65b828a5cf63dca1bbb17ebb44a1dd84ddffe0989cb3f3537a05de5fa0a242",
+          "backend": "519ab4575792554a652010253278eda393fd87127608454d1b6c80fafa7c538f"
+        }
+      },
+      "fock": {
+        "max_absolute": 3.5491609651217004e-12,
+        "mean_absolute": 1.4111411020941224e-14,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 1.2411682792645706e-11,
+        "mean_absolute": 1.7596362236964652e-13,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 24,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/24-stack-1.xyz",
+        "geometry_sha256": "a8466bc817156ed41598ff954c55df3534adbd602eee4cf5a3ea9c6cf6c11687",
+        "id": "24-stack-1-cc-pvdz",
+        "original_sha256": "de60533a350b71f5c9fe734501377c5a0c475fe5ddec6b52fd8d247a88a07a6f",
+        "system": 24,
+        "translation": [
+          0.0,
+          0.0,
+          7.448800621
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "0b774ef712ba39b78bb9c1404fe6652a887a83c30a938c930217cb6e71b15037",
+          "backend": "424765a48d900f6b3fa773c8e634043e007e7e634685c0e641df88ada07d23f8"
+        },
+        "density-out": {
+          "reference": "8b65b828a5cf63dca1bbb17ebb44a1dd84ddffe0989cb3f3537a05de5fa0a242",
+          "backend": "65e3315461523c581d952537691558a939eb334a999fe527bddca9fd6423243e"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 7.364915733619272e-17,
+        "elements": 51984
+      },
+      "density": {
+        "max_absolute": 6.684652831268068e-13,
+        "mean_absolute": 6.837171469046138e-15,
+        "elements": 51984
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 2.1600499167107046e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "dab6eabb6c1f4909ec1afc087bb83de6cddf2ada454c6b4c9bf2d495ec0c481a",
+          "backend": "e773f3a323bdbe72ed45085667f6c275cf350975e2a40879b2200e439be59d41"
+        },
+        "density-out": {
+          "reference": "cade329f48e3d37cbd8828556fb561e7a47f8ce2328396cf33f1b2bb21ffd69a",
+          "backend": "ffbaeb05b52aa1a54f54214bccfcd4d0b4f04f64b9385451b689c6b405a77782"
+        }
+      },
+      "fock": {
+        "max_absolute": 2.4979129875646322e-11,
+        "mean_absolute": 4.1879475532837165e-14,
+        "elements": 35344
+      },
+      "density": {
+        "max_absolute": 1.8022805470252479e-12,
+        "mean_absolute": 2.3495338324793732e-14,
+        "elements": 35344
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "dab6eabb6c1f4909ec1afc087bb83de6cddf2ada454c6b4c9bf2d495ec0c481a",
+          "backend": "75aa290e0767f43eb0484d04b946d21b0de24011837aba034b6ba76c0f121db5"
+        },
+        "density-out": {
+          "reference": "cade329f48e3d37cbd8828556fb561e7a47f8ce2328396cf33f1b2bb21ffd69a",
+          "backend": "1224d5253a7ef9faf73cae89241f62de470328e949cd20ddefc49e4fc0f96441"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 2.9952353014171434e-17,
+        "elements": 35344
+      },
+      "density": {
+        "max_absolute": 1.350586309456503e-13,
+        "mean_absolute": 1.3002312077130301e-15,
+        "elements": 35344
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "dab6eabb6c1f4909ec1afc087bb83de6cddf2ada454c6b4c9bf2d495ec0c481a",
+          "backend": "eabab1b4ac824d7eb526bac37e8be6de727608feccbf1cd99261a87d2984ccb8"
+        },
+        "density-out": {
+          "reference": "cade329f48e3d37cbd8828556fb561e7a47f8ce2328396cf33f1b2bb21ffd69a",
+          "backend": "982609f46dbfaad3d7ec80de2f39732378c35741ac18bfc06921bd1a42f69316"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 4.467293174815398e-17,
+        "elements": 35344
+      },
+      "density": {
+        "max_absolute": 1.811328864675943e-13,
+        "mean_absolute": 1.3028164940011362e-15,
+        "elements": 35344
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 3.296918293926865e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "dab6eabb6c1f4909ec1afc087bb83de6cddf2ada454c6b4c9bf2d495ec0c481a",
+          "backend": "1a1d9aa726fe23cb921db564e35774fcfc6440dc062b9a47301d447ad6d3dacd"
+        },
+        "density-out": {
+          "reference": "cade329f48e3d37cbd8828556fb561e7a47f8ce2328396cf33f1b2bb21ffd69a",
+          "backend": "660fb3b78b729f4a0c2f5b787d073c46c3cf33d7c94d70e456a590c9629c43a9"
+        }
+      },
+      "fock": {
+        "max_absolute": 6.59383658785373e-12,
+        "mean_absolute": 1.0857507037632137e-14,
+        "elements": 35344
+      },
+      "density": {
+        "max_absolute": 2.0018431357016198e-12,
+        "mean_absolute": 3.3742308490789646e-14,
+        "elements": 35344
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "6-31G*",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-6-31gs",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": -1.1368683772161603e-13,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "dab6eabb6c1f4909ec1afc087bb83de6cddf2ada454c6b4c9bf2d495ec0c481a",
+          "backend": "4512819d2e216742cd72f1586edc934b8277c0a7f8f1c18eb16b02b4ecac82e5"
+        },
+        "density-out": {
+          "reference": "cade329f48e3d37cbd8828556fb561e7a47f8ce2328396cf33f1b2bb21ffd69a",
+          "backend": "c093c6c74b09c515b66a2d53f3c8c88d9045070976bc21080eb58a9470217051"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 5.564411720834364e-17,
+        "elements": 35344
+      },
+      "density": {
+        "max_absolute": 1.8640644583456378e-13,
+        "mean_absolute": 1.5594697091951212e-15,
+        "elements": 35344
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 2.2737367544323206e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "95120495379b33808ab58b2e999dbba87ebd8176f58753c835db97a5530a5a5f",
+          "backend": "84929df9c18ce46bb3e0091081d4956cff150dc1d67e471c56bc0e0ac6e3fb00"
+        },
+        "density-out": {
+          "reference": "c4e55143e9a27a478a4641ab8f320d72b82ac948c54ea6ef39c2119fe96e7ecc",
+          "backend": "d038f957cc95f8db10a70e536527dda645a1e8e32ceb77aacfb4db91c911367f"
+        }
+      },
+      "fock": {
+        "max_absolute": 2.7124968937641825e-11,
+        "mean_absolute": 2.509157339046774e-14,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 2.4183988145409785e-12,
+        "mean_absolute": 2.3253185583396563e-14,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "95120495379b33808ab58b2e999dbba87ebd8176f58753c835db97a5530a5a5f",
+          "backend": "327cdc625b1cfe1534a0100210dfe34437f443ada2257698e260622819a3d63c"
+        },
+        "density-out": {
+          "reference": "c4e55143e9a27a478a4641ab8f320d72b82ac948c54ea6ef39c2119fe96e7ecc",
+          "backend": "ed6a9c560ceadd5e151953a85d683b7c108b79ab82d5a7287574d645dfa8bf74"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 2.5448750463837334e-17,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 2.5998647679159603e-13,
+        "mean_absolute": 1.729364544276753e-15,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "95120495379b33808ab58b2e999dbba87ebd8176f58753c835db97a5530a5a5f",
+          "backend": "2273e6a0030201a398aa751b30da9a1535db20cc0a0119998d48bc2fd6e7c77a"
+        },
+        "density-out": {
+          "reference": "c4e55143e9a27a478a4641ab8f320d72b82ac948c54ea6ef39c2119fe96e7ecc",
+          "backend": "dfa86a208678b061e601973f6a0ba6d2ffe5a3269f30dd6666bea85683b3c218"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.0658141036401503e-14,
+        "mean_absolute": 3.5095672703338817e-17,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 3.3084646133829665e-13,
+        "mean_absolute": 2.007097111989884e-15,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 2.8421709430404007e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "95120495379b33808ab58b2e999dbba87ebd8176f58753c835db97a5530a5a5f",
+          "backend": "ad69119f88fccae59f93b63cc14685263c2546946cc4f8dec08408669f548eb7"
+        },
+        "density-out": {
+          "reference": "c4e55143e9a27a478a4641ab8f320d72b82ac948c54ea6ef39c2119fe96e7ecc",
+          "backend": "5ac86a68a25c667d1e35c70451ca6b21696ab7357dd7ba27c68ada0f65d350ee"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.3784529073745944e-12,
+        "mean_absolute": 5.2684649613037965e-15,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 6.181909151248277e-12,
+        "mean_absolute": 3.8423550161684136e-14,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "def2-SVP",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-def2-svp",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "95120495379b33808ab58b2e999dbba87ebd8176f58753c835db97a5530a5a5f",
+          "backend": "d2c4f80ee16ac13d211c84209bdcff76624792c7b12dff3d5f483be478ffd78e"
+        },
+        "density-out": {
+          "reference": "c4e55143e9a27a478a4641ab8f320d72b82ac948c54ea6ef39c2119fe96e7ecc",
+          "backend": "615be22a829b337b6864108653e3b3e1392669f065c1998199db26cca678ce14"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 4.5484621138289446e-17,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 3.0159208463942377e-13,
+        "mean_absolute": 1.7922962177683482e-15,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "original",
+      "energy_difference": 1.5916157281026244e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "87b09ffe1f018448d43bec9840751c721b9ca220678e03af44733cd932b4274e",
+          "backend": "2fe0e4118eaecca64283c6df5020b5a6105fd632857bde971da550fe5870a2d5"
+        },
+        "density-out": {
+          "reference": "2332f0f73876466f19bab2f3d9bd6806157d1a72b38bb655d977941e40074c64",
+          "backend": "2485569916e655fc5488f48504e8fccba77ed451f7d84345408139728460163e"
+        }
+      },
+      "fock": {
+        "max_absolute": 6.988187806200585e-12,
+        "mean_absolute": 1.4560298535947505e-14,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 2.876254789896393e-12,
+        "mean_absolute": 2.3748611954643294e-14,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "fabo",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "87b09ffe1f018448d43bec9840751c721b9ca220678e03af44733cd932b4274e",
+          "backend": "db2c6ffdcb7791dcf5f20b1ba1afbabc92512c6834f871796b6e10f6281a943b"
+        },
+        "density-out": {
+          "reference": "2332f0f73876466f19bab2f3d9bd6806157d1a72b38bb655d977941e40074c64",
+          "backend": "e8222223d7a29122e5845e500a2256a5c49c9827fdb232db22a7b459993a2b9f"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 2.6763053667044837e-17,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 1.0724754417879012e-13,
+        "mean_absolute": 9.777088474539736e-16,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "libintx",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "87b09ffe1f018448d43bec9840751c721b9ca220678e03af44733cd932b4274e",
+          "backend": "cc2cc00b9608208f9859f481285cede4775f0e38e461c085d332985c53450879"
+        },
+        "density-out": {
+          "reference": "2332f0f73876466f19bab2f3d9bd6806157d1a72b38bb655d977941e40074c64",
+          "backend": "564774594bd0b57fe5986792f2dd92042180dff97330910f08e42bd6cf7dd168"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.105427357601002e-15,
+        "mean_absolute": 3.7208287930209145e-17,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 1.0791367799356522e-13,
+        "mean_absolute": 1.1043735141514631e-15,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "vsr",
+      "energy_difference": 2.6147972675971687e-12,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "87b09ffe1f018448d43bec9840751c721b9ca220678e03af44733cd932b4274e",
+          "backend": "7183a8430cec735cb5a8deada5bd911ed26db596ccc114a60f5233142d172bbb"
+        },
+        "density-out": {
+          "reference": "2332f0f73876466f19bab2f3d9bd6806157d1a72b38bb655d977941e40074c64",
+          "backend": "8de3b402d54f2e70c6d6933fbfdd01d64f6ff751cab665e26da0c99fb4db732c"
+        }
+      },
+      "fock": {
+        "max_absolute": 7.58682006107847e-12,
+        "mean_absolute": 9.42933583382699e-15,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 5.063172103803026e-12,
+        "mean_absolute": 3.584801480478305e-14,
+        "elements": 67600
+      }
+    },
+    {
+      "case": {
+        "atoms": 34,
+        "basis": "cc-pVDZ",
+        "copies": 1,
+        "geometry": "geometries/34-stack-1.xyz",
+        "geometry_sha256": "419d403c22b5de8f2921e04eb664959debde150b07fdc01e879fdc876f522d27",
+        "id": "34-stack-1-cc-pvdz",
+        "original_sha256": "81600e01a548418f058f873e7dba8b6f0ef3704879747231b6112ed960613b88",
+        "system": 34,
+        "translation": [
+          0.0,
+          5.913242621,
+          0.0
+        ]
+      },
+      "backend": "laikov",
+      "energy_difference": 0.0,
+      "bitwise_reproducible": true,
+      "matrix_sha256": {
+        "fock": {
+          "reference": "87b09ffe1f018448d43bec9840751c721b9ca220678e03af44733cd932b4274e",
+          "backend": "948516a4a7548108b1a6fe3ba9ea6d5905fa9a77fea6c95396649f34088f7bee"
+        },
+        "density-out": {
+          "reference": "2332f0f73876466f19bab2f3d9bd6806157d1a72b38bb655d977941e40074c64",
+          "backend": "d96ed0e9e2fe4eb14a22114f142f0c408e2bd7b6061339d09e9324cca831cedd"
+        }
+      },
+      "fock": {
+        "max_absolute": 1.4210854715202004e-14,
+        "mean_absolute": 5.099771472218793e-17,
+        "elements": 67600
+      },
+      "density": {
+        "max_absolute": 1.065536547883994e-13,
+        "mean_absolute": 1.0782546848540586e-15,
+        "elements": 67600
+      }
+    }
+  ]
+}

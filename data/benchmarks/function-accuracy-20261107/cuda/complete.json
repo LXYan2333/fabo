@@ -1,0 +1,18 @@
+{
+  "denominator": 1000000,
+  "execution": "45a9211f99114235110d2dc299a0e1a278707fb90b48a858b0268f0a101ed4a7",
+  "files": {
+    "accuracy-cuda-fast-absolute.pdf": "b17486d8cf8e99d314ac9e3ac89bf36c71e9ff7f7fcc1d376bbf31470d79705f",
+    "accuracy-cuda-fast-relative.pdf": "9e52c421d3cf3fa2afb5f9c16eab7f28298e1eecc74c95800b687da18c725c62",
+    "accuracy-cuda-fast-ulp.pdf": "fb9417aec22bc59a2c05aab5ecf258379d0f49c1b9c7544c70ae4aa5f6591dca",
+    "accuracy-cuda-strict-absolute.pdf": "0a51f02e47ec014f1ff26a0374985a96ab1dc34ef3ced6123ae4d45582818aef",
+    "accuracy-cuda-strict-relative.pdf": "6feecf413c5f0989f0382948ed7d5b2c5c88e4afd90473d933ca371c32d6b6ae",
+    "accuracy-cuda-strict-ulp.pdf": "954700180101952c6e2a57cc250a02d6f44f4f604eb22d72bb8cecb1f296c1ca",
+    "accuracy.csv": "712d0902a3a5bf0f4136ebd52427d24e52e306133724b278723b7e009d6c454e",
+    "accuracy.json": "bc176c000ea8f9d7820ed6bdfd59c24aadd39b0351b2e9ba906d90c9b8c3e4fc",
+    "accuracy.tex": "6143bcc51f688444390f389a77ae9b5ad145dbfe61c69557653db433ae41118e"
+  },
+  "identity": "36a4674a54be5c316a4ce08be8b637f7d52b7882ebd09ea3ee1576b79e7752c8",
+  "inputs": 1000000001,
+  "sampled_only": true
+}

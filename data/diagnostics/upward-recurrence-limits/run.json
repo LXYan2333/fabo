@@ -1,0 +1,59 @@
+{
+  "identity": "596d186a3e9462fb2b2eb0f34dfb09490ede6f9cbac368cd97b9655b8f492323",
+  "recipe": {
+    "command": [
+      "x86_64-conda-linux-gnu-g++",
+      "-std=c++17",
+      "-fext-numeric-literals",
+      "-O2",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-fno-lto",
+      "/export/home/yanlongxiang/fast-boys-additive/upward-window-1000-20261107/repo/benchmark/upward_recurrence/scan.cc",
+      "-I/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/include",
+      "-L/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/lib",
+      "-Wl,-rpath,/export/home/yanlongxiang/miniconda3/envs/fabo-nwchem/lib",
+      "-lmpfr",
+      "-lgmp",
+      "-lquadmath",
+      "-ldl",
+      "-pthread",
+      "-o",
+      "/export/home/yanlongxiang/fast-boys-additive/upward-window-1000-20261107/results/scan"
+    ],
+    "compiler": "x86_64-conda-linux-gnu-g++ (conda-forge gcc 14.4.0-7) 14.4.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "denominator": 1000000,
+    "files": {
+      "boys.tbl": "09a312255722ec81a2117b6fea6f987d0695d05881bc23a805b1dc94dd79b757",
+      "exp.tbl": "124f2e84f16a2906fe7c0635f9b28e18b2dbf25611821a97e6be47b4aff4fdd4",
+      "scan": "9589a5f895aae0164caf5b6ac71d60887adcc25240c84ee87fe14b4c08034f53"
+    },
+    "final": 1000000000,
+    "protocol": "upward-window-v1",
+    "sources": {
+      "benchmark/library_accuracy/accuracy_reference_v3.h": "32bf29920f6b27193a61eb2e2f070f69a305c3c7c4754ecb6aea1aad8b8f296e",
+      "benchmark/library_accuracy/scan.cc": "f12ce128519553a15536045c2a40cc03936c5f8ae1a7139240e0101da8eff866",
+      "benchmark/library_accuracy/taylor_boys_reference_v2.cc": "b10eae597e0a522f0382b511ecae4b271ca512520801d959c9fcc32933e9dce1",
+      "benchmark/upward_recurrence/rounded_reference_v3.h": "94f26dca001e5366f881a1957953fc713d32344e6ce3b452577cd58f3e58dbd1",
+      "benchmark/upward_recurrence/scan.cc": "b387a780ef42e10f2521d9f33093fdd3fdd17e62366e9c92d02bd8f8bfd5d437",
+      "workflow/library_accuracy/README.md": "e34afa308e348fc1e94f62a0ada4c7870039e7ba359922e2ab0bdf014c43fd4b",
+      "workflow/library_accuracy/__init__.py": "3e0781eb8b0ae8afbff7a41c0433f22236ecb007b43c8d780a1d4e8e3b758e31",
+      "workflow/library_accuracy/__main__.py": "cab3ef32ea86f1862f15f9dec17916465f7a019910bc972cdc9142e6c6b8d2c8",
+      "workflow/library_accuracy/adapters.py": "c29eb1c22881c1bc8c7435a6c0a2b4e4562a85591141b66e7cdd69bdc0ae7b21",
+      "workflow/library_accuracy/build.py": "8a623fcd4b3952e4af995babc8ac8fda998749e09a4aee26696399d0adaaf761",
+      "workflow/library_accuracy/cluster.py": "f437d58af8c1d908f02784b3dd92b289f29a7a328708fa1ce2f7b9405eea3cfa",
+      "workflow/library_accuracy/core.py": "4ea5ff675b6a85cd0b9f15ec7f0c2c4c79b5a9be73feedb43aea465ed94963eb",
+      "workflow/library_accuracy/environment.py": "02a7cf91a2d183ca38b8008ff3928a4d3c67657aa6346aa828eac377716844ee",
+      "workflow/library_accuracy/group.py": "b9e6b13248c643e79a16afd9908969f1276ca54c1f9277190088da45c2053cb1",
+      "workflow/library_accuracy/pilot_job.py": "4d0c21db6c6656cca5458ceed1ac33f52474a650013005fccdc69e365b49875e",
+      "workflow/library_accuracy/report.py": "500594235b8b609f5c9919962430eb424fdfaf7dcf0947488e8fe1fb20e6a254",
+      "workflow/library_accuracy/suite.py": "fd444c956bba9c3123d5386732a64c56d9cec4da41e0bc7c4951869585c3a18c",
+      "workflow/upward_recurrence_limits/README.md": "5e1cce80ff42c05295fe53c393267a4b8ab48e5782f46951e46ac55693ed39fa",
+      "workflow/upward_recurrence_limits/__init__.py": "0200d9dc36026032d665142238b4be4db5ec0a313735d34b9dc88e9e4f15ecd0",
+      "workflow/upward_recurrence_limits/__main__.py": "39cbdb49590091e99d15ff90419b2c835f3c180ddfac2532c5481449b8c75616",
+      "workflow/upward_recurrence_limits/core.py": "1c2464f4f89fedd740a918332c9d5e05d14f8edf2e0be84196da19697529eb54",
+      "workflow/upward_recurrence_limits/test_windows.py": "d17229cc3969ad47ef54a4300838a09697f4f55772e4745c191f9372efe15616"
+    },
+    "window": 1000000
+  }
+}

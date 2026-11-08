@@ -1,0 +1,11 @@
+{
+  "platform": "cuda",
+  "cxx": "/usr/bin/g++",
+  "nvcc": "/usr/local/cuda/bin/nvcc",
+  "cuda_arch": "sm_120",
+  "scanner": "/path/to/strict/scan",
+  "reference_table": "/path/to/reference.bin",
+  "workers": 4,
+  "batch": 1024,
+  "shard_size": 1000000
+}

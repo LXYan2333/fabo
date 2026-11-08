@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "files": {
+    "matrix-absolute.json": "06f0c66d49766550e75fe7de1438f5f5a12a33812e03c73348de2f6b65beebce"
+  },
+  "source": "Heitler:/export/home/yanlongxiang/fast-boys-nwchem/matrix-absolute-20261107.json",
+  "verification": "Matched remote sha256sum on 2026-11-08; no measurements were recomputed."
+}
