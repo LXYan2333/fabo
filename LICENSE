@@ -35,12 +35,11 @@ Third-party material
 
 Third-party code, dependencies, submodules, coefficients, datasets, and
 publications retain their respective copyright and license terms. This
-includes upstream material under third_party/ and upstream material copied
-or adapted elsewhere in the repository. This notice does not relicense
-those contributions or grant rights that their owners have not granted.
-Preserve their existing notices and consult their accompanying licenses
-and provenance records. The licenses of combined or linked works also
-depend on the applicable dependency licenses.
+includes upstream material under third_party/ in the repository. This
+notice does not relicense those contributions or grant rights that their
+owners have not granted. Preserve their existing notices and consult
+their accompanying licenses and provenance records. The licenses of
+combined or linked works also depend on the applicable dependency licenses.
 
 The covered material is provided without warranty, as specified in the
 applicable license.
