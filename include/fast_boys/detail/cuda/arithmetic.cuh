@@ -27,6 +27,11 @@ struct Binary64 {
     return r;
 #endif
   }
+  // The host fallbacks below support conformance tests and debugging of the
+  // CUDA evaluator, not performance-oriented CPU use (use Highway SIMD for
+  // that). Their volatile intermediates preserve separate binary64 operations
+  // instead of allowing contraction across helper calls. Device code uses
+  // explicit rounded intrinsics and does not execute these volatile paths.
   FAST_BOYS_HD static FAST_BOYS_INLINE double add(double a, double b) {
 #if defined(__CUDA_ARCH__)
     return __dadd_rn(a, b);
