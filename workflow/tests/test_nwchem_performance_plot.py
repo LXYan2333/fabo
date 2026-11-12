@@ -28,4 +28,4 @@ def test_cpu_table_full_coverage_and_trailing_zeros():
     assert table.count('2.000') == 60
     assert 'Laikov' in table and 'GANSU' not in table
     assert 'tab:cpu-fock-times' in table
-    assert 'Water (8)' in table and 'Pentane (1)' in table
+    assert r'$8\times$ water dimer' in table and r'$1\times$ pentane dimer' in table

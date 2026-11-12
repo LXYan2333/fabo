@@ -16,6 +16,7 @@ import struct
 from benchmark.nwchem.bindings import BACKENDS, SHARED_TAIL, header
 from benchmark.nwchem.simint_binding import patch as patch_simint
 from benchmark.nwchem.patch_nwchem import patch_single_update
+from workflow.comparator_ports import copy_cpu_ports
 
 ROOT=Path(__file__).resolve().parents[1]
 NWCHEM='e2869a2c81445f2edfd25bbae652d099fabb9a92'
@@ -35,7 +36,7 @@ def workflow_files():
             ROOT/'benchmark/nwchem/highway_gather.patch',ROOT/'benchmark/nwchem/reference.cc',
             ROOT/'benchmark/nwchem/reference_check.cc',
             ROOT/'workflow/quick/geometry.py',ROOT/'workflow/nwchem_cluster.py',ROOT/'workflow/scripts/quick_reference_data.py',
-            ROOT/'workflow/additive/reference.py']
+            ROOT/'workflow/additive/reference.py',ROOT/'workflow/comparator_ports.py']
 
 def patch_highway(root):
     """PR #3519, from the author's local Highway commits; fail on drift."""
@@ -164,9 +165,8 @@ def prepare(out,config):
     export(config['nwchem_source'],NWCHEM,out/'nwchem')
     patch_single_update(out/'nwchem')
     export(config['simint_source'],SIMINT,out/'generator')
-    export(ROOT,config['legacy_revision'],out/'legacy',[
-        'benchmark/third_party_boys_impl/laikov_global_approximation',
-        'benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax'])
+    copy_cpu_ports(out/'legacy/benchmark/third_party_boys_impl',
+                   revision=config.get('ports_revision',config.get('legacy_revision')))
     export(config['libintx_source'],config['libintx_revision'],out/'libintx',
            ['src/libintx','include/eigen3'])
     export(config['highway_source'],config['highway_revision'],out/'highway',['hwy'])

@@ -24,6 +24,8 @@ The project name is **Fast and Accurate Boys**; the C++ namespace and include pa
 
 No numerical search, Python environment, MPFR installation, or quantum-chemistry package is needed to use the bundled library.
 
+The CPU and CUDA comparator ports used in the paper, including their coefficient sources and application bindings, are indexed in [benchmark/ports/README.md](benchmark/ports/README.md). They are separate from the library API and have their own upstream dependencies and licensing notices.
+
 ## Getting started
 
 Add this repository's `include/` directory to your compiler's include path. Use C++17 or later. The CPU backend additionally requires Highway 1.4 or newer; the GPU backend requires a CUDA compiler and device with double-precision support. QUICK, LibintX, and other benchmark dependencies are not required for normal library use, so there is no need to initialize their submodules.

@@ -30,6 +30,9 @@ def test_table_preserves_three_decimal_places():
     table = timing_table(rows)
     assert table.count('1.000') == 60
     assert table.count(' & ') == 13 * 6  # header plus twelve complete rows
+    assert r'$128\times$ water dimer' in table
+    assert 'Molecule & Basis' in table
+    assert 'Dimer stack' not in table and 'parentheses' not in table
 
 
 @pytest.mark.parametrize('repair_checksum', [False, True])

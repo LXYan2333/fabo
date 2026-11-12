@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 from decimal import Decimal, localcontext
 
-from workflow.scripts.report_function_accuracy import load_records, aggregate_ranges, accuracy_table, verify_provenance
+from workflow.scripts.report_function_accuracy import load_records, aggregate_ranges, accuracy_table, verify_provenance, reference_storage
 from workflow.library_accuracy.core import storage
 
 
@@ -82,3 +82,10 @@ def test_manuscript_storage_matches_generated_models():
         assert row['total_bytes'] == sum(row[k] for k in ('coefficient_bytes', 'correction_bytes', 'padding_bytes'))
         if row['N'] in expected:
             assert f"{row['total_bytes']/1024:.3f}" == expected[row['N']]
+
+
+def test_reference_storage_maximum_degrees():
+    summary = ROOT / 'data/numerical/paired-1ulp/summary.json'
+    rows = reference_storage(summary, ROOT / 'include')
+    assert [r['max_taylor_degree'] for r in rows] == [4]*4 + [5]*6 + [6]*12 + [7]*3
+    assert [{k: v for k, v in r.items() if k != 'max_taylor_degree'} for r in rows] == storage(summary, ROOT / 'include')

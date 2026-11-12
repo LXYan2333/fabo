@@ -1,0 +1,70 @@
+SUPPLEMENTARY MATERIAL
+
+to the work
+
+Global approximation to the Boys functions for vectorized computation
+
+by
+
+Dimitri N. Laikov
+
+FILE       DESCRIPTION
+
+makefile   Data file for UNIX make utility used to compile the code.
+
+t_fn.c     C code, main file.
+
+t_fpn.c    C code, mathematical functions,
+           one source to be converted on-the-fly to 4 floating-point data types.
+
+c0n4.c     Coefficients c_n of Eq. (3), and z_nb of Eq. (17).
+
+cnm4.c     Approximation coefficients for the rational function of Eq. (11), polynomial.
+
+z0nm4.c    Approximation coefficients in terms of polynomial roots.
+
+z1nm4.c    Approximation coefficients in terms of polynomial roots as in Eqs. (12), (13), (14).
+
+RUNNING THE CODE
+
+What the code does can be learnt from it, thanks to C.
+But to soften the experience, here is an example
+with all command line arguments followed by short explanation:
+
+./t_fn L:4 z:2 f:50 c:0 t:2 p:-1,0 b:12 x: r:z o:0
+
+L:4     sets the order n = 4 of the function computed by the approximation,
+        followed by the recursion down to m = 0.
+
+z:0     compute polynomials directly from their coefficients.
+z:1     compute polynomials in terms of their roots, but without the polynomial division.
+z:2     compute polynomials in terms of their roots, as in Eqs. (12), (13), (14).
+z:3     compute polynomials in terms of positive-real-part roots and one more polynomial.
+
+f:50    select the approximation accurate to at least 50 bits.
+f:0     use the infinite series summation, asymptotic formula for large argument.
+
+c:0     use the above selection.
+c:4     use the approximation of order N = 4.
+c:-1    use the approximation for the single precision as in Table 1.
+c:-2    use the approximation for the double precision as in Table 1.
+c:-3    use the approximation for the current precision if it is single or double.
+
+t:1     use single          precision, "float"       data type.
+t:2     use double          precision, "double"      data type.
+t:3     use double extended precision, "long double" data type.
+t:4     use quadruple       precision, "__float128"  data type.
+
+p:-1,0  binary exponent range for the argument from -1 to 0 (see the source code).
+
+b:12    run through all 12-bit values of mantissa (see the source code).
+
+x:      scale the above values by the z_nb of Eq. (17),
+        otherwise take them as they are.
+
+r:z     set the rounding mode to round-to-zero.
+
+o:0     do not print each value, only the maximum errors for m = 0, ..., n .
+o:1     print all the values (may need output redirection to a file),
+        can be used for plotting.
+

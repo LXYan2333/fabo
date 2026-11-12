@@ -8,8 +8,8 @@ import subprocess
 import tarfile
 from .adapters import source as fabo_source
 from .core import ROOT, save, sha
+from workflow.comparator_ports import copy_cpu_ports
 
-PORT_REVISION='728ec72'
 SIMINT_REVISION='38b24bb040c647e4acc0e040457180b574089c58'
 BACKENDS={'cpu':['simint','fabo','libintx','vsr','laikov'], 'cuda':['quick','fabo','libintx','vsr','gansu']}
 
@@ -88,7 +88,7 @@ def build(config,out):
         if config.get('ports_snapshot'):
             shutil.copytree(config['ports_snapshot'],sources/'ports',dirs_exist_ok=True)
         else:
-            export(ROOT,PORT_REVISION,sources/'ports',['benchmark/third_party_boys_impl/laikov_global_approximation','benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax'])
+            copy_cpu_ports(sources/'ports/benchmark/third_party_boys_impl')
         ports=sources/'ports/benchmark/third_party_boys_impl'
         if 'simint' in backends:
             if config.get('simint_snapshot'):

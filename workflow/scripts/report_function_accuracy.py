@@ -115,6 +115,18 @@ def accuracy_table(rows):
     return '\n'.join(lines + [r'\end{tabular}', r'\end{ruledtabular}', r'\endgroup', r'\end{table*}']) + '\n'
 
 
+def reference_storage(summary, include):
+    """Attach each selected model's maximum per-output Taylor degree."""
+    sizes = storage(summary, include)
+    winners = json.loads(Path(summary).read_text())['winners']
+    for row in sizes:
+        degrees = winners[f"0-{row['N']}"]['degrees']
+        if len(degrees) != row['N'] + 1 or any(type(p) is not int or p < 0 for p in degrees):
+            raise ValueError('Invalid per-output Taylor degrees')
+        row['max_taylor_degree'] = max(degrees)
+    return sizes
+
+
 def generate(records, figures, tables, summary, include):
     import matplotlib
     matplotlib.use('Agg')
@@ -122,7 +134,7 @@ def generate(records, figures, tables, summary, include):
     from matplotlib.ticker import MaxNLocator
 
     rows = load_records(records)
-    sizes = storage(summary, include)
+    sizes = reference_storage(summary, include)
     figures.mkdir(parents=True, exist_ok=True)
     tables.mkdir(parents=True, exist_ok=True)
     csv_write(tables / 'results-function-accuracy.csv', rows)
@@ -164,8 +176,17 @@ def generate(records, figures, tables, summary, include):
                  labels=['Main table', 'Tail table'], colors=['#0072B2', '#E69F00'], alpha=.85)
     ax.axhline(1024, color='gray', linestyle='--', label='1 MiB budget')
     ax.set(xlabel='Requested maximum order N', ylabel='Reference storage (KiB)', xlim=(0, 24), ylim=(0, 1280))
-    ax.legend(ncol=3, loc='upper center', frameon=False)
-    fig.tight_layout()
+    degree_ax = ax.twinx()
+    degrees = [r['max_taylor_degree'] for r in sizes]
+    degree_ax.plot(n, degrees, color='#222222', marker='o', markersize=3.5,
+                   markerfacecolor='white', linewidth=1.2, label='Max. Taylor degree')
+    degree_ax.set(ylabel='Maximum Taylor degree', ylim=(min(degrees)-.5, max(degrees)+.5))
+    degree_ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    handles, labels = ax.get_legend_handles_labels()
+    degree_handles, degree_labels = degree_ax.get_legend_handles_labels()
+    fig.legend(handles+degree_handles, labels+degree_labels, ncol=2,
+               loc='upper center', frameon=False)
+    fig.tight_layout(rect=(0, 0, 1, .86))
     fig.savefig(figures / 'results-reference-storage.pdf')
     plt.close(fig)
     sources = [summary, Path(__file__)] + [records / p / f for p in ('cpu', 'cuda') for f in ('accuracy.json', 'complete.json', 'download-manifest.json', 'run.json', 'execution.json', 'built.json', 'scan.build.json')]
@@ -173,7 +194,7 @@ def generate(records, figures, tables, summary, include):
         dict(sources={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
              plotted='Pooled per-request strict/fast ULP error upper bounds; native CPU gather',
              summary='Maximum and sum/count mean across all requests; each returned value has equal weight',
-             storage='Packed main+tail arrays, including corrections and row padding'), indent=2) + '\n')
+             storage='Packed main+tail arrays, including corrections and row padding; right axis is max(degrees) for each selected [0,N] model'), indent=2) + '\n')
 
 
 if __name__ == '__main__':

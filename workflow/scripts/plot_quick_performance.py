@@ -24,6 +24,11 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def molecule_label(name, copies):
+    """Shared LaTeX/Matplotlib label; copies denotes complete S66 dimers."""
+    return rf'${copies}\times$ {name.lower()} dimer'
+
+
 def load_records(root):
     complete = json.loads((root / 'complete.json').read_text())
     for name, key in (('summary.json', 'summary_sha256'), ('reuse.json', 'reuse_sha256'),
@@ -60,29 +65,29 @@ def load_records(root):
     return complete['identity'], rows
 
 
-def timing_table(rows, *, backends=BACKENDS, systems=SYSTEMS, engine='QUICK', scope='full Fock-build', figure_prefix='gpu'):
+def timing_table(rows, *, backends=BACKENDS, systems=SYSTEMS, engine='QUICK', scope='Fock-build', figure_prefix='gpu'):
     by_key = {(r['system'], r['basis'], r['backend']): r for r in rows}
     lines = [
         r'\begin{table*}[tbp]',
-        r'\caption{Mean ' + scope + ' times in seconds for every molecular stack, basis set, and timed Boys backend in ' + engine + r'. Each entry is the arithmetic mean of five measurements, reported to three decimal places. Stack sizes are given in parentheses as numbers of dimers. These are the same observations as Fig.~\ref{fig:' + figure_prefix + r'-fock-performance}; the correctly rounded reference is untimed.}',
+        r'\caption{Mean ' + scope + ' times in seconds for the ' + engine + r' benchmarks shown in Fig.~\ref{fig:' + figure_prefix + r'-fock-performance}.}',
         r'\label{tab:' + figure_prefix + '-fock-times}',
         r'\begin{ruledtabular}',
         r'\begin{tabular}{llrrrrr}',
-        'Dimer stack & Basis & ' + ' & '.join(label for _, label, _ in backends) + r' \\',
+        'Molecule & Basis & ' + ' & '.join(label for _, label, _ in backends) + r' \\',
         r'\hline',
     ]
     for i, (system, (_, name, copies)) in enumerate(systems.items()):
         if i:
             lines.append(r'\hline')
         for j, basis in enumerate(BASES):
-            label = f'{name} ({copies})' if j == 1 else ''
+            label = molecule_label(name, copies) if j == 1 else ''
             times = [f"{by_key[system, basis, backend]['mean_seconds']:.3f}" for backend, _, _ in backends]
             lines.append(' & '.join([label, basis, *times]) + r' \\')
     lines.extend([r'\end{tabular}', r'\end{ruledtabular}', r'\end{table*}'])
     return '\n'.join(lines) + '\n'
 
 
-def render(rows, output, *, tables=None, backends=BACKENDS, systems=SYSTEMS, stem='quick', engine='QUICK', scope='full Fock-build', figure_prefix='gpu', ylabel='Mean Fock-build time (s)'):
+def render(rows, output, *, tables=None, backends=BACKENDS, systems=SYSTEMS, stem='quick', engine='QUICK', scope='Fock-build', figure_prefix='gpu', ylabel='Mean Fock-build time (s)'):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -108,7 +113,7 @@ def render(rows, output, *, tables=None, backends=BACKENDS, systems=SYSTEMS, ste
                    yerr=[r['sd_seconds'] for r in values], capsize=2,
                    error_kw={'elinewidth': 0.8, 'capthick': 0.8})
         ax.set(xticks=range(3), xticklabels=BASES, ylabel=ylabel,
-               xlabel='Basis set', title=f'{name}: {copies} dimer' + ('s' if copies != 1 else ''), ylim=(0, None))
+               xlabel='Basis set', title=molecule_label(name, copies), ylim=(0, None))
         ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
         ax.set_axisbelow(True)
         ax.grid(axis='y', alpha=0.2)

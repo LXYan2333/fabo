@@ -140,10 +140,8 @@ def test_compile_comparator(tmp_path,backend):
     # All five production variants use GCC; do not mix integral compilers.
     compiler='g++'
     if not shutil.which(compiler) or not hwy.exists():pytest.skip('compiler/Highway required')
-    from workflow.nwchem_compare import export
-    export(ROOT,'main',tmp_path/'legacy',[
-        'benchmark/third_party_boys_impl/laikov_global_approximation',
-        'benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax'])
+    from workflow.comparator_ports import copy_cpu_ports
+    copy_cpu_ports(tmp_path/'legacy/benchmark/third_party_boys_impl')
     simint=tmp_path/'simint/vectorization';simint.mkdir(parents=True)
     (simint/'vectorization.h').write_text('#include <immintrin.h>\n#define SIMINT_SIMD_LEN 8\n#define SIMINT_DBLTYPE __m512d\n')
     config=tmp_path/'libintx';config.mkdir()

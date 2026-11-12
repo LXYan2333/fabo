@@ -6,7 +6,7 @@
   "minimum_fock_seconds": 2.0,
   "rounds": 5,
   "reference_rounds": 2,
-  "legacy_revision": "728ec72",
+  "ports_revision": "728ec72e9dae8b3897265500860e9340139c70b1",
   "nwchem_source": "/export/home/yanlongxiang/fast-boys-deps/nwchem",
   "simint_source": "/export/home/yanlongxiang/fast-boys-deps/simint-generator",
   "libintx_source": "/export/home/yanlongxiang/fast-boys-deps/libintx",

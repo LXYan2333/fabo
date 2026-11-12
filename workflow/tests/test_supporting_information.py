@@ -109,10 +109,16 @@ def test_table_generation(tmp_path):
     table(path, 'Caption', ['Case', 'Backend'], [('case_1', 'A&B')])
     text = path.read_text()
     assert r'\Needspace{8\baselineskip}' in text
+    assert text.count(r'\label{tab:table}') == 1
     assert r'case\_1 & A\&B' in text
     assert r'\endfirsthead' in text and r'\endhead' in text
     table(path, 'Caption', ['Case', 'Backend'],
           [(f'case_{case}', str(backend)) for case in range(12) for backend in range(5)])
     text = path.read_text()
     assert text.count(r'\\*') == 48
+    assert text.count(r'\label{tab:table}') == 1
     assert r'\newpage' not in text and r'\Needspace' not in text
+    table(path, 'Caption', ['Molecule', 'Basis', 'Backend'],
+          [(f'molecule_{case//3}', f'basis_{case%3}', str(backend))
+           for case in range(12) for backend in range(5)], group_columns=2)
+    assert path.read_text().count(r'\\*') == 48

@@ -9,6 +9,7 @@ import re
 import shutil
 
 from workflow.scripts.plot_quick_performance import load_records as quick
+from workflow.scripts.plot_quick_performance import molecule_label, SYSTEMS
 from workflow.scripts.plot_nwchem_performance import load_records as nwchem
 from workflow.scripts.report_function_accuracy import load_records as accuracy
 from workflow.scripts.report_molecular_accuracy import load as molecular
@@ -37,11 +38,12 @@ def backend_name(value):
     return BACKEND_NAMES[value]
 
 
-def table(path, caption, heads, rows):
+def table(path, caption, heads, rows, *, group_columns=1):
     rows=list(rows)
     cols = 'l' * len(heads)
     header = ' & '.join(heads) + r' \\ \midrule'
-    text = [r'\begin{longtable}{' + cols + '}', r'\caption{' + caption + r'}\\',
+    label = 'tab:' + path.stem.lower()
+    text = [r'\begin{longtable}{' + cols + '}', r'\caption{' + caption + r'}\label{' + label + r'}\\',
             r'\toprule', header, r'\endfirsthead', r'\toprule', header, r'\endhead',
             r'\midrule\multicolumn{' + str(len(heads)) + r'}{r}{Continued on next page}\\\endfoot',
             r'\bottomrule\endlastfoot']
@@ -49,7 +51,7 @@ def table(path, caption, heads, rows):
         text.insert(0, r'\Needspace{' + str(len(rows)+7) + r'\baselineskip}')
     for i,row in enumerate(rows):
         # Let longtable paginate; a forced midpoint break left most of a page empty.
-        same_case=(len(rows)==60 and i+1<len(rows) and row[0]==rows[i+1][0])
+        same_case=(len(rows)==60 and i+1<len(rows) and row[:group_columns]==rows[i+1][:group_columns])
         text.append(' & '.join(escape(v) for v in row) + (r' \\*' if same_case else r' \\'))
     path.write_text('\n'.join(text + [r'\end{longtable}', '']))
 
@@ -63,14 +65,16 @@ def generate(output, application_inputs=Path('overleaf-si/data/application-input
     root=Path('data/benchmarks')
     gpu=root/'quick-fixed-density-20261106'; cpu=root/'nwchem-fixed-density-20261106'
     timing={'GPU':quick(gpu)[1], 'CPU':nwchem(cpu)}
+    case_labels = {(platform, r['case']): (molecule_label(SYSTEMS[r['system']][0], r['copies']), r['basis'])
+                   for platform, rows in timing.items() for r in rows}
     errors=accuracy(root/'function-accuracy-20261107')
     mol,means=molecular(gpu,cpu)
     variability=[dict(case=c['case']['id'],energy_sd=c['reference_energy_sd'],
                       fock_sd_max=c['reference_matrix_sd_max']['fock'],density_sd_max=c['reference_matrix_sd_max']['density']) for c in means['cases']]
     csv_write(data/'reference-variability.csv',variability)
     table(tables/'reference-variability.tex','QUICK reference-repeat dispersion: energy sample SD and largest elementwise sample SD of each matrix.',
-          ['Case','Energy SD (hartree)','Max Fock SD (hartree)','Max density SD'],
-          [(r['case'],*[f'{r[k]:.3e}' for k in ('energy_sd','fock_sd_max','density_sd_max')]) for r in variability])
+          ['Molecule','Basis','Energy SD (hartree)','Max Fock SD (hartree)','Max density SD'],
+          [(*case_labels['GPU',r['case']],*[f'{r[k]:.3e}' for k in ('energy_sd','fock_sd_max','density_sd_max')]) for r in variability])
     csv_write(data/'function-accuracy.csv',errors)
     csv_write(data/'molecular-differences.csv',mol)
     csv_write(data/'timing-summary.csv',[dict(platform=p,**r) for p,rows in timing.items() for r in rows])
@@ -94,10 +98,10 @@ def generate(output, application_inputs=Path('overleaf-si/data/application-input
             ratio=math.exp(sum(map(math.log,values))/12)
             ratios.append(dict(platform=platform,backend=backend,geometric_mean_ratio=ratio,speedup_percent=100*(ratio-1)))
         table(tables/f'timings-{platform}.tex',f'{platform} timings in seconds; arithmetic means and sample standard deviations of five observations.',
-              ['Case','Backend','Mean (s)','SD (s)'],[(r['case'],backend_name(r['backend']),f"{r['mean_seconds']:.3f}",f"{r['sd_seconds']:.3f}") for r in rows])
+              ['Molecule','Basis','Backend','Mean (s)','SD (s)'],[(*case_labels[platform,r['case']],backend_name(r['backend']),f"{r['mean_seconds']:.3f}",f"{r['sd_seconds']:.3f}") for r in rows], group_columns=2)
         table(tables/f'molecular-{platform}.tex',f'{platform} casewise differences from the correctly rounded Boys backend. Energy and Fock quantities are in hartree; density entries are dimensionless. Matrix means include every element.',
-              ['Case','Backend',r'$|\Delta E|$',r'$\max|\Delta F|$',r'$\mathrm{mean}|\Delta F|$',r'$\max|\Delta P|$',r'$\mathrm{mean}|\Delta P|$'],
-              [(r['case'],backend_name(r['backend']),*[f'{r[k]:.2e}' for k in ('energy','fock','fock_mean_absolute','density','density_mean_absolute')]) for r in mol if r['platform']==platform])
+              ['Molecule','Basis','Backend',r'$|\Delta E|$',r'$\max|\Delta F|$',r'$\mathrm{mean}|\Delta F|$',r'$\max|\Delta P|$',r'$\mathrm{mean}|\Delta P|$'],
+              [(*case_labels[platform,r['case']],backend_name(r['backend']),*[f'{r[k]:.2e}' for k in ('energy','fock','fock_mean_absolute','density','density_mean_absolute')]) for r in mol if r['platform']==platform], group_columns=2)
     csv_write(data/'geometric-speedups.csv',ratios)
     table(tables/'speedups.tex','Geometric means of comparator/FABO mean-time ratios over 12 cases.',
           ['Platform','Comparator','Ratio','Speedup (percent)'],[(r['platform'],backend_name(r['backend']),f"{r['geometric_mean_ratio']:.6f}",f"{r['speedup_percent']:.2f}") for r in ratios])
@@ -158,7 +162,7 @@ def generate(output, application_inputs=Path('overleaf-si/data/application-input
     assert len(workloads)==24
     csv_write(data/'workloads.csv',workloads)
     table(tables/'workloads.tex','Accepted workload dimensions. QUICK uses Cartesian functions; NWChem uses spherical functions. The orbital rank equals the basis dimension in these cases.',
-          ['Platform','Case','Copies','AO dimension','Electrons'],[(r['platform'],r['case'],r['copies'],r['dimension'],r['electrons']) for r in workloads])
+          ['Platform','Molecule','Basis','AO dimension','Electrons'],[(r['platform'],*case_labels[r['platform'],r['case']],r['dimension'],r['electrons']) for r in workloads])
     csv_write(data/'backend-names.csv',[dict(identifier=k,display=v) for k,v in BACKEND_NAMES.items()])
     # Supply the exact scanner/qualification-adjacent code, authenticated against
     # the completed scan's recipe, rather than labelling all current HEAD as used.

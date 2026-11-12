@@ -1,5 +1,7 @@
 # Third-party dependencies
 
+For all CPU/CUDA comparator ports and their application bindings, see [benchmark/ports/README.md](../benchmark/ports/README.md). The retained VSR and Laikov Highway source snapshots are tracked in `benchmark/ports/cpu/`; they no longer require exporting the legacy branch.
+
 ## QUICK
 
 `quick/` is a Git submodule of [merzlab/QUICK](https://github.com/merzlab/QUICK), pinned to stable release [QUICK-26.03](https://github.com/merzlab/QUICK/releases/tag/QUICK-26.03), commit `730af1533da8912ce5874852561e63b5907f9d7a`. This was the upstream latest release on 2026-10-23. The submodule has no moving-branch tracking setting.
