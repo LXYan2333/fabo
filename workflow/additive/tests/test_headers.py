@@ -345,10 +345,18 @@ def test_bundled_combined_sources_match_generator():
     emitter=hashlib.sha256((ROOT/'workflow/additive/paired_headers.py').read_bytes()+
                           (ROOT/'workflow/additive/headers.py').read_bytes()).hexdigest()
     assert manifest['generator_sha256']==emitter
+    recorded=json.loads((ROOT/'include/simd-manifest.json').read_text()).get('formatting')
+    if recorded:
+        from workflow.scripts.format_public_headers import format_source, formatter_identity
+        if not shutil.which(recorded['executable']):
+            pytest.skip('recorded clang-format required for exact formatted regeneration')
+        assert formatter_identity(recorded['executable'])==recorded
     for entry in manifest['models'].values():
         record=entry['record']; error=summary['config']['error']
         assert entry['id']==digest(dict(recipe=record,error=error,layout=LAYOUT,emitter=emitter))
         expected=combined_source(record,entry['id'],error,entry['payload_sha256'])
+        if recorded:
+            expected=format_source(expected,recorded['executable'])
         assert (ROOT/'include/fast_boys/models'/entry['id']/'model.h').read_text()==expected
 
 

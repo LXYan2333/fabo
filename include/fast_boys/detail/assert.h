@@ -6,7 +6,7 @@
 #include <cstdlib>
 namespace fast_boys::detail {
 FAST_BOYS_HD static inline void assertion_failed(const char *expression,
-                                                const char *file, int line) {
+                                                 const char *file, int line) {
 #if defined(__CUDA_ARCH__)
   printf("fast_boys assertion failed: %s (%s:%d)\n", expression, file, line);
   __trap();
@@ -18,9 +18,9 @@ FAST_BOYS_HD static inline void assertion_failed(const char *expression,
 }
 } // namespace fast_boys::detail
 #define FAST_BOYS_ASSERT(condition)                                            \
-  do {                                                                        \
-    if (!(condition))                                                         \
-      ::fast_boys::detail::assertion_failed(#condition, __FILE__, __LINE__);     \
+  do {                                                                         \
+    if (!(condition))                                                          \
+      ::fast_boys::detail::assertion_failed(#condition, __FILE__, __LINE__);   \
   } while (false)
 #else
 // Do not evaluate the expression, including any side effects.

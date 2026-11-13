@@ -1,0 +1,2 @@
+# Large generated numerical payloads: preserve their emitted representation.
+include/fast_boys/models/**/data.h

@@ -1,5 +1,9 @@
 # Evaluation APIs
 
+## Source formatting (contributors)
+
+Run `python -m workflow.scripts.format_public_headers --clang-format clang-format-22` from the repository root after regenerating headers. This formats `.h` and `.cuh` files under `include/fast_boys/`, explicitly excludes every `data.h` payload, and refreshes the SIMD implementation checksums and formatting identity. It does not change numerical selections or regenerate coefficients. The root `.clang-format-ignore` also excludes the payloads for direct clang-format use. Include sorting is disabled because Highway configuration and target-toggle headers require their existing order. The checked formatter version is recorded in `include/simd-manifest.json`; the formatter is a development tool, not a library dependency.
+
 Combined catalogs (`FAST_BOYS_COMBINED_TABLE`) select `Model<Last,First>` with one `data_First_Last.h` payload header. One array stores main rows followed by tail rows; `Model::tail_row_offset` is the compile-time row offset, and `table_bytes` includes both regions. CUDA and Highway select coordinates and a logical row, then execute common coefficient loads and Horner arithmetic. Subsets reuse the allocation. Inputs must be finite and nonnegative, including -0.0; infinity and NaN are outside this contract. Users should not enable floating-point traps.
 
 The CUDA API is described below. See [SIMD.md](SIMD.md) for the Highway CPU API with compile-time output ranges and native/software gather selection.

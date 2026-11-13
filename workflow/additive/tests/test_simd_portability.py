@@ -154,6 +154,13 @@ def test_regeneration(tmp_path):
     from workflow.additive.simd_headers import generate
     shutil.copyfile(INCLUDE/'manifest.json',tmp_path/'manifest.json')
     generate(tmp_path)
+    recorded=json.loads((INCLUDE/'simd-manifest.json').read_text()).get('formatting')
+    if recorded:
+        from workflow.scripts.format_public_headers import format_headers, formatter_identity
+        if not shutil.which(recorded['executable']):
+            pytest.skip('recorded clang-format required for exact formatted regeneration')
+        assert formatter_identity(recorded['executable'])==recorded
+        format_headers(tmp_path,recorded['executable'])
     manifest=json.loads((tmp_path/'simd-manifest.json').read_text())
     for name in manifest['files']:
         assert (tmp_path/name).read_bytes()==(INCLUDE/name).read_bytes()

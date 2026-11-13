@@ -47,6 +47,7 @@ Explicit FMA and numerical reassociation fences preserve the existing operation 
 
 ```sh
 python -m workflow.additive.simd_headers --include include
+python -m workflow.scripts.format_public_headers --include include --clang-format clang-format-22
 FABO_HIGHWAY_ROOT=/path/to/highway python -m pytest workflow/additive/tests/test_simd*.py -q
 ```
 

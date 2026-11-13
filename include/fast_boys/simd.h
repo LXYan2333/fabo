@@ -14,25 +14,32 @@ HWY_BEFORE_NAMESPACE();
 namespace fast_boys {
 namespace simd {
 namespace HWY_NAMESPACE {
-template<class Model,bool Software=kDefaultUseSoftwareGather>
+template <class Model, bool Software = kDefaultUseSoftwareGather>
 class CombinedEvaluator {
 public:
-  constexpr explicit CombinedEvaluator(TableView<Model> table): table_(table) {}
-  template<int First,int Last,class... Outputs>
-  HWY_INLINE void evaluate(const V x,Outputs& HWY_RESTRICT... out) const {
-    static_assert(Model::combined_table && Model::domain_end>=1,"combined tail requires C >= 1");
-    static_assert(Model::first<=First && First<=Last && Last<=Model::last,"invalid subset");
-    static_assert(sizeof...(Outputs)==Last-First+1,"one distinct output reference per order required");
-    static_assert((std::is_same<V,Outputs>::value && ...),"outputs must be binary64 vectors");
+  constexpr explicit CombinedEvaluator(TableView<Model> table)
+      : table_(table) {}
+  template <int First, int Last, class... Outputs>
+  HWY_INLINE void evaluate(const V x, Outputs &HWY_RESTRICT... out) const {
+    static_assert(Model::combined_table && Model::domain_end >= 1,
+                  "combined tail requires C >= 1");
+    static_assert(Model::first <= First && First <= Last && Last <= Model::last,
+                  "invalid subset");
+    static_assert(sizeof...(Outputs) == Last - First + 1,
+                  "one distinct output reference per order required");
+    static_assert((std::is_same<V, Outputs>::value && ...),
+                  "outputs must be binary64 vectors");
     // Finite x >= -0 is a caller precondition; do not inspect lanes at runtime.
-    Kernel<Model>::template run<First,Last,Software>(table_.data(),x,out...);
+    Kernel<Model>::template run<First, Last, Software>(table_.data(), x,
+                                                       out...);
   }
+
 private:
   TableView<Model> table_;
 };
-template<bool Software=kDefaultUseSoftwareGather,class Model>
+template <bool Software = kDefaultUseSoftwareGather, class Model>
 constexpr auto make_evaluator(TableView<Model> table) {
-  return CombinedEvaluator<Model,Software>(table);
+  return CombinedEvaluator<Model, Software>(table);
 }
 // No vector-valued members or containers: compatible with sizeless vectors.
 // RN-even and gradual underflow required. Users should not enable FP traps.

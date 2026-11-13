@@ -1,3 +1,6 @@
 #pragma once
 #include "fast_boys/models/catalog_f0bf23f77f9ea2867c9e8465007520192e07e49695b237eb758d303db760e363.h"
-namespace fast_boys { namespace selected=fast_boys::models::catalog_f0bf23f77f9ea2867c9e8465007520192e07e49695b237eb758d303db760e363; }
+namespace fast_boys {
+namespace selected = fast_boys::models::
+    catalog_f0bf23f77f9ea2867c9e8465007520192e07e49695b237eb758d303db760e363;
+}

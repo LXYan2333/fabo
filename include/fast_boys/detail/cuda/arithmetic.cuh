@@ -55,15 +55,16 @@ struct Binary64 {
     return r;
 #endif
   }
-  FAST_BOYS_HD static FAST_BOYS_INLINE double fma(double a, double b, double c) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double fma(double a, double b,
+                                                  double c) {
 #if defined(__CUDA_ARCH__)
     return __fma_rn(a, b, c);
 #else
     return std::fma(a, b, c);
 #endif
   }
-  FAST_BOYS_HD static FAST_BOYS_INLINE double correction(std::uint64_t ordinary_hi,
-                                               unsigned code) {
+  FAST_BOYS_HD static FAST_BOYS_INLINE double
+  correction(std::uint64_t ordinary_hi, unsigned code) {
     return value(((ordinary_hi & 0x7ff0000000000000ULL) - (53ULL << 52)) +
                  (std::uint64_t(code) << 45));
   }
