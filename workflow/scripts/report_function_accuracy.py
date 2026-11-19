@@ -163,7 +163,6 @@ def generate(records, figures, tables, summary, include):
                     ax.set(xlabel='Requested maximum order N', ylabel=stat.capitalize() + ' ULP error', yscale='log')
                     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
                     ax.grid(alpha=.2)
-            axes[i, 0].axhline(1, color='#bbbbbb', linestyle='--', linewidth=.8, zorder=0)
             handles, labels = axes[i, 0].get_legend_handles_labels()
             fig.legend(handles, labels, loc='lower center', bbox_to_anchor=(.54, .505 if i == 0 else .005), ncol=5, frameon=False)
         fig.text(.54, .97, 'GPU', ha='center', fontsize=13)
