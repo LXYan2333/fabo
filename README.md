@@ -32,6 +32,45 @@ Add this repository's `include/` directory to your compiler's include path. Use 
 
 Choose a model with `fast_boys::selected::Model<N>` and include its matching `fast_boys/models/data_0_N.h` payload where table storage is instantiated. Use static storage for host tables rather than placing a large table on the stack. Construct/upload a table once and reuse it across evaluations.
 
+### CMake
+
+CMake 3.23 or newer provides header-only interface targets. `fabo::fabo` supplies common headers, tables, and C++17; `fabo::simd` additionally links Highway; `fabo::cuda` additionally links the CUDA runtime and requires CUDA C++17. All distributed headers, including generated payloads, are registered with `target_sources(FILE_SET HEADERS)` and installed without compiling them separately.
+
+For a source-tree dependency:
+
+```cmake
+# Highway must provide hwy::hwy, either from a parent add_subdirectory()
+# or from an installed package discoverable through CMAKE_PREFIX_PATH.
+add_subdirectory(path/to/fabo)
+target_link_libraries(my_application PRIVATE fabo::simd)
+```
+
+`FABO_ENABLE_SIMD` defaults to `ON` and requires Highway **1.4.0 or newer**. CMake accepts an existing `hwy::hwy` target (the parent must ensure that version requirement); otherwise it calls `find_package(hwy 1.4.0 CONFIG REQUIRED)`. There are no automatic downloads. `FABO_ENABLE_CUDA` defaults to `OFF`; enabling it finds `CUDAToolkit`. For CUDA-only use, disable SIMD, enable CUDA, and link `fabo::cuda`. Your application enables the CUDA language and selects its GPU architectures. Core-only use disables both options and links `fabo::fabo`.
+
+Highway 1.4.0's source build exposes the target `hwy`; after adding that source tree, use `add_library(hwy::hwy ALIAS hwy)` if the namespaced target does not already exist. Installed Highway packages already supply `hwy::hwy`.
+
+Installation rules are enabled by default for a standalone build and disabled under `add_subdirectory()`, so vendored dependencies need no export rules. To install FABO from a parent project, set `FABO_ENABLE_INSTALL=ON` and use imported dependency targets or also export the vendored dependencies.
+
+To install the default SIMD-enabled package:
+
+```sh
+cmake -S . -B build-codex/cmake -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_PREFIX_PATH=/path/to/highway/install \
+  -DCMAKE_INSTALL_PREFIX=/path/to/fabo/install
+cmake --install build-codex/cmake
+```
+
+Then consume it with:
+
+```cmake
+find_package(fabo CONFIG REQUIRED COMPONENTS simd)
+target_link_libraries(my_application PRIVATE fabo::simd)
+```
+
+Include the FABO and Highway installation prefixes in `CMAKE_PREFIX_PATH`. Request `COMPONENTS cuda` for a CUDA-enabled installation, or omit components for the dependency-free `fabo::fabo` target. Components are available only if enabled when installing. The package currently has no assigned release version, so use an unversioned `find_package(fabo ...)` call. CMake does not impose optimization, architecture, fast-math, or Highway dispatch flags on consumers. Existing direct-header usage and pytest-based research workflows remain supported; Python is not an installation dependency.
+
+Use `OPTIONAL_COMPONENTS simd` or `OPTIONAL_COMPONENTS cuda` when a missing backend should leave the core usable; check `fabo_simd_FOUND` or `fabo_cuda_FOUND` before linking it.
+
 ### CPU SIMD
 
 This single-target example evaluates one full SIMD vector of arguments, returning orders 0–4 to five arrays. Each input/output array must have room for `hwy::HWY_NAMESPACE::Lanes(fast_boys::simd::HWY_NAMESPACE::D())` doubles; the five output arrays must not overlap each other or the table. Unaligned input/output pointers are supported by the loads and stores shown here.
