@@ -13,7 +13,7 @@ import tempfile
 import math
 import struct
 
-from benchmark.nwchem.bindings import BACKENDS, SHARED_TAIL, header
+from benchmark.nwchem.bindings import BACKENDS, header
 from benchmark.nwchem.simint_binding import patch as patch_simint
 from benchmark.nwchem.patch_nwchem import patch_single_update
 from workflow.comparator_ports import copy_cpu_ports
@@ -156,10 +156,16 @@ def environment(config):
     env.pop('MKL_CBWR',None);env.pop('MKL_ENABLE_INSTRUCTIONS',None)
     return env
 
+def require_combined_catalog(include):
+    if json.loads((include/'manifest.json').read_text()).get('combined_table') is not True:
+        raise ValueError('combined-table catalog required for NWChem')
+
+
 def prepare(out,config):
     if not config['copies'] or config['copies']!=sorted(set(config['copies'])) or any(type(v)!=int or v<1 for v in config['copies']):raise ValueError('invalid copy counts')
     if config['rounds']<2 or config['reference_rounds']!=2 or config['minimum_fock_seconds']<=0:raise ValueError('invalid protocol')
     if not config['systems'] or len(set(config['systems']))!=len(config['systems']) or set(config['bases'])!=set(BASES):raise ValueError('invalid workload selection')
+    require_combined_catalog(ROOT/'include')
     out.mkdir(parents=True,exist_ok=False)
     save(out/'config.json',config)
     export(config['nwchem_source'],NWCHEM,out/'nwchem')
@@ -210,6 +216,7 @@ def freeze_workflow(out):
     save(out/'inputs.json',{str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p!=out/'inputs.json'})
 
 def build(out):
+    require_combined_catalog(out/'include')
     c=json.loads((out/'config.json').read_text());env=environment(c)
     if os.uname().nodename.split('.')[0] != c['build_node']:raise RuntimeError('wrong build node')
     verify_inputs(out)
@@ -239,7 +246,6 @@ def build(out):
         for backend in ALL_BACKENDS:
             tree=work/backend;shutil.copytree(generated,tree)
             bindings=tree/'bindings';bindings.mkdir()
-            (bindings/'shared_tail.h').write_text(SHARED_TAIL)
             for n in range(9):
                 folder=bindings/f'order-{n}';folder.mkdir()
                 if backend!='original':

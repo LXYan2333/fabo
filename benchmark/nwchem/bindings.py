@@ -21,8 +21,7 @@ for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
              'static_assert(SIMINT_SIMD_LEN == 8);']
     if backend == 'fabo':
         lines += ['#include "fast_boys/selected_simd.h"',
-                  f'#include "fast_boys/models/data_0_{n}.h"', '#ifndef FAST_BOYS_COMBINED_TABLE', '#ifdef FAST_BOYS_RANGE_TAILS',
-                  f'#include "fast_boys/models/tail_data_0_{n}.h"', '#else', '#include "shared_tail.h"', '#endif', '#endif']
+                  f'#include "fast_boys/models/data_0_{n}.h"']
     elif backend == 'libintx':
         lines += ['#include <libintx/simd.h>', '#include <libintx/boys/chebyshev.h>', '#include <cstring>']
     else:
@@ -33,13 +32,11 @@ for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
         lines += [f'inline const auto& evaluator=libintx::boys::chebyshev<{n}>();']
     if backend == 'fabo':
         lines += ['namespace fb=fast_boys::simd::HWY_NAMESPACE;',
-                  f'inline constexpr fast_boys::BoysTable<fast_boys::selected::Model<{n}>> table;',
-                  '#ifndef FAST_BOYS_COMBINED_TABLE', '#ifdef FAST_BOYS_RANGE_TAILS',f'inline constexpr fast_boys::BoysTable<fast_boys::selected::Tail<{n}>> tail;',
-                  '#else','inline constexpr auto& tail = fast_boys_nw_shared_tail::table;','#endif', '#endif']
+                  f'inline constexpr fast_boys::BoysTable<fast_boys::selected::Model<{n}>> table;']
     lines += ['HWY_INLINE void evaluate(SIMINT_DBLTYPE x, SIMINT_DBLTYPE* __restrict__ out) {']
     if backend == 'fabo':
         names=','.join(f'f{i}' for i in range(n+1))
-        lines += [f'fb::V {names};', '#ifdef FAST_BOYS_COMBINED_TABLE', 'const auto e=fb::make_evaluator(table.view());', '#else', 'const auto e=fb::make_evaluator(table.view(),tail.view());', '#endif',
+        lines += [f'fb::V {names};', 'const auto e=fb::make_evaluator(table.view());',
                   f'e.template evaluate<0,{n}>(fb::D(), fb::V{{x}},{names});']
         lines += [f'out[{i}]=f{i}.raw;' for i in range(n+1)]
     elif backend == 'libintx':
@@ -55,10 +52,3 @@ for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
                   f'auto values=fast_boys::benchmark::{ns}::boys<{n}>(d,hn::VFromD<decltype(d)>{{x}});']
         lines += [f'out[{i}]=values[{i}].raw;' for i in range(n+1)]
     return '\n'.join(lines+['}', '}', ''])
-
-SHARED_TAIL = '''#pragma once
-#include "fast_boys/models/tail_data.h"
-namespace fast_boys_nw_shared_tail {
-inline constexpr fast_boys::BoysTable<fast_boys::selected::Tail> table;
-}
-'''

@@ -54,15 +54,30 @@ The generated CUDA code uses straight-line per-order stages rather than a runtim
 
 Each main and tail row interleaves one 64-bit correction word before each group of eight corresponding reference coefficients: corrections for outputs 0–7, coefficients 0–7, corrections for outputs 8–15, coefficients 8–15, and so on (indices are relative to the model's first order). Once all output corrections have been placed, remaining Taylor coefficients follow without extra correction slots. The final correction word retains zero padding. This brings low-order corrections closer to the coefficients used by short requests without increasing row size or changing numerical values. All generated accesses use constant word offsets. Reduced memory-sector traffic is layout-dependent, not a measured speedup guarantee.
 
-`DeviceTable` is an optional synchronous host upload helper. It is move-only and must be destroyed on its allocation device after kernels have finished. The core accepts caller-managed allocations through `TableView<Model>::from_pointer`; this is an explicit trust boundary and requires matching bytes, lifetime, address space, and eight-byte alignment. Evaluators using the same configured pair can share its allocations; different pairs have different tails. Do not copy an owning table into each GPU thread.
+`DeviceTable` is an optional synchronous host upload helper. It is move-only and must be destroyed on its allocation device after kernels have finished. The core accepts caller-managed allocations through `TableView<Model>::from_pointer`; this is an explicit trust boundary and requires matching bytes, lifetime, address space, and eight-byte alignment. Evaluators for the same model can share its allocation. Do not copy an owning table into each GPU thread.
 
 ## Numerical and large-argument behavior
 
 Use C++17 or later, binary64 RN-even arithmetic, and gradual underflow. Users should not enable floating-point traps; the library does not inspect or change trap settings. CUDA uses explicit rounded add/multiply and FMA intrinsics to preserve the canonical numerical DAG. The host-parsable implementation is for conformance, not a tuned CPU backend. Strict and fast-math validation are distinct artifacts. The numerical one-ULP target is sampled qualification against directed reference enclosures, not a continuous-domain guarantee.
 
-The default factory pairs the main domain `[0,C]` with its normalized materialized tail on `(C,DBL_MAX]`, where C is `Model::domain_end` and varies by configured range. It checks matching domains, order coverage, error targets, and pair identity. Only finite nonnegative arguments are admitted; negative zero is accepted. An explicitly supplied `Evaluator<Model,Handler>` can use another outside-domain policy; `Handler::evaluate<First,Limit>(x,last,output,stride)` must implement the required behavior and has independent numerical responsibility.
+The single-view factory uses the model's main rows on `[0,C]` and its normalized tail rows on `(C,DBL_MAX]`, where `C = Model::domain_end`. To migrate, pass the view of a combined catalog's `BoysTable<Model>`; old split payloads are not interchangeable with its storage. For an archived split catalog, use the matching historical runtime.
 
-The tail normalizes x=u*2^(2k) with 1<=u<4 and tabulates the complete integral A_n(u), not F_n(u). It stores every needed reference coefficient and output correction; no reference recurrence or exponential is evaluated. Both tables feed the same CUDA factorial-Horner graph, followed by RN-even power-of-two scaling for tail outputs, including subnormals and zero. Qualification accounts for the omitted integral near C and checks scaling classes at large x. Each pair fits the combined 1 MiB budget; the selected `[0,4]`, `[0,8]`, and `[0,12]` switches are approximately 48.1420, 58.3906, and 66.6379. The exact constants, degrees, storage and sampled error witnesses are in the frozen summary.
+If you used `cuda::Evaluator<Model, OutsideDomain>`, move the dispatch to your call site. The old evaluator called your handler for **every** input outside the main grid, including finite `x > C` that the new factory would evaluate using its built-in tail. The following CUDA device code preserves the old boundary and forwards the same output range and stride:
+
+```cpp
+const auto bits = static_cast<std::uint64_t>(__double_as_longlong(x));
+const auto end_bits = static_cast<std::uint64_t>(__double_as_longlong(Model::domain_end));
+if (bits <= end_bits || bits == 0x8000000000000000ULL) {  // [0,C] or -0
+  fast_boys::cuda::make_evaluator(table_view)
+      .template evaluate<First, Limit>(x, last, out, stride);
+} else {
+  outside.template evaluate<First, Limit>(x, last, out, stride);
+}
+```
+
+The unsigned bit comparison also sends negative nonzero inputs, infinities, and NaNs to the handler without relying on floating-point comparisons under fast math. Callers that want FABO's built-in tail and already supply only finite, nonnegative inputs need no guard.
+
+The tail normalizes x=u*2^(2k) with 1<=u<4 and tabulates the complete integral A_n(u), not F_n(u). It stores every needed reference coefficient and output correction; no reference recurrence or exponential is evaluated. Both regions feed the same CUDA factorial-Horner graph, followed by RN-even power-of-two scaling for tail outputs, including subnormals and zero. Qualification accounts for the omitted integral near C and checks scaling classes at large x. Each pair fits the combined 1 MiB budget; the selected `[0,4]`, `[0,8]`, and `[0,12]` switches are approximately 48.1420, 58.3906, and 66.6379. The exact constants, degrees, storage and sampled error witnesses are in the frozen summary.
 
 ## QUICK integration
 
@@ -76,4 +91,4 @@ python -m pytest -q
 FABO_RUN_CUDA=1 python -m pytest workflow/additive/tests/test_headers.py -q
 ```
 
-Tests cover exact serialized words, incremental loading with nonmonotonic degrees, every fixture cell boundary, static/runtime subsets, output sentinels, correction decoding, compact-tail scaling and MPFR checks, and multi-translation-unit ownership. CUDA execution tests partial/divergent warps and heterogeneous request endpoints. Fast-math differences are written as diagnostics in pytest's temporary directory. Device tests are explicitly skipped without an allocation; a host pass alone does not qualify device execution.
+Tests cover exact serialized words, incremental loading with nonmonotonic degrees, every fixture cell boundary, static/runtime subsets, output sentinels, correction decoding, normalized-tail scaling and reference checks, and multi-translation-unit ownership. CUDA execution tests partial/divergent warps and heterogeneous request endpoints. Fast-math differences are written as diagnostics in pytest's temporary directory. Device tests are explicitly skipped without an allocation; a host pass alone does not qualify device execution.

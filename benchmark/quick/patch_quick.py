@@ -82,22 +82,16 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
             copies[Path('src/gpu')/name] = HERE/name
     if variant == 'fabo_additive':
         numerical = json.loads((ROOT/'include/manifest.json').read_text())
+        if numerical.get('combined_table') is not True:
+            raise ValueError('combined-table catalog required for QUICK')
         for n in (4, 8, 12):
             model = numerical['models'][f'0-{n}']
             record = model['record']
             if record['first'] != 0 or record['last'] != n or record['status'] != 'qualified':
                 raise ValueError('invalid selected QUICK model')
-        combined=numerical.get('combined_table',False)
-        if not combined and 'tails' not in numerical and not numerical['tail']['matches_main_target']:
-            raise ValueError('tail target differs from main model')
         manifest['numerical_identity'] = numerical['numerical_identity']
         manifest['models'] = {k: numerical['models'][k] for k in ('0-4', '0-8', '0-12')}
-        if combined:
-            manifest['combined_table']=True
-        elif 'tails' in numerical:
-            manifest['tails'] = {k:numerical['tails'][k] for k in manifest['models']}
-        else:
-            manifest['tail'] = numerical['tail']
+        manifest['combined_table'] = True
         header = 'src/gpu/gpu_get2e_subs.h'
         edit(header, '#include "gpu_fmt.h"', '''#include "gpu_fmt.h"
 #include "additive_binding.cuh"
@@ -121,19 +115,15 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/..")
         for name in ('additive_boys.cuh','additive_binding.cuh','additive_runtime.cuh','additive_host.cc'):
             copies[Path('src/gpu')/name] = HERE/name
         # Lightweight catalog includes every model definition, but only the
-        # three family payloads and shared tail enter the host initializer.
+        # three combined family payloads enter the host initializer.
         base = ROOT/'include/fast_boys'
         for path in base.rglob('*'):
             if path.is_file() and path.suffix in ('.h','.cuh') and 'models' not in path.relative_to(base).parts:
                 copies[Path('src/gpu/fast_boys')/path.relative_to(base)] = path
-        tails=[] if combined else list(numerical['tails'].values()) if 'tails' in numerical else [numerical['tail']]
-        selected_tails=list(manifest['tails'].values()) if 'tails' in manifest else tails
         model_files = [f'catalog_{numerical["catalog"]["id"]}.h']
-        if not combined:
-            model_files += [f'tail_data_0_{n}.h' for n in (4,8,12)] if 'tails' in numerical else ['tail_data.h']
-        model_files += [f'{m["id"]}/model.h' for m in [*numerical['models'].values(),*tails]]
+        model_files += [f'{m["id"]}/model.h' for m in numerical['models'].values()]
         model_files += [f'data_0_{n}.h' for n in (4,8,12)]
-        model_files += [f'{m["id"]}/data.h' for m in [*manifest['models'].values(),*selected_tails]]
+        model_files += [f'{m["id"]}/data.h' for m in manifest['models'].values()]
         for name in model_files:
             copies[Path('src/gpu/fast_boys/models')/name] = base/'models'/name
     if probe or training:

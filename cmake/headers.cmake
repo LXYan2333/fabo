@@ -2,7 +2,6 @@
 set(FABO_PUBLIC_HEADERS
     include/fast_boys/scalar.h
     include/fast_boys/detail/binary64.h
-    include/fast_boys/detail/scalar_tail.h
     include/fast_boys/boys_types.h
     include/fast_boys/cuda.cuh
     include/fast_boys/cuda/upload.cuh
@@ -10,7 +9,6 @@ set(FABO_PUBLIC_HEADERS
     include/fast_boys/detail/config.h
     include/fast_boys/detail/cuda/arithmetic.cuh
     include/fast_boys/detail/cuda/evaluator.cuh
-    include/fast_boys/detail/cuda/large_argument.cuh
     include/fast_boys/detail/simd/ops-inl.h
     include/fast_boys/models/0df661439c3650bd9a59597b6a1efea0034f13d629d7eaaa3662ef2e69c798ec/data.h
     include/fast_boys/models/0df661439c3650bd9a59597b6a1efea0034f13d629d7eaaa3662ef2e69c798ec/model.h

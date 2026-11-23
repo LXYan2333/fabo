@@ -2,13 +2,12 @@
   "numerical_identity": "8b3bc332afa8b3aa26856e5aab5de3c3aea6fd1d4be3e148fede633f3537d8e2",
   "numerical_manifest_sha256": "42fa07e2210f6f33094904425fd40a9c08081fc7777aedb53535906ced8bbcf1",
   "sources": {
-    "workflow/additive/simd_headers.py": "43962351cefa365ef9116ce2f8bdae83aa4d88855845588356acd90ff77b0a36",
-    "include/fast_boys/simd.h": "ab9e8b6f90abbb853341893ee83216100c8da2594c1c117fcec2733f946393d6",
+    "workflow/additive/simd_headers.py": "3b67daa6c4d9ad8a74429780294d10deb765a619b25c7ab2a18566705fd726f4",
+    "include/fast_boys/simd.h": "070021f72629895098f9daf47b95e8ee349c8ee7066387e3ed6d108b4bb81460",
     "include/fast_boys/simd_config.h": "e624d8be950763746190014934258b71197efdc06fd3c05d720eea7e960d7b6c",
-    "include/fast_boys/detail/simd/ops-inl.h": "e6d16333772610defa15ce969e1353b293c51d825a1276a5083ba01ba9a44e8e",
-    "include/fast_boys/scalar.h": "388f58c3b9aff5191dc182cff2c278d3926fa5260bd100e8ff87e667ff8ddfe9",
+    "include/fast_boys/detail/simd/ops-inl.h": "2137d838ffd3e5c432b0600b00128586d5ce5b7bc271fcd46d3e546330f27745",
+    "include/fast_boys/scalar.h": "184259c806e9c6bb0ea6caa6dd295b573e7291ca8fcabec8fe2d1fe1bbeb0841",
     "include/fast_boys/detail/binary64.h": "474ba4e05f86648c2938085828e8439f9f1d20206c0b7f2012557cb45794c415",
-    "include/fast_boys/detail/scalar_tail.h": "7aacc24eace28e7bcddb919ff0523193f7495d00d3201c8ff472bc0b2bfbe2d0",
     "workflow/scripts/format_public_headers.py": "1a04ed54afe30f2045a1f6ebc10730fe1c9c1d1d8c5c5d566be211fec161fb61",
     ".clang-format": "673e355d906cde6400cee822557e8366472ea1841d3f14ad720e0fca08018b1d"
   },

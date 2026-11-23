@@ -126,29 +126,11 @@ struct Dimensions { unsigned x; } gridDim{1},blockDim{17};
 extern "C" const std::uint64_t* fabo_quick_host_table(int,std::size_t*);
 template<int Family> int check() {
   using M=typename FaboQuickFamily<Family>::Model;
-#ifndef FAST_BOYS_COMBINED_TABLE
-#ifdef FAST_BOYS_RANGE_TAILS
-  using T=fast_boys::selected::Tail<M::last>;
-  constexpr int tail_key=-M::last;
-  auto& tail_ptr=fabo_quick_tail[Family/4-1];
-#else
-  using T=fast_boys::selected::Tail;
-  constexpr int tail_key=-1;
-  auto& tail_ptr=fabo_quick_tail;
-#endif
-#endif
   using O=fast_boys::detail::Binary64;
   std::size_t bytes;
   fabo_quick_main[Family/4-1]=fabo_quick_host_table(M::last,&bytes);
   if(bytes!=M::table_bytes) return 1;
-#ifdef FAST_BOYS_COMBINED_TABLE
   auto e=fast_boys::cuda::make_evaluator(fast_boys::TableView<M>::from_pointer(fabo_quick_main[Family/4-1]));
-#else
-  tail_ptr=fabo_quick_host_table(tail_key,&bytes);
-  auto e=fast_boys::cuda::make_evaluator(
-    fast_boys::TableView<M>::from_pointer(fabo_quick_main[Family/4-1]),
-    fast_boys::TableView<T>::from_pointer(tail_ptr));
-#endif
   const double points[]={0.,0.01,1.,100.,1e7,1e8};
   for(int last=0;last<=M::last;++last) for(double x:points) {
     double out[13*17],expected[13];

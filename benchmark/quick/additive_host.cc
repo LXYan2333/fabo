@@ -6,18 +6,6 @@
 #include "fast_boys/models/data_0_8.h"
 #endif
 #include "fast_boys/selected.h"
-#ifndef FAST_BOYS_COMBINED_TABLE
-#ifdef FAST_BOYS_RANGE_TAILS
-#include "fast_boys/models/tail_data_0_4.h"
-#ifdef ENABLEF
-#include "fast_boys/models/tail_data_0_12.h"
-#else
-#include "fast_boys/models/tail_data_0_8.h"
-#endif
-#else
-#include "fast_boys/models/tail_data.h"
-#endif
-#endif
 
 template <class Model>
 static const std::uint64_t *host_words(std::size_t *bytes) {
@@ -37,19 +25,6 @@ extern "C" const std::uint64_t *fabo_quick_host_table(int last,
 #else
   case 8:
     return host_words<fast_boys::selected::Model<8>>(bytes);
-#endif
-#ifndef FAST_BOYS_COMBINED_TABLE
-#ifdef FAST_BOYS_RANGE_TAILS
-  case -4: return host_words<fast_boys::selected::Tail<4>>(bytes);
-#ifdef ENABLEF
-  case -12: return host_words<fast_boys::selected::Tail<12>>(bytes);
-#else
-  case -8: return host_words<fast_boys::selected::Tail<8>>(bytes);
-#endif
-#else
-  case -1:
-    return host_words<fast_boys::selected::Tail>(bytes);
-#endif
 #endif
   default:
     *bytes = 0;

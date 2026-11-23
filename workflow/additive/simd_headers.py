@@ -18,35 +18,27 @@ def scale_power_next(n):
     return f' if constexpr({n}<Last) scale_power=hn::Add(scale_power,two_k);'
 
 
-def wrap(ident,model,kind,body):
+def wrap(ident,model,body):
     guard='FAST_BOYS_SIMD_'+ident.upper()+'_H_'
     return '\n'.join([
         f'#if defined({guard}) == defined(HWY_TARGET_TOGGLE)',
         f'#ifdef {guard}',f'#undef {guard}','#else',f'#define {guard}','#endif',
         '#include "fast_boys/simd.h"',f'#include "fast_boys/models/{ident}/model.h"',
         '#if HWY_NATIVE_FMA','HWY_BEFORE_NAMESPACE();','namespace fast_boys { namespace simd { namespace HWY_NAMESPACE {',
-        f'template<> struct {kind}<{model}> {{',f' using M={model};',
+        f'template<> struct Kernel<{model}> {{',f' using M={model};',
         ' template<int First,int Last,bool Software,class D,class... Outputs>',
         ' static HWY_INLINE void run(D, const std::uint64_t* data,hn::VFromD<D> x,'+
-        ('hn::Mask<D> active,' if kind=='TailKernel' else '')+'Outputs& HWY_RESTRICT ...out) {',
+        'Outputs& HWY_RESTRICT ...out) {',
         ' using Op=detail::Ops<D>; using V=hn::VFromD<D>;',
         *body,' }','};','} } }','HWY_AFTER_NAMESPACE();','#endif // HWY_NATIVE_FMA','#endif',''])
 
 
-def main_kernel(entry,combined=False,kind='Kernel'):
+def main_kernel(entry):
     r=entry['record']; first,last=r['first'],r['last']; degrees=r['degrees']
-    body=[
-        ' const auto y=Op::RoundedAdd(x,Op::S(M::offset));',
-        ' const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Op::Bits(y),Op::SU(1ULL<<(M::discarded_bits-1))));',
-        ' const auto ref=Op::RoundedSub(Op::Float(hn::ShiftLeft<M::discarded_bits>(key)),Op::S(M::offset));',
-        ' const auto h=Op::RoundedSub(ref,x);',
-        ' const auto row=Op::template MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,Op::SU(M::key_min)));',
-        ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
-    if combined:
-        body=[' U row FAST_BOYS_INDETERMINATE;', ' U k FAST_BOYS_INDETERMINATE;',
+    body=[' U row FAST_BOYS_INDETERMINATE;', ' U k FAST_BOYS_INDETERMINATE;',
               ' V h FAST_BOYS_INDETERMINATE;', ' Op::template PrepareCombinedCoordinates<M>(x,row,h,k);',
               ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
-        body += scale_power_setup(first)
+    body += scale_power_setup(first)
     high=max(n+p for n,p in zip(range(first,last+1),degrees))
     body += [f' V c{n} FAST_BOYS_INDETERMINATE;' for n in range(first,high+1)]
     body += [f' V a{j} FAST_BOYS_INDETERMINATE;' for j in range(2,max(degrees)+1)]
@@ -67,103 +59,27 @@ def main_kernel(entry,combined=False,kind='Kernel'):
             body += [f' q=Op::Fma(a{j+1},q,c{n+j});']
         expr=f'Op::RoundedAdd(Op::Float(hn::Add(hi,Op::SU(1))),Op::FmaSub(h,q,Op::template CorrectionFromWord<{(n-first)%8}>(hi,w{slot})))'
         body += [f' const auto hi=Op::Bits(c{n});']
-        if combined:
-            body += [f' const auto value={expr};',f' Op::template At<{n}-First>(out...)=Op::Scale(Op::Bits(value),scale_power);']
-        else:
-            body += [f' Op::template At<{n}-First>(out...)={expr};']
+        body += [f' const auto value={expr};',f' Op::template At<{n}-First>(out...)=Op::Scale(Op::Bits(value),scale_power);']
         body += [' }']
-        if combined:
-            body += [scale_power_next(n)]
-    return wrap(entry['id'],entry['cpp_model'],kind,[' using U=typename Op::U;', *body])
-
-
-def tail_kernel(entry,metadata):
-    first,last,p,b=(metadata[k] for k in ('first','last','degree','retained_bits'))
-    top=last+p; stride=metadata['storage']['row_words']; shift=52-b
-    body=[
-        ' const auto bits=Op::Bits(x);',
-        ' const auto x_biased_exponent=hn::ShiftRight<52>(bits);',
-        ' const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,Op::SU(1023));',
-        ' const auto k=hn::ShiftRight<1>(x_unbiased_exponent);',
-        ' const auto u_biased_exponent=hn::Add(Op::SU(1023),hn::And(x_unbiased_exponent,Op::SU(1)));',
-        ' const auto u=Op::Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,Op::SU(0xfffffffffffffULL)));',
-        f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Op::Bits(u),Op::SU(1ULL<<{shift-1})));',
-        f' const auto row=Op::template MultiplyConstant<{stride},{metadata["storage"]["allocated_bytes"]//(8*stride)-1}>(hn::Sub(key,Op::SU({1023<<b})));',
-        f' const auto r=Op::Float(hn::ShiftLeft<{shift}>(key)),h=Op::RoundedSub(r,u),t=Op::RoundedAdd(r,r);']
-    body += scale_power_setup(first)
-    for i in range(stride):
-        body += [f' const auto w{i}=Op::template Gather<Software,M::word_count-1>(data,hn::Add(row,Op::SU({i})));']
-    body += [f' const auto g{top}=Op::Float(w0);']
-    for n in range(top-1,first-1,-1):
-        i=top-1-n
-        body += [f' const auto byte{n}=Op::template ByteAt<{i%8}>(w{1+i//8});',
-                 f' const auto patch{n}=hn::Sub(hn::Xor(byte{n},Op::SU(128)),Op::SU(128));',
-                 # Both operands are positive normal tail-reference values:
-                 # FMA(t,g,0) equals rounded multiplication. Fence that product
-                 # before reciprocal scaling, including under fast-math.
-                 f' const auto g{n}=Op::Float(hn::Add(Op::Bits(Op::RoundedMul(Op::RoundedMul(t,g{n+1}),Op::S({float(1/(2*n+1)).hex()}))),patch{n}));']
-    body += [f' const auto a{j}=Op::RoundedMul(h,Op::S({float(1/j).hex()}));' for j in range(2,p+1)]
-    for n in range(first,last+1):
-        i=top-first+n-first
-        body += [f' if constexpr(First<={n} && {n}<=Last) {{',f' V q=g{n+p};']
-        body += [f' q=Op::Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
-        body += [f' const auto hi=Op::Bits(g{n});',
-                 f' const auto v=Op::RoundedAdd(Op::Float(hn::Add(hi,Op::SU(1))),Op::FmaSub(h,q,Op::template CorrectionFromWord<{i%8}>(hi,w{1+i//8})));',
-                 f' Op::template At<{n}-First>(out...)=hn::IfThenElse(active,Op::Scale(Op::Bits(v),scale_power),Op::template At<{n}-First>(out...));',' }',scale_power_next(n)]
-    return wrap(entry['id'],entry['cpp_model'],'TailKernel',body)
-
-
-def paired_tail_kernel(entry,main):
-    # Reuse the materialized main polynomial emitter, replacing coordinates
-    # and the final store. The two SIMD paths remain separate for now.
-    source=main_kernel(dict(main,id=entry['id'],cpp_model=entry['cpp_model']),kind='TailKernel')
-    start=source.index(' const auto y='); end=source.index(' static_assert',start)
-    source=source[:start]+''' const auto bits=Op::Bits(x);
- const auto x_biased_exponent=hn::ShiftRight<52>(bits);
- const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,Op::SU(1023));
- const auto k=hn::ShiftRight<1>(x_unbiased_exponent);
- const auto u_biased_exponent=hn::Add(Op::SU(1023),hn::And(x_unbiased_exponent,Op::SU(1)));
- const auto u=Op::Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,Op::SU(0xfffffffffffffULL)));
- const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Op::Bits(u),Op::SU(1ULL<<(M::discarded_bits-1))));
- const auto h=Op::RoundedSub(Op::Float(hn::ShiftLeft<M::discarded_bits>(key)),u);
- const auto row=Op::template MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,Op::SU(1023ULL<<M::retained_bits)));
-'''+source[end:]
-    r=main['record']
-    source=source.replace(' static_assert', '\n'.join(scale_power_setup(r['first']))+'\n static_assert',1)
-    for n in range(r['first'],r['last']+1):
-        prefix=f' Op::template At<{n}-First>(out...)='
-        start=source.index(prefix); end=source.index(';',start)
-        expr=source[start+len(prefix):end]
-        source=source[:start]+f' const auto value={expr};\n'+prefix+f'hn::IfThenElse(active,Op::Scale(Op::Bits(value),scale_power),Op::template At<{n}-First>(out...))'+source[end:]
-        end=source.index('\n }',start)+len('\n }')
-        source=source[:end]+'\n'+scale_power_next(n)+source[end:]
-    return source
+        body += [scale_power_next(n)]
+    return wrap(entry['id'],entry['cpp_model'],[' using U=typename Op::U;', *body])
 
 
 def generate(include):
     include=Path(include)
     manifest=json.loads((include/'manifest.json').read_text())
-    combined=manifest.get('combined_table',False)
-    archive=Path(__file__).resolve().parents[2]/'data/numerical/compact-tail-1ulp.json'
-    tail=json.loads(archive.read_text()) if not combined and 'tails' not in manifest else None
-    if not combined and 'tails' not in manifest and manifest['tail']['archive_definition']!=tail['metadata']['definition_id']:
-        raise ValueError('tail metadata differs from emitted table')
+    if manifest.get('combined_table') is not True:
+        raise ValueError('combined-table catalog required; use the historical release for split tables')
     files={}
     for entry in manifest['models'].values():
-        expected_layout='materialized-nextup-main-tail-v3' if combined else 'materialized-nextup-interleaved8-v2'
+        expected_layout='materialized-nextup-main-tail-v3'
         if entry['payload_layout'] != expected_layout:
             raise ValueError('unsupported SIMD payload layout')
         if not entry['record']['minimum_order_prebiased']:
             raise ValueError('SIMD requires the next-up minimum-order coefficient')
         if min(entry['record']['degrees']) < 1:
             raise ValueError('SIMD requires positive Taylor degrees')
-        files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=main_kernel(entry,combined)
-    if 'tails' in manifest:
-        for key,entry in manifest['tails'].items():
-            files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=paired_tail_kernel(entry,manifest['models'][key])
-    elif not combined:
-        entry=manifest['tail']
-        files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=tail_kernel(entry,tail['metadata'])
+        files[f'fast_boys/models/{entry["id"]}/simd-inl.h']=main_kernel(entry)
     guard='FAST_BOYS_SELECTED_SIMD_H_'
     files['fast_boys/selected_simd.h']='\n'.join([
         f'#if defined({guard}) == defined(HWY_TARGET_TOGGLE)',f'#ifdef {guard}',
@@ -176,7 +92,7 @@ def generate(include):
     root=Path(__file__).resolve().parents[2]
     sources=['workflow/additive/simd_headers.py','include/fast_boys/simd.h',
              'include/fast_boys/simd_config.h','include/fast_boys/detail/simd/ops-inl.h',
-             'include/fast_boys/scalar.h','include/fast_boys/detail/binary64.h','include/fast_boys/detail/scalar_tail.h']
+             'include/fast_boys/scalar.h','include/fast_boys/detail/binary64.h']
     source_hashes={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in sources}
     (include/'simd-manifest.json').write_text(json.dumps(dict(
         numerical_identity=manifest['numerical_identity'],

@@ -24,9 +24,6 @@ def test_simd(tmp_path,isa,flags,n,first,fast=False):
 #include "fast_boys/selected_simd.h"
 #include "fast_boys/cuda.cuh"
 #include "fast_boys/models/data_0_{n}.h"
-#ifndef FAST_BOYS_COMBINED_TABLE
-#include "fast_boys/models/tail_data_0_{n}.h"
-#endif
 #include <cstdio>
 #include <limits>
 #include <vector>
@@ -35,27 +32,13 @@ namespace fb=fast_boys::simd::HWY_NAMESPACE;
 namespace hn=hwy::HWY_NAMESPACE;
 static_assert(HWY_TARGET=={'HWY_AVX2' if isa=='avx2' else 'HWY_AVX3_DL'},"test must exercise the named ISA");
 using M=fast_boys::selected::Model<{n}>;
-#ifndef FAST_BOYS_COMBINED_TABLE
-using T=fast_boys::selected::Tail<{n}>;
-#endif
 static constexpr fast_boys::BoysTable<M> main_table{{}};
-#ifndef FAST_BOYS_COMBINED_TABLE
-static constexpr fast_boys::BoysTable<T> tail_table{{}};
-#endif
 __attribute__((noinline)) void reference(double x,double* ref) {{
-#ifdef FAST_BOYS_COMBINED_TABLE
  auto scalar=fast_boys::cuda::make_evaluator(main_table.view());
-#else
- auto scalar=fast_boys::cuda::make_evaluator(main_table.view(),tail_table.view());
-#endif
  scalar.template evaluate<0,{n}>(x,ref);
 }}
 template<bool Software> __attribute__((noinline)) void evaluate(fb::V x,{','.join(f'fb::V& f{i}' for i in range(first,n+1))}) {{
-#ifdef FAST_BOYS_COMBINED_TABLE
  auto e=fb::make_evaluator<Software>(main_table.view());
-#else
- auto e=fb::make_evaluator<Software>(main_table.view(),tail_table.view());
-#endif
  e.template evaluate<{first},{n}>(fb::D(), x,{variables});
 }}
 template<bool Software> int check() {{
@@ -67,13 +50,8 @@ template<bool Software> int check() {{
  std::vector<double> samples(std::begin(special),std::end(special));
  for(unsigned i=0;i<1200;++i) samples.push_back(std::exp(i*0.013));
  // Exercise every paired-tail reference cell across normal/subnormal scales.
-#ifdef FAST_BOYS_COMBINED_TABLE
  constexpr auto tail_rows=M::tail_row_count;
  constexpr auto tail_bits=M::tail_retained_bits,tail_shift=M::tail_discarded_bits;
-#else
- constexpr auto tail_rows=T::row_count;
- constexpr auto tail_bits=T::retained_bits,tail_shift=T::discarded_bits;
-#endif
  for(int exponent:{{6,24,50,100,300,600,1000,1022}})
   for(unsigned j=0;j<tail_rows;++j) {{
    const double u=O::value(((std::uint64_t(1023)<<tail_bits)+j)<<tail_shift);

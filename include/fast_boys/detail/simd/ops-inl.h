@@ -358,7 +358,6 @@ template <class D> struct Ops {
 };
 } // namespace detail
 template <class Model> struct Kernel;
-template <class Tail> struct TailKernel;
 } // namespace HWY_NAMESPACE
 } // namespace simd
 } // namespace fast_boys

@@ -35,23 +35,15 @@ PROBE = '''
 #include "fast_boys/selected_simd.h"
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 using M=fast_boys::selected::Model<4>;
-#ifndef FAST_BOYS_COMBINED_TABLE
-using T=fast_boys::selected::Tail<4>;
-#endif
 namespace hn=hwy::HWY_NAMESPACE;
-template<class D> void probe(const std::uint64_t* main,const std::uint64_t* tail,
+template<class D> void probe(const std::uint64_t* main,
            hn::VFromD<D> x,hn::VFromD<D>& a,hn::VFromD<D>& b) {
-#ifdef FAST_BOYS_COMBINED_TABLE
  auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main));
-#else
- auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main),
-                          fast_boys::TableView<T>::from_pointer(tail));
-#endif
  e.template evaluate<1,2>(D(), x,a,b);
 }
 template<class D> void run(const std::uint64_t* table, const double* input,double* out) {
  hn::VFromD<D> a,b;
- probe<D>(table,table,hn::LoadU(D(),input),a,b);
+ probe<D>(table,hn::LoadU(D(),input),a,b);
  hn::StoreU(a,D(),out);
  hn::StoreU(b,D(),out+hn::Lanes(D()));
 }
@@ -81,6 +73,27 @@ def test_compile_portability(tmp_path, compiler, flags):
     compile_source(tmp_path, PROBE+f'\nstatic_assert({condition},"test target mismatch");\n', compiler, flags)
 
 
+def test_only_one_table_view_accepted(tmp_path):
+    source = '''
+#include "fast_boys/cuda.cuh"
+#include "fast_boys/selected_simd.h"
+#include <utility>
+namespace fb=fast_boys::simd::HWY_NAMESPACE;
+using View=fast_boys::TableView<fast_boys::selected::Model<0>>;
+template<class T, class=void> struct accepts_two : std::false_type {};
+template<class T> struct accepts_two<T, std::void_t<decltype(
+    fb::make_evaluator(std::declval<T>(),std::declval<T>()))>> : std::true_type {};
+template<class T, class=void> struct cuda_two : std::false_type {};
+template<class T> struct cuda_two<T, std::void_t<decltype(
+    fast_boys::cuda::make_evaluator(std::declval<T>(),std::declval<T>()))>> : std::true_type {};
+template<class T, class=void> struct scalar_two : std::false_type {};
+template<class T> struct scalar_two<T, std::void_t<decltype(
+    fast_boys::scalar::evaluate<0,0>(std::declval<T>(),std::declval<T>(),0.))>> : std::true_type {};
+static_assert(!accepts_two<View>::value && !cuda_two<View>::value && !scalar_two<View>::value);
+'''
+    compile_source(tmp_path, source, flags=['-DHWY_COMPILE_ONLY_SCALAR'])
+
+
 def test_foreach_target(tmp_path):
     source = '''
 #include "fast_boys/simd_config.h"
@@ -92,16 +105,8 @@ HWY_BEFORE_NAMESPACE();
 namespace app { namespace HWY_NAMESPACE {
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 using M=fast_boys::selected::Model<0>;
-#ifndef FAST_BOYS_COMBINED_TABLE
-using T=fast_boys::selected::Tail<0>;
-#endif
-void Probe(const std::uint64_t* main,const std::uint64_t* tail,double* out) {
-#ifdef FAST_BOYS_COMBINED_TABLE
+void Probe(const std::uint64_t* main,double* out) {
  auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main));
-#else
- auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main),
-                          fast_boys::TableView<T>::from_pointer(tail));
-#endif
  fb::V f;
  e.evaluate<0,0>(fb::D(), hwy::HWY_NAMESPACE::Zero(fb::D()),f);
  hwy::HWY_NAMESPACE::StoreU(f,fb::D(),out);

@@ -9,38 +9,28 @@ import shutil
 import struct
 import subprocess
 
-import gmpy2 as g
 import pytest
-from workflow.additive.headers import (generate, ROOT, MAIN_LAYOUT,
+from workflow.additive.headers import (generate, ROOT,
                                        coefficient_word, correction_word, interleaved_rows)
 from workflow.additive.model import Grid, storage, evaluate_order
-from workflow.additive.reference import bits64, from_bits, rn64, add64, mul64, fma64, residual_value, ulp
+from workflow.additive.reference import bits64
 from workflow.additive.search import payload_rows
-from workflow.additive.tests.legacy_tail_fixture import record as legacy_tail_record
-
-
-@pytest.fixture(scope='module',autouse=True)
-def legacy_archive(tmp_path_factory):
-    import workflow.additive.headers as headers
-    archive=tmp_path_factory.mktemp('legacy-decoder')/'fixture.json'
-    archive.write_text(json.dumps(legacy_tail_record()))
-    with pytest.MonkeyPatch.context() as patch:
-        patch.setattr(headers,'TAIL',archive)
-        yield archive
+from workflow.additive import tail
 
 
 @pytest.fixture(scope='module')
 def fixture(tmp_path_factory):
     directory=tmp_path_factory.mktemp('generated')
-    grid=Grid(3,-3,4,0.8)
+    grid=Grid(3,-3,4,1.)
     # Deliberately nonmonotonic n+p[n]; covers nonzero subset starts.
     record=dict(first=0,last=3,degrees=[5,2,1,3],grid=grid.metadata(),
                 status='qualified',minimum_order_prebiased=True,
                 qualification=[{'status':'qualified','scope':'test fixture only'}]*4)
     record['storage']=storage(grid,0,record['degrees'])
     record['payload_sha256']=hashlib.sha256(b''.join(payload_rows(record))).hexdigest()
+    record['tail']=tail.construct(record['first'],record['last'],record['degrees'],3,grid.domain_end)
     summary=dict(complete=True,unresolved=0,identity='test-fixture-not-production',
-                 config={'error':{'metric':'ulp','limit':1}},winners={'0-3':record})
+                 config={'budget_bytes':1048576,'error':{'metric':'ulp','limit':1}},winners={'0-3':record})
     manifest=generate(summary,directory)
     return directory,grid,record,summary,manifest
 
@@ -62,22 +52,32 @@ def compile_run(tmp_path,source,includes,flags=(),cuda=False):
 
 
 def preamble(manifest):
-    main=manifest['models']['0-3']; tail=manifest['tail']
+    main=manifest['models']['0-3']
     return f'''#include "fast_boys/cuda.cuh"
 #include "fast_boys/models/{main['id']}/data.h"
-#include "fast_boys/models/{tail['id']}/data.h"
 #include <cstdio>
 using M={main['cpp_model']};
-using T={tail['cpp_model']};
 using O=fast_boys::detail::Binary64;
 inline constexpr fast_boys::BoysTable<M> table{{}};
-inline constexpr fast_boys::BoysTable<T> tail{{}};
-struct Invalid {{
-template<int A,int B> FAST_BOYS_HD void evaluate(double,int last,double* out,std::size_t stride) const {{
-for(int n=A;n<=last;++n) out[(n-A)*stride]=O::value(0x7ff8000000000000ULL);
-}}
-}};
 '''
+
+
+def test_reject_split_catalog_before_emission(fixture,tmp_path):
+    import copy
+    from workflow.additive.simd_headers import generate as generate_simd
+    _,_,_,summary,manifest=fixture
+    mixed=copy.deepcopy(summary)
+    legacy=mixed['winners']['0-4']=dict(mixed['winners']['0-3'])
+    del legacy['tail']
+    output=tmp_path/'generated'
+    with pytest.raises(ValueError,match='combined-table'):
+        generate(mixed,output)
+    assert not output.exists()
+    old=dict(manifest,combined_table=False)
+    (tmp_path/'manifest.json').write_text(json.dumps(old))
+    with pytest.raises(ValueError,match='combined-table'):
+        generate_simd(tmp_path)
+    assert not (tmp_path/'fast_boys').exists()
 
 
 def test_payload_and_generated_structure(fixture,tmp_path):
@@ -89,7 +89,7 @@ def test_payload_and_generated_structure(fixture,tmp_path):
     assert 'double c1=' not in source and 'memcpy' not in source
     assert 'high_before(First,2)' in source
     assert 'if(last_output==0) return;' in source
-    assert 'table_bytes=9288' in (directory/'fast_boys/models'/manifest['tail']['id']/'model.h').read_text()
+    assert manifest['models']['0-3']['table_bytes']==record['storage']['table_bytes']+record['tail']['storage']['table_bytes']
     broken=json.loads(json.dumps(summary)); broken['winners']['0-3']['payload_sha256']='0'*64
     with pytest.raises(ValueError,match='SHA-256'):
         generate(broken,tmp_path/'broken')
@@ -98,7 +98,7 @@ def test_payload_and_generated_structure(fixture,tmp_path):
 
 @pytest.mark.parametrize('first,count',[(0,1),(2,7),(0,8),(3,9),(0,16),(4,17),(0,25)])
 def test_interleaved_word_mapping(first,count):
-    grid=Grid(3,-3,4,0.8)
+    grid=Grid(3,-3,4,1.)
     record=dict(first=first,last=first+count-1,degrees=[6]*count,grid=grid.metadata())
     record['storage']=storage(grid,first,record['degrees'])
     high=record['storage']['highest_reference_order']
@@ -128,7 +128,7 @@ def test_low_order_sector_locality():
 
 
 def test_interleaved_multi_block_evaluation(tmp_path):
-    grid=Grid(3,-3,4,0.8)
+    grid=Grid(3,-3,4,1.)
     first,last=2,18
     degrees=[1+(n%6) for n in range(first,last+1)]
     record=dict(first=first,last=last,degrees=degrees,grid=grid.metadata(),
@@ -136,7 +136,8 @@ def test_interleaved_multi_block_evaluation(tmp_path):
                 qualification=[{'status':'qualified','scope':'fixture only'}]*len(degrees))
     record['storage']=storage(grid,first,degrees)
     record['payload_sha256']=hashlib.sha256(b''.join(payload_rows(record))).hexdigest()
-    summary=dict(complete=True,identity='fixture',config={'error':{'metric':'ulp','limit':1}},winners={'2-18':record})
+    record['tail']=tail.construct(record['first'],record['last'],record['degrees'],3,grid.domain_end)
+    summary=dict(complete=True,identity='fixture',config={'budget_bytes':1048576,'error':{'metric':'ulp','limit':1}},winners={'2-18':record})
     manifest=generate(summary,tmp_path/'generated')
     model=manifest['models']['2-18']
     source=f'''#include "fast_boys/cuda.cuh"
@@ -144,9 +145,8 @@ def test_interleaved_multi_block_evaluation(tmp_path):
 #include <cstdio>
 #include <cstdlib>
 using M={model['cpp_model']}; using O=fast_boys::detail::Binary64;
-struct Reject {{template<int A,int B> void evaluate(double,int,double*,std::size_t) const {{std::abort();}}}};
 static constexpr fast_boys::BoysTable<M> table{{}};
-int main(){{fast_boys::cuda::Evaluator<M,Reject> e(table.view(),Reject{{}});
+int main(){{auto e=fast_boys::cuda::make_evaluator(table.view());
 '''
     expected=[]
     for begin in (2,9,10,17,18):
@@ -183,65 +183,10 @@ for(int i=0;i<12;++i) {{if(O::bits(a[i])!=O::bits(b[i])) return 2; printf("%llu\
                 values=[-1.]*12
                 for n in range(first,last+1): values[2*(n-first)]=evaluate_order(grid,x,n,record['degrees'][n])
                 expected.extend(map(bits64,values))
-    source=preamble(manifest)+'int main(){ fast_boys::cuda::Evaluator<M,Invalid> e(table.view(),Invalid{});\n'+'\n'.join(statements)+'}\n'
+    source=preamble(manifest)+'int main(){ auto e=fast_boys::cuda::make_evaluator(table.view());\n'+'\n'.join(statements)+'}\n'
     assert list(map(int,compile_run(tmp_path,source,[directory]).split()))==expected
     fast=list(map(int,compile_run(tmp_path,source,[directory],['-ffast-math']).split()))
     (tmp_path/'fast-math.json').write_text(json.dumps({'cases':len(expected),'different_bits':sum(a!=b for a,b in zip(expected,fast))}))
-
-
-def tail_oracle(x,last=24):
-    record=legacy_tail_record(); words=[int(w,16) for w in record['words']]
-    exponent=(bits64(x)>>52)-1023; k=exponent//2
-    u=from_bits((bits64(x)&((1<<52)-1))|((1023+(exponent&1))<<52))
-    key=(bits64(u)+(1<<45))>>46
-    r=from_bits(key<<46); h=add64(r,-u)
-    row=words[(key-(1023<<6))*9:][:9]
-    codes=b''.join(w.to_bytes(8,'little') for w in row[1:])
-    values=[0.]*37; values[36]=from_bits(row[0])
-    for n in range(35,-1,-1):
-        raw=mul64(fma64(add64(r,r),values[n+1],0.),rn64(g.mpq(1,2*n+1)))
-        code=codes[35-n]; code=code if code<128 else code-256
-        values[n]=from_bits(bits64(raw)+code)
-    out=[]
-    for n in range(last+1):
-        q=values[n+12]
-        for j in range(11,0,-1): q=fma64(mul64(h,rn64(g.mpq(1,j+1))),q,values[n+j])
-        v=add64(from_bits(bits64(values[n])+1),fma64(h,q,-residual_value(values[n],codes[36+n])))
-        out.append(rn64(g.mpq(v)/g.mpq(2)**((2*n+1)*k)))
-    return out
-
-
-def test_compact_tail_simd_header_warning_clean(fixture, legacy_archive, tmp_path):
-    from workflow.additive.simd_headers import tail_kernel
-    from workflow.additive.tests.test_simd_portability import compile_source
-    directory, _, _, _, manifest = fixture
-    text = tail_kernel(manifest['tail'], json.loads(legacy_archive.read_text())['metadata'])
-    compile_source(tmp_path, text, 'g++', ['-march=haswell', '-maes',
-                   '-DHWY_COMPILE_ONLY_STATIC', '-Wall', '-Werror', '-I'+str(directory)])
-
-
-def test_compact_tail_and_decoder(fixture,tmp_path):
-    directory,_,_,_,manifest=fixture
-    points=[math.nextafter(1e7,math.inf),1e8,1e50,1e100,1e300,float.fromhex('0x1.fffffffffffffp+1023')]
-    # Exponent seams and subnormal transition classes, including archived witness.
-    points += [math.ldexp(u,2*k) for u in (1.,1.625,math.nextafter(4.,0.)) for k in (12,20,40,70,110,340,511)]
-    points += [float.fromhex('0x1.d433333333333p+680')]
-    statements=[]; expected=[]
-    for x in points:
-        statements.append(f'{{double out[25]; f.evaluate<0,24>({x.hex()},24,out,1); for(double v:out) printf("%llu\\n",(unsigned long long)O::bits(v));}}')
-        expected.extend(map(bits64,tail_oracle(x)))
-    from workflow.additive.reference import enclosure, error_interval
-    # Independent directed MPFR enclosures, not only agreement with the decoder.
-    for x in points:
-        for n,value in enumerate(tail_oracle(x)):
-            lo,hi,_=enclosure(n,x,512,1000)
-            assert error_interval(value,lo,hi,'ulp')[1] <= 1
-    for hi in (1.,math.nextafter(1.,0.),0.125,1e-200):
-        for code in range(193):
-            statements.append(f'printf("%llu\\n",(unsigned long long)O::bits(O::correction({bits64(hi)}ULL,{code})));')
-            expected.append(bits64(residual_value(hi,code)))
-    source=preamble(manifest)+'int main(){fast_boys::cuda::LargeArgumentFallback<T> f(tail.view());\n'+'\n'.join(statements)+'}\n'
-    assert list(map(int,compile_run(tmp_path,source,[directory]).split()))==expected
 
 
 def test_two_translation_units(fixture,tmp_path):
@@ -294,14 +239,11 @@ int main(int argc,char** argv) {
   if(argc==1) return 0;
   const int mode=std::atoi(argv[1]);
   double out[4];
-  fast_boys::cuda::Evaluator<M,Invalid> e(table.view(),Invalid{});
+  auto e=fast_boys::cuda::make_evaluator(table.view());
   if(mode==1) e.evaluate<0>(0.,-1,out);
   if(mode==2) e.evaluate<0>(0.,4,out);
   if(mode==3) e.evaluate<0>(0.,3,out,0);
-  if(mode==4) {
-    fast_boys::cuda::LargeArgumentFallback<T> f(tail.view());
-    f.evaluate<0,3>(1e8,4,out,1);
-  }
+  if(mode==4) e.evaluate<0>(1e8,4,out);
 }
 '''
     path=tmp_path/'assertions.cc'; path.write_text(source)
@@ -323,11 +265,10 @@ def test_catalog_and_opt_in_payload(fixture,tmp_path):
     directory,_,_,summary,manifest=fixture
     source='''#include "fast_boys/selected.h"
 #include "fast_boys/models/data_0_3.h"
-#include "fast_boys/models/tail_data.h"
 #include <type_traits>
 using M=fast_boys::selected::Model<3>;
 static_assert(M::first==0 && M::last==3);
-static_assert(fast_boys::selected::Tail::last==24);
+static_assert(M::combined_table);
 static constexpr fast_boys::BoysTable<M> table{};
 int main(){return table.data()==nullptr;}
 '''
@@ -344,15 +285,16 @@ int main(){return table.data()==nullptr;}
 
 def test_bundled_combined_sources_match_generator():
     """Do not ship an older evaluation graph under the current catalog."""
-    from workflow.additive.paired_headers import combined_source, LAYOUT
-    from workflow.additive.headers import digest
+    from workflow.additive._frozen_v3.paired_headers import combined_source, LAYOUT
+    from workflow.additive._frozen_v3.headers import digest
     path=ROOT/'include/manifest.json'
     if not path.exists(): pytest.skip('bundled production catalog not generated')
     manifest=json.loads(path.read_text())
-    if not manifest.get('combined_table'): pytest.skip('legacy catalog')
+    assert manifest['combined_table'] is True
     summary=json.loads((ROOT/'data/numerical/paired-1ulp/summary.json').read_text())
-    emitter=hashlib.sha256((ROOT/'workflow/additive/paired_headers.py').read_bytes()+
-                          (ROOT/'workflow/additive/headers.py').read_bytes()).hexdigest()
+    from workflow.additive._frozen_v3 import headers, paired_headers
+    emitter=hashlib.sha256(Path(paired_headers.__file__).read_bytes()+
+                          Path(headers.__file__).read_bytes()).hexdigest()
     assert manifest['generator_sha256']==emitter
     recorded=json.loads((ROOT/'include/simd-manifest.json').read_text()).get('formatting')
     if recorded:
@@ -379,29 +321,28 @@ def test_bundled_catalog_coverage():
     for key,model in manifest['models'].items():
         assert model['record']==summary['winners'][key]
         assert (ROOT/'include/fast_boys/models'/model['id']/'data.h').is_file()
-        combined=manifest.get('combined_table',False)
-        assert model['payload_layout']==('materialized-nextup-main-tail-v3' if combined else MAIN_LAYOUT)
+        assert manifest['combined_table'] is True
+        assert model['payload_layout']=='materialized-nextup-main-tail-v3'
         text=(ROOT/'include/fast_boys/models'/model['id']/'data.h').read_text()
         words=[int(word,16) for word in re.findall(r'0x([0-9a-f]{16})ULL',text)]
         raw=struct.pack('<'+'Q'*len(words),*words)
         assert hashlib.sha256(raw).hexdigest()==model['payload_sha256']
         record=model['record']; row_words=record['storage']['row_bytes']//8
-        if combined:
-            boundary=record['storage']['table_bytes']
-            assert model['tail_row_offset']==record['grid']['row_count']
-            assert model['table_bytes']==boundary+record['tail']['storage']['table_bytes']
-            assert model['table_bytes']<=summary['config']['budget_bytes']
-            assert hashlib.sha256(raw[:boundary]).hexdigest()==model['section_sha256']['main']
-            assert hashlib.sha256(raw[boundary:]).hexdigest()==model['section_sha256']['tail']
-            canonical_tail=hashlib.sha256()
-            tm=record['tail']; tail_words=words[boundary//8:]
-            for start in range(0,len(tail_words),row_words):
-                row=tail_words[start:start+row_words]
-                restored=[row[coefficient_word(tm,n)] for n in range(tm['first'],tm['storage']['highest_reference_order']+1)]
-                restored += [row[correction_word(tm,n)] for n in range(tm['first'],tm['last']+1,8)]
-                canonical_tail.update(struct.pack('<'+'Q'*len(restored),*restored))
-            assert canonical_tail.hexdigest()==tm['payload_sha256']
-            words=words[:boundary//8]
+        boundary=record['storage']['table_bytes']
+        assert model['tail_row_offset']==record['grid']['row_count']
+        assert model['table_bytes']==boundary+record['tail']['storage']['table_bytes']
+        assert model['table_bytes']<=summary['config']['budget_bytes']
+        assert hashlib.sha256(raw[:boundary]).hexdigest()==model['section_sha256']['main']
+        assert hashlib.sha256(raw[boundary:]).hexdigest()==model['section_sha256']['tail']
+        canonical_tail=hashlib.sha256()
+        tm=record['tail']; tail_words=words[boundary//8:]
+        for start in range(0,len(tail_words),row_words):
+            row=tail_words[start:start+row_words]
+            restored=[row[coefficient_word(tm,n)] for n in range(tm['first'],tm['storage']['highest_reference_order']+1)]
+            restored += [row[correction_word(tm,n)] for n in range(tm['first'],tm['last']+1,8)]
+            canonical_tail.update(struct.pack('<'+'Q'*len(restored),*restored))
+        assert canonical_tail.hexdigest()==tm['payload_sha256']
+        words=words[:boundary//8]
         high=record['storage']['highest_reference_order']
         canonical=hashlib.sha256()
         for start in range(0,len(words),row_words):
@@ -410,99 +351,9 @@ def test_bundled_catalog_coverage():
             restored += [row[correction_word(record,n)] for n in range(record['first'],record['last']+1,8)]
             canonical.update(struct.pack('<'+'Q'*len(restored),*restored))
         assert canonical.hexdigest()==record['payload_sha256']
-    if manifest.get('combined_table',False):
-        expected_dirs={e['id'] for e in manifest['models'].values()}
-        assert {p.name for p in (ROOT/'include/fast_boys/models').iterdir() if p.is_dir()}==expected_dirs
-        assert not list((ROOT/'include/fast_boys/models').glob('tail_data*'))
-        return
-    assert set(manifest['tails'])==set(manifest['models'])
-    expected_dirs={e['id'] for group in ('models','tails') for e in manifest[group].values()}
+    expected_dirs={e['id'] for e in manifest['models'].values()}
     assert {p.name for p in (ROOT/'include/fast_boys/models').iterdir() if p.is_dir()}==expected_dirs
-    for key,entry in manifest['tails'].items():
-        record=entry['record']; main=manifest['models'][key]['record']
-        assert record==summary['winners'][key]['tail']
-        assert record['degrees']==main['degrees']
-        assert record['storage']['table_bytes']+main['storage']['table_bytes']<=summary['config']['budget_bytes']
-        text=(ROOT/'include/fast_boys/models'/entry['id']/'data.h').read_text()
-        words=[int(word,16) for word in re.findall(r'0x([0-9a-f]{16})ULL',text)]
-        assert hashlib.sha256(struct.pack('<'+'Q'*len(words),*words)).hexdigest()==entry['payload_sha256']
-        canonical=hashlib.sha256(); stride=record['storage']['row_words']
-        for start in range(0,len(words),stride):
-            row=words[start:start+stride]
-            restored=[row[coefficient_word(record,n)] for n in range(record['first'],record['storage']['highest_reference_order']+1)]
-            restored += [row[correction_word(record,n)] for n in range(record['first'],record['last']+1,8)]
-            canonical.update(struct.pack('<'+'Q'*len(restored),*restored))
-        assert canonical.hexdigest()==record['payload_sha256']
-
-
-@pytest.mark.parametrize('packet', [False, True], ids=['scalar-index', 'legacy-simd-adapter'])
-def test_special_inputs_and_nonzero_model_first(tmp_path, packet):
-    grid=Grid(3,-3,4,1e7)
-    record=dict(first=2,last=3,degrees=[2,3],grid=grid.metadata(),status='qualified',
-                minimum_order_prebiased=True,qualification=[{'status':'qualified','scope':'fixture only'}]*2)
-    record['storage']=storage(grid,2,record['degrees'])
-    record['payload_sha256']=hashlib.sha256(b''.join(payload_rows(record))).hexdigest()
-    summary=dict(complete=True,identity='fixture',config={'error':{'metric':'ulp','limit':1}},winners={'2-3':record})
-    directory=tmp_path/'generated'; m=generate(summary,directory)
-    main=m['models']['2-3']; tail=m['tail']
-    source=f'''#include "fast_boys/cuda.cuh"
-#include "fast_boys/models/{main['id']}/data.h"
-#include "fast_boys/models/{tail['id']}/data.h"
-#include <cstdio>
-using M={main['cpp_model']}; using T={tail['cpp_model']}; using O=fast_boys::detail::Binary64;
-static constexpr fast_boys::BoysTable<M> a{{}}; static constexpr fast_boys::BoysTable<T> b{{}};
-int main(){{auto e=fast_boys::cuda::make_evaluator(a.view(),b.view());
-double out[4];
-'''
-    expected=[]
-    points=(-0.,0.,0.125,1e7,math.nextafter(1e7,math.inf),1e100,math.inf,-1.,math.nan,-math.inf)
-    for x in points:
-        source+=f'e.evaluate<2,3>(O::value({bits64(x)}ULL),3,out,2); printf("%llu %llu\\n",(unsigned long long)O::bits(out[0]),(unsigned long long)O::bits(out[2]));\n'
-        if x>=0 and math.isfinite(x):
-            expected.extend(bits64(v) for v in (tail_oracle(x)[2:4] if x>1e7 else [evaluate_order(grid,x,n,record['degrees'][n-2]) for n in (2,3)]))
-        else:
-            expected.extend([0 if x==math.inf else 0x7ff8000000000000]*2)
-    source+='}\n'
-    if packet:
-        from workflow.additive.tests.test_simd_portability import compile_source
-        # Supply both table views; this tests the old compact-tail interface,
-        # including its defined infinity/NaN results, without a scalar target.
-        source=source.split('int main()')[0]+f'''
-#include "fast_boys/simd.h"
-namespace fb=fast_boys::simd::HWY_NAMESPACE;
-namespace hn=hwy::HWY_NAMESPACE;
-static_assert(HWY_TARGET==HWY_SSE2);
-int main() {{
- const uint64_t inputs[]={{{','.join(str(bits64(x))+'ULL' for x in points)}}};
- auto e=fb::make_evaluator(a.view(),b.view());
- for(size_t i=0;i<sizeof(inputs)/sizeof(*inputs);i+=2) {{
-   fb::V p,q;
-   e.evaluate<2,3>(fb::D(), hn::BitCast(fb::D(),hn::LoadU(fb::DU(),inputs+i)),p,q);
-   for(size_t lane=0;lane<2;++lane) {{
-     const auto x=O::value(inputs[i+lane]);
-     if(std::isfinite(x) && x>=0) {{
-       const auto [f2,f3]=fast_boys::scalar::evaluate<2,3>(a.view(),b.view(),x);
-       if(O::bits(f2)!=hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(p),lane) ||
-          O::bits(f3)!=hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(q),lane)) return 1;
-     }}
-     printf("%llu %llu\\n",(unsigned long long)hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(p),lane),
-                          (unsigned long long)hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(q),lane));
-   }}
- }}
-}}
-'''
-        exe=compile_source(tmp_path,source,'g++',['-DHWY_COMPILE_ONLY_STATIC','-march=x86-64',
-                                                  '-I'+str(directory)],link=True)
-        assert list(map(int,subprocess.check_output([exe]).split()))==expected
-        return
-    for flags in ([],['-ffast-math'],['-std=c++2c']):
-        actual=list(map(int,compile_run(tmp_path,source,[directory],flags).split()))
-        if '-ffast-math' in flags:
-            # Accuracy is diagnostic in fast-math; classification must remain safe.
-            assert actual[-8:]==expected[-8:]
-            (tmp_path/'fast-special.json').write_text(json.dumps({'cases':len(expected),'different_bits':sum(a!=b for a,b in zip(actual,expected))}))
-        else:
-            assert actual==expected
+    assert not list((ROOT/'include/fast_boys/models').glob('tail_data*'))
 
 
 def test_selected_production_witnesses(tmp_path):
@@ -518,9 +369,8 @@ def test_selected_production_witnesses(tmp_path):
 #include <cstdio>
 #include <cstdlib>
 using M={model['cpp_model']}; using O=fast_boys::detail::Binary64;
-struct Reject {{template<int A,int B> void evaluate(double,int,double*,std::size_t) const {{std::abort();}}}};
 static constexpr fast_boys::BoysTable<M> table{{}};
-int main(){{fast_boys::cuda::Evaluator<M,Reject> e(table.view(),Reject{{}}); double out[{last-first+1}];
+int main(){{auto e=fast_boys::cuda::make_evaluator(table.view()); double out[{last-first+1}];
 '''
         expected=[]
         for n,q in zip(range(first,last+1),record['qualification']):
@@ -537,25 +387,21 @@ def test_cuda_mixed_requests(fixture,tmp_path):
     directory,grid,record,_,manifest=fixture
     # 47 lanes: partial final warp; divergence at entry and varying endpoints.
     source='#include <cuda_runtime.h>\n#include "fast_boys/cuda/upload.cuh"\n'+preamble(manifest)+'''
-__global__ void run(fast_boys::TableView<M> view, fast_boys::TableView<T> tv, unsigned long long* result) {
+__global__ void run(fast_boys::TableView<M> view, unsigned long long* result) {
  int i=blockIdx.x*blockDim.x+threadIdx.x; if(i>=47) return;
  double out[4]={-1,-1,-1,-1}; const int last=i%4;
- if(i%3==0) {
-   fast_boys::cuda::LargeArgumentFallback<T> f(tv); f.evaluate<0,3>(1e100,last,out,1);
- } else {
-   fast_boys::cuda::Evaluator<M,Invalid> e(view,Invalid{}); e.evaluate<0>(0.125,last,out);
- }
+ fast_boys::cuda::make_evaluator(view).evaluate<0>(i%3==0?1e100:0.125,last,out);
  for(int n=0;n<4;++n) result[i*4+n]=O::bits(out[n]);
 }
 int main(){
- fast_boys::cuda::DeviceTable<M> d(table); fast_boys::cuda::DeviceTable<T> t(tail);
+ fast_boys::cuda::DeviceTable<M> d(table);
  unsigned long long *p,host[47*4]; if(cudaMalloc(&p,sizeof(host))!=cudaSuccess) return 2;
- run<<<1,64>>>(d.view(),t.view(),p);
+ run<<<1,64>>>(d.view(),p);
  if(cudaGetLastError()!=cudaSuccess || cudaMemcpy(host,p,sizeof(host),cudaMemcpyDeviceToHost)!=cudaSuccess) return 3;
  cudaFree(p); for(auto v:host) printf("%llu\\n",v);
 }
 '''
-    expected=[]; tail_values=tail_oracle(1e100)
+    expected=[]; tail_values=tail.evaluate(record['tail'],1e100)
     for i in range(47):
         for n in range(4): expected.append(bits64(-1. if n>i%4 else tail_values[n] if i%3==0 else evaluate_order(grid,0.125,n,record['degrees'][n])))
     actual=list(map(int,compile_run(tmp_path,source,[directory],['--fmad=false','--diag-error=20013'],cuda=True).split()))

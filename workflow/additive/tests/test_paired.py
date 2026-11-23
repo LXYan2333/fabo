@@ -66,7 +66,7 @@ def test_paired_header_conformance(tmp_path,cuda):
 using M={main['cpp_model']};
 static constexpr fast_boys::BoysTable<M> m;
 #if defined(__CUDACC__)
-__global__ void instantiate(const std::uint64_t* a,const std::uint64_t* b,const double* x,double* out) {{
+__global__ void instantiate(const std::uint64_t* a,const double* x,double* out) {{
  auto e=fast_boys::cuda::make_evaluator(fast_boys::TableView<M>::from_pointer(a));
  e.evaluate<0>(x[threadIdx.x],int(threadIdx.x%4),out+threadIdx.x,blockDim.x);
 }}
@@ -108,7 +108,7 @@ int main() {{ auto e=fast_boys::cuda::make_evaluator(m.view());
 
 def test_combined_payload_preserved(tmp_path):
     from workflow.additive.headers import interleaved_rows
-    from workflow.additive.paired_headers import rows
+    from workflow.additive._frozen_v3.paired_headers import rows
     _,_,record,manifest=paired_fixture(tmp_path)
     entry=manifest['models']['0-3']
     text=(tmp_path/'include/fast_boys/models'/entry['id']/'data.h').read_text()

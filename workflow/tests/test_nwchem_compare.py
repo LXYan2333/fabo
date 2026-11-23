@@ -4,7 +4,7 @@ import shutil
 import subprocess
 
 import pytest
-from benchmark.nwchem.bindings import BACKENDS, header, SHARED_TAIL
+from benchmark.nwchem.bindings import BACKENDS, header
 from benchmark.nwchem.patch_nwchem import patch_single_update
 from benchmark.nwchem.simint_binding import patch
 from workflow.nwchem_compare import environment,input_text,sample_record,save,sha,verify_sample,syntax_preflight
@@ -128,7 +128,6 @@ def test_compile_fabo_binding(tmp_path,compiler):
     if not shutil.which(compiler) or not hwy.exists():pytest.skip('compiler/Highway required')
     simint=tmp_path/'simint/vectorization';simint.mkdir(parents=True)
     (simint/'vectorization.h').write_text('#include <immintrin.h>\n#define SIMINT_SIMD_LEN 8\n#define SIMINT_DBLTYPE __m512d\n')
-    (tmp_path/'shared_tail.h').write_text(SHARED_TAIL)
     (tmp_path/'binding.h').write_text(header(4,'fabo'))
     (tmp_path/'test.cc').write_text('#include "binding.h"\nstatic_assert(!fast_boys::simd::HWY_NAMESPACE::kDefaultUseSoftwareGather);\nvoid f(__m512d x,__m512d* out){fabo_nw_fabo_4::evaluate(x,out);}\n')
     subprocess.run([compiler,'-std=c++20','-march=sapphirerapids','-DHWY_COMPILE_ONLY_STATIC',

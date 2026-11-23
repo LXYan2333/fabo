@@ -24,16 +24,4 @@ FAST_BOYS_HD FAST_BOYS_INLINE void FaboAdditiveBoys(
   const auto boys=fast_boys::cuda::make_evaluator(table);
   boys.template evaluate<0>(x,last,output,order_stride);
 }
-// Compatibility with archived pre-combined catalogs.
-template <class Model, class Tail>
-FAST_BOYS_HD inline void
-FaboAdditiveBoys(const int last, const double x,
-                 double *FAST_BOYS_RESTRICT output, std::size_t order_stride,
-                 fast_boys::TableView<Model> main_table,
-                 fast_boys::TableView<Tail> tail_table) {
-  static_assert(Model::first == 0,
-                "QUICK FmT requires outputs starting at zero");
-  const auto boys = fast_boys::cuda::make_evaluator(main_table, tail_table);
-  boys.template evaluate<0>(x, last, output, order_stride);
-}
 #endif
