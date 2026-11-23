@@ -26,24 +26,25 @@ def wrap(ident,model,kind,body):
         '#include "fast_boys/simd.h"',f'#include "fast_boys/models/{ident}/model.h"',
         '#if HWY_NATIVE_FMA','HWY_BEFORE_NAMESPACE();','namespace fast_boys { namespace simd { namespace HWY_NAMESPACE {',
         f'template<> struct {kind}<{model}> {{',f' using M={model};',
-        ' template<int First,int Last,bool Software,class... Outputs>',
-        ' static HWY_INLINE void run(const std::uint64_t* data,const V x,'+
-        ('Mask active,' if kind=='TailKernel' else '')+'Outputs& HWY_RESTRICT ...out) {',
-        ' using namespace detail;',*body,' }','};','} } }','HWY_AFTER_NAMESPACE();','#endif // HWY_NATIVE_FMA','#endif',''])
+        ' template<int First,int Last,bool Software,class D,class... Outputs>',
+        ' static HWY_INLINE void run(D, const std::uint64_t* data,hn::VFromD<D> x,'+
+        ('hn::Mask<D> active,' if kind=='TailKernel' else '')+'Outputs& HWY_RESTRICT ...out) {',
+        ' using Op=detail::Ops<D>; using V=hn::VFromD<D>;',
+        *body,' }','};','} } }','HWY_AFTER_NAMESPACE();','#endif // HWY_NATIVE_FMA','#endif',''])
 
 
-def main_kernel(entry,combined=False):
+def main_kernel(entry,combined=False,kind='Kernel'):
     r=entry['record']; first,last=r['first'],r['last']; degrees=r['degrees']
     body=[
-        ' const auto y=RoundedAdd(x,S(M::offset));',
-        ' const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(y),SU(1ULL<<(M::discarded_bits-1))));',
-        ' const auto ref=RoundedSub(Float(hn::ShiftLeft<M::discarded_bits>(key)),S(M::offset));',
-        ' const auto h=RoundedSub(ref,x);',
-        ' const auto row=MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,SU(M::key_min)));',
+        ' const auto y=Op::RoundedAdd(x,Op::S(M::offset));',
+        ' const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Op::Bits(y),Op::SU(1ULL<<(M::discarded_bits-1))));',
+        ' const auto ref=Op::RoundedSub(Op::Float(hn::ShiftLeft<M::discarded_bits>(key)),Op::S(M::offset));',
+        ' const auto h=Op::RoundedSub(ref,x);',
+        ' const auto row=Op::template MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,Op::SU(M::key_min)));',
         ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
     if combined:
         body=[' U row FAST_BOYS_INDETERMINATE;', ' U k FAST_BOYS_INDETERMINATE;',
-              ' V h FAST_BOYS_INDETERMINATE;', ' PrepareCombinedCoordinates<M>(x,row,h,k);',
+              ' V h FAST_BOYS_INDETERMINATE;', ' Op::template PrepareCombinedCoordinates<M>(x,row,h,k);',
               ' static_assert(M::word_count-1<=INT64_MAX,"gather index exceeds signed range");']
         body += scale_power_setup(first)
     high=max(n+p for n,p in zip(range(first,last+1),degrees))
@@ -55,86 +56,85 @@ def main_kernel(entry,combined=False):
         body += [f' if constexpr(First<={n} && {n}<=Last) {{']
         for j in range(n,n+p+1):
             off=coefficient_word(r,j)
-            load=f'Gather<Software,M::word_count-1>(data,hn::Add(row,SU({off})))'
-            if j==first: load=f'hn::Sub({load},SU(1))'
-            body += [f' if constexpr({j}>M::high_before(First,{n})) c{j}=Float({load});']
-        body += [f' if constexpr(First=={n} || {n}=={first+8*slot}) w{slot}=Gather<Software,M::word_count-1>(data,hn::Add(row,SU({correction_word(r,n)})));']
+            load=f'Op::template Gather<Software,M::word_count-1>(data,hn::Add(row,Op::SU({off})))'
+            if j==first: load=f'hn::Sub({load},Op::SU(1))'
+            body += [f' if constexpr({j}>M::high_before(First,{n})) c{j}=Op::Float({load});']
+        body += [f' if constexpr(First=={n} || {n}=={first+8*slot}) w{slot}=Op::template Gather<Software,M::word_count-1>(data,hn::Add(row,Op::SU({correction_word(r,n)})));']
         for j in range(2,p+1):
-            body += [f' if constexpr({j}>M::degree_before(First,{n})) a{j}=RoundedMul(h,S({float(1/j).hex()}));']
+            body += [f' if constexpr({j}>M::degree_before(First,{n})) a{j}=Op::RoundedMul(h,Op::S({float(1/j).hex()}));']
         body += [f' V q=c{n+p};']
         for j in range(p-1,0,-1):
-            body += [f' q=Fma(a{j+1},q,c{n+j});']
-        expr=f'RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{(n-first)%8}>(hi,w{slot})))'
-        body += [f' const auto hi=Bits(c{n});']
+            body += [f' q=Op::Fma(a{j+1},q,c{n+j});']
+        expr=f'Op::RoundedAdd(Op::Float(hn::Add(hi,Op::SU(1))),Op::FmaSub(h,q,Op::template CorrectionFromWord<{(n-first)%8}>(hi,w{slot})))'
+        body += [f' const auto hi=Op::Bits(c{n});']
         if combined:
-            body += [f' const auto value={expr};',f' At<{n}-First>(out...)=Scale(Bits(value),scale_power);']
+            body += [f' const auto value={expr};',f' Op::template At<{n}-First>(out...)=Op::Scale(Op::Bits(value),scale_power);']
         else:
-            body += [f' At<{n}-First>(out...)={expr};']
+            body += [f' Op::template At<{n}-First>(out...)={expr};']
         body += [' }']
         if combined:
             body += [scale_power_next(n)]
-    return wrap(entry['id'],entry['cpp_model'],'Kernel',body)
+    return wrap(entry['id'],entry['cpp_model'],kind,[' using U=typename Op::U;', *body])
 
 
 def tail_kernel(entry,metadata):
     first,last,p,b=(metadata[k] for k in ('first','last','degree','retained_bits'))
     top=last+p; stride=metadata['storage']['row_words']; shift=52-b
     body=[
-        ' const auto bits=Bits(x);',
+        ' const auto bits=Op::Bits(x);',
         ' const auto x_biased_exponent=hn::ShiftRight<52>(bits);',
-        ' const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,SU(1023));',
+        ' const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,Op::SU(1023));',
         ' const auto k=hn::ShiftRight<1>(x_unbiased_exponent);',
-        ' const auto u_biased_exponent=hn::Add(SU(1023),hn::And(x_unbiased_exponent,SU(1)));',
-        ' const auto u=Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,SU(0xfffffffffffffULL)));',
-        f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Bits(u),SU(1ULL<<{shift-1})));',
-        f' const auto row=MultiplyConstant<{stride},{metadata["storage"]["allocated_bytes"]//(8*stride)-1}>(hn::Sub(key,SU({1023<<b})));',
-        f' const auto r=Float(hn::ShiftLeft<{shift}>(key)),h=RoundedSub(r,u),t=RoundedAdd(r,r);']
+        ' const auto u_biased_exponent=hn::Add(Op::SU(1023),hn::And(x_unbiased_exponent,Op::SU(1)));',
+        ' const auto u=Op::Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,Op::SU(0xfffffffffffffULL)));',
+        f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Op::Bits(u),Op::SU(1ULL<<{shift-1})));',
+        f' const auto row=Op::template MultiplyConstant<{stride},{metadata["storage"]["allocated_bytes"]//(8*stride)-1}>(hn::Sub(key,Op::SU({1023<<b})));',
+        f' const auto r=Op::Float(hn::ShiftLeft<{shift}>(key)),h=Op::RoundedSub(r,u),t=Op::RoundedAdd(r,r);']
     body += scale_power_setup(first)
     for i in range(stride):
-        body += [f' const auto w{i}=Gather<Software,M::word_count-1>(data,hn::Add(row,SU({i})));']
-    body += [f' const auto g{top}=Float(w0);']
+        body += [f' const auto w{i}=Op::template Gather<Software,M::word_count-1>(data,hn::Add(row,Op::SU({i})));']
+    body += [f' const auto g{top}=Op::Float(w0);']
     for n in range(top-1,first-1,-1):
         i=top-1-n
-        body += [f' const auto byte{n}=ByteAt<{i%8}>(w{1+i//8});',
-                 f' const auto patch{n}=hn::Sub(hn::Xor(byte{n},SU(128)),SU(128));',
+        body += [f' const auto byte{n}=Op::template ByteAt<{i%8}>(w{1+i//8});',
+                 f' const auto patch{n}=hn::Sub(hn::Xor(byte{n},Op::SU(128)),Op::SU(128));',
                  # Both operands are positive normal tail-reference values:
                  # FMA(t,g,0) equals rounded multiplication. Fence that product
                  # before reciprocal scaling, including under fast-math.
-                 f' const auto g{n}=Float(hn::Add(Bits(RoundedMul(RoundedMul(t,g{n+1}),S({float(1/(2*n+1)).hex()}))),patch{n}));']
-    body += [f' const auto a{j}=RoundedMul(h,S({float(1/j).hex()}));' for j in range(2,p+1)]
+                 f' const auto g{n}=Op::Float(hn::Add(Op::Bits(Op::RoundedMul(Op::RoundedMul(t,g{n+1}),Op::S({float(1/(2*n+1)).hex()}))),patch{n}));']
+    body += [f' const auto a{j}=Op::RoundedMul(h,Op::S({float(1/j).hex()}));' for j in range(2,p+1)]
     for n in range(first,last+1):
         i=top-first+n-first
         body += [f' if constexpr(First<={n} && {n}<=Last) {{',f' V q=g{n+p};']
-        body += [f' q=Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
-        body += [f' const auto hi=Bits(g{n});',
-                 f' const auto v=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{i%8}>(hi,w{1+i//8})));',
-                 f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),scale_power),At<{n}-First>(out...));',' }',scale_power_next(n)]
+        body += [f' q=Op::Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
+        body += [f' const auto hi=Op::Bits(g{n});',
+                 f' const auto v=Op::RoundedAdd(Op::Float(hn::Add(hi,Op::SU(1))),Op::FmaSub(h,q,Op::template CorrectionFromWord<{i%8}>(hi,w{1+i//8})));',
+                 f' Op::template At<{n}-First>(out...)=hn::IfThenElse(active,Op::Scale(Op::Bits(v),scale_power),Op::template At<{n}-First>(out...));',' }',scale_power_next(n)]
     return wrap(entry['id'],entry['cpp_model'],'TailKernel',body)
 
 
 def paired_tail_kernel(entry,main):
     # Reuse the materialized main polynomial emitter, replacing coordinates
     # and the final store. The two SIMD paths remain separate for now.
-    source=main_kernel(dict(main,id=entry['id'],cpp_model=entry['cpp_model']))
-    source=source.replace('struct Kernel<','struct TailKernel<').replace('const V x,Outputs&','const V x,Mask active,Outputs&')
+    source=main_kernel(dict(main,id=entry['id'],cpp_model=entry['cpp_model']),kind='TailKernel')
     start=source.index(' const auto y='); end=source.index(' static_assert',start)
-    source=source[:start]+''' const auto bits=Bits(x);
+    source=source[:start]+''' const auto bits=Op::Bits(x);
  const auto x_biased_exponent=hn::ShiftRight<52>(bits);
- const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,SU(1023));
+ const auto x_unbiased_exponent=hn::Sub(x_biased_exponent,Op::SU(1023));
  const auto k=hn::ShiftRight<1>(x_unbiased_exponent);
- const auto u_biased_exponent=hn::Add(SU(1023),hn::And(x_unbiased_exponent,SU(1)));
- const auto u=Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,SU(0xfffffffffffffULL)));
- const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Bits(u),SU(1ULL<<(M::discarded_bits-1))));
- const auto h=RoundedSub(Float(hn::ShiftLeft<M::discarded_bits>(key)),u);
- const auto row=MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,SU(1023ULL<<M::retained_bits)));
+ const auto u_biased_exponent=hn::Add(Op::SU(1023),hn::And(x_unbiased_exponent,Op::SU(1)));
+ const auto u=Op::Float(hn::OrAnd(hn::ShiftLeft<52>(u_biased_exponent),bits,Op::SU(0xfffffffffffffULL)));
+ const auto key=hn::ShiftRight<M::discarded_bits>(hn::Add(Op::Bits(u),Op::SU(1ULL<<(M::discarded_bits-1))));
+ const auto h=Op::RoundedSub(Op::Float(hn::ShiftLeft<M::discarded_bits>(key)),u);
+ const auto row=Op::template MultiplyConstant<M::row_words,M::row_count-1>(hn::Sub(key,Op::SU(1023ULL<<M::retained_bits)));
 '''+source[end:]
     r=main['record']
     source=source.replace(' static_assert', '\n'.join(scale_power_setup(r['first']))+'\n static_assert',1)
     for n in range(r['first'],r['last']+1):
-        prefix=f' At<{n}-First>(out...)='
+        prefix=f' Op::template At<{n}-First>(out...)='
         start=source.index(prefix); end=source.index(';',start)
         expr=source[start+len(prefix):end]
-        source=source[:start]+f' const auto value={expr};\n'+prefix+f'hn::IfThenElse(active,Scale(Bits(value),scale_power),At<{n}-First>(out...))'+source[end:]
+        source=source[:start]+f' const auto value={expr};\n'+prefix+f'hn::IfThenElse(active,Op::Scale(Op::Bits(value),scale_power),Op::template At<{n}-First>(out...))'+source[end:]
         end=source.index('\n }',start)+len('\n }')
         source=source[:end]+'\n'+scale_power_next(n)+source[end:]
     return source

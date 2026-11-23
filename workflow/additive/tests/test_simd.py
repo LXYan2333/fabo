@@ -56,7 +56,7 @@ template<bool Software> __attribute__((noinline)) void evaluate(fb::V x,{','.joi
 #else
  auto e=fb::make_evaluator<Software>(main_table.view(),tail_table.view());
 #endif
- e.template evaluate<{first},{n}>(x,{variables});
+ e.template evaluate<{first},{n}>(fb::D(), x,{variables});
 }}
 template<bool Software> int check() {{
  using O=fast_boys::detail::Binary64;

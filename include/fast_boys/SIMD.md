@@ -16,12 +16,17 @@ static constexpr fast_boys::BoysTable<Model> table{};
 
 // Inside a HWY_BEFORE_NAMESPACE / HWY_AFTER_NAMESPACE target namespace:
 namespace fb = fast_boys::simd::HWY_NAMESPACE;
+namespace hn = hwy::HWY_NAMESPACE;
 auto boys = fb::make_evaluator(table.view());
+const fb::D d;
 fb::V f1, f2, f3;
-boys.evaluate<1, 3>(x, f1, f2, f3);
+const auto x = hn::LoadU(d, inputs);
+boys.evaluate<1, 3>(d, x, f1, f2, f3);
 ```
 
-`x` is a full Highway binary64 vector (`VFromD<ScalableTag<double>>`). Each output is a separate `HWY_RESTRICT` vector reference, in increasing order, and must not alias another output or table storage. The input is passed by value. No containers of SIMD vectors are used, allowing sizeless SVE/RVV vector types. Subsets share the original table and omit unrelated main-path coefficients and Horner calculations. There is no runtime-order CPU overload.
+`fb::D` is the full-width binary64 tag (`hn::ScalableTag<double>`), and `fb::V` is its vector type. The example returns orders 1–3 for each of `hn::Lanes(d)` inputs. Use other tag is possible, e.g. to process up to four inputs instead, use `hn::CappedTag<double, 4>` for the tag and `hn::VFromD<decltype(d)>` for the outputs. The evaluator and table stay the same.
+
+Each output is a separate `HWY_RESTRICT` vector reference, in increasing order, and must not alias another output or table storage. The input is passed by value. No containers of SIMD vectors are used, allowing sizeless SVE/RVV vector types. Subsets share the original table and omit unrelated main-path coefficients and Horner calculations. There is no runtime-order CPU overload.
 
 `selected_simd.h` is a convenience catalog, not payload storage. A minimal caller can instead include `simd.h` and its combined `models/<id>/simd-inl.h` companion. These are target-toggle headers compatible with `hwy/foreach_target.h`; place application functions in the corresponding target namespace. The owning `BoysTable` belongs outside target namespaces and can be shared across targets or translation units through `TableView`. Keep its lifetime longer than every evaluator. No runtime table initialization is required for constexpr storage. Mixed main/tail vectors select logical row indices before gathering, so each coefficient or correction word requires only one gather from the combined allocation.
 

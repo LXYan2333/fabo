@@ -51,7 +51,7 @@ int main() {
   for(std::size_t i=0;i<xs.size();i+=lanes) {
     for(std::size_t j=0;j<lanes;++j) input[j]=xs[(i+j)%xs.size()];
     fb::U row,k; fb::V h;
-    fb::detail::PrepareCombinedCoordinates<M>(hn::Load(fb::D(),input),row,h,k);
+    fb::detail::Ops<fb::D>::PrepareCombinedCoordinates<M>(hn::Load(fb::D(),input),row,h,k);
     hn::Store(row,fb::DU(),rows); hn::Store(k,fb::DU(),ks); hn::Store(h,fb::D(),hs);
     for(std::size_t j=0;j<lanes;++j) {
       std::size_t r; unsigned exponent; double delta;

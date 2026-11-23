@@ -40,7 +40,7 @@ for(int l=0;l<={n};++l)out[l]=_mm512_load_pd(values+8*l);
     if backend == 'fabo':
         names=','.join(f'f{i}' for i in range(n+1))
         lines += [f'fb::V {names};', '#ifdef FAST_BOYS_COMBINED_TABLE', 'const auto e=fb::make_evaluator(table.view());', '#else', 'const auto e=fb::make_evaluator(table.view(),tail.view());', '#endif',
-                  f'e.template evaluate<0,{n}>(fb::V{{x}},{names});']
+                  f'e.template evaluate<0,{n}>(fb::D(), fb::V{{x}},{names});']
         lines += [f'out[{i}]=f{i}.raw;' for i in range(n+1)]
     elif backend == 'libintx':
         lines += ['using V=libintx::simd_t<double>;', 'static_assert(sizeof(V)==sizeof(x));',

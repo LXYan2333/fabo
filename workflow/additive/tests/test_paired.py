@@ -151,7 +151,7 @@ template<bool Software> int check() {{
  for(unsigned start=0;start<7;++start) {{
   for(unsigned j=0;j<hn::Lanes(fb::D());++j) x[j]=points[(start+j)%7];
   fb::V a,b,c,d;
-  simd.template evaluate<0,3>(hn::Load(fb::D(),x),a,b,c,d);
+  simd.template evaluate<0,3>(fb::D(), hn::Load(fb::D(),x),a,b,c,d);
   hn::Store(a,fb::D(),out[0]); hn::Store(b,fb::D(),out[1]);
   hn::Store(c,fb::D(),out[2]); hn::Store(d,fb::D(),out[3]);
   for(unsigned j=0;j<hn::Lanes(fb::D());++j) {{

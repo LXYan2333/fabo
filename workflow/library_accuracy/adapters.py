@@ -37,7 +37,7 @@ extern "C" void boys_accuracy(size_t count,const double* x,double* out) {{
  auto e=fb::make_evaluator<{str(software).lower()}>(table.view());
  for(size_t pos=0;pos<count;pos+=lanes) {{
   size_t active=std::min(lanes,count-pos);for(size_t j=0;j<lanes;++j)buffer[j]=j<active?x[pos+j]:0.;
-  auto vx=hn::LoadU(d,buffer);fb::V {variables};e.template evaluate<0,{n}>(vx,{variables});
+  auto vx=hn::LoadU(d,buffer);fb::V {variables};e.template evaluate<0,{n}>(d, vx,{variables});
   {stores}
  }}
 }}

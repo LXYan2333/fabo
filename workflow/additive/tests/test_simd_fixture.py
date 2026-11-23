@@ -55,15 +55,15 @@ const auto lanes=hn::Lanes(fb::D());
 for(size_t batch=0; batch<sizeof(inputs)/sizeof(double); batch+=lanes) {{
  auto x=hn::LoadU(fb::D(),inputs+batch);
  fb::V a,b,c,d;
- fb::make_evaluator<false>(table.view()).evaluate<2,5>(x,a,b,c,d);
+ fb::make_evaluator<false>(table.view()).evaluate<2,5>(fb::D(), x,a,b,c,d);
  for(size_t lane=0;lane<lanes;++lane) {{
-  for(auto bits:{{hn::ExtractLane(fb::detail::Bits(a),lane),hn::ExtractLane(fb::detail::Bits(b),lane),
-                  hn::ExtractLane(fb::detail::Bits(c),lane),hn::ExtractLane(fb::detail::Bits(d),lane)}})
+  for(auto bits:{{hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(a),lane),hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(b),lane),
+                  hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(c),lane),hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(d),lane)}})
     std::printf("%llu\\n",(unsigned long long)bits);
  }}
  // Nonzero subsets restart coefficient/factor reuse independently.
  fb::V e,f;
- fb::make_evaluator<true>(table.view()).evaluate<3,4>(x,e,f);
+ fb::make_evaluator<true>(table.view()).evaluate<3,4>(fb::D(), x,e,f);
  if(!hn::AllTrue(fb::D(),hn::Eq(e,b)) || !hn::AllTrue(fb::D(),hn::Eq(f,c))) return 1;
 }}
 }}

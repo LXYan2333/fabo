@@ -63,8 +63,8 @@ namespace fb = fast_boys::simd::HWY_NAMESPACE;
 namespace hn = hwy::HWY_NAMESPACE;
 int check() {
   fb::V a, b;
-  fb::make_evaluator<true>(table.view()).evaluate<0,0>(hn::Zero(fb::D()), a);
-  fb::make_evaluator<false>(table.view()).evaluate<0,0>(hn::Zero(fb::D()), b);
+  fb::make_evaluator<true>(table.view()).evaluate<0,0>(fb::D(), hn::Zero(fb::D()), a);
+  fb::make_evaluator<false>(table.view()).evaluate<0,0>(fb::D(), hn::Zero(fb::D()), b);
   return !(hn::AllTrue(fb::D(), hn::Eq(a,b)) && hn::GetLane(a) == 1.0);
 }
 } }
@@ -175,7 +175,7 @@ int64_t Run(double x, double* result) {
   using M = fast_boys::selected::Model<4>;
   static constexpr fast_boys::BoysTable<M> table{};
   fb::V a, b;
-  fb::make_evaluator(table.view()).evaluate<2,3>(hn::Set(fb::D(), x), a, b);
+  fb::make_evaluator(table.view()).evaluate<2,3>(fb::D(), hn::Set(fb::D(), x), a, b);
   result[0] = hn::GetLane(a);
   result[1] = hn::GetLane(b);
   return HWY_TARGET;

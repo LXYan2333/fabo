@@ -80,26 +80,27 @@ def cuda_source(record, ident, stride):
 def simd_source(record, ident, stride):
     m=record['metadata']; last=m['last']; p=m['degree']; top=last+p; shift=52-m['retained_bits']
     body=[
-        ' const auto bits=Bits(x);',
-        ' const auto exponent=hn::Sub(hn::ShiftRight<52>(bits),SU(1023));',
+        ' using U=typename Op::U;',
+        ' const auto bits=Op::Bits(x);',
+        ' const auto exponent=hn::Sub(hn::ShiftRight<52>(bits),Op::SU(1023));',
         ' const auto k=hn::ShiftRight<1>(exponent);',
-        ' const auto u=Float(hn::Or(hn::And(bits,SU(0xfffffffffffffULL)),hn::ShiftLeft<52>(hn::Add(SU(1023),hn::And(exponent,SU(1))))));',
-        f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Bits(u),SU(1ULL<<{shift-1})));',
-        f' const auto row=MultiplyConstant<{stride},{m["storage"]["row_count"]-1}>(hn::Sub(key,SU({1023<<m["retained_bits"]})));',
-        f' const auto r=Float(hn::ShiftLeft<{shift}>(key)),h=RoundedSub(r,u);']
+        ' const auto u=Op::Float(hn::Or(hn::And(bits,Op::SU(0xfffffffffffffULL)),hn::ShiftLeft<52>(hn::Add(Op::SU(1023),hn::And(exponent,Op::SU(1))))));',
+        f' const auto key=hn::ShiftRight<{shift}>(hn::Add(Op::Bits(u),Op::SU(1ULL<<{shift-1})));',
+        f' const auto row=Op::template MultiplyConstant<{stride},{m["storage"]["row_count"]-1}>(hn::Sub(key,Op::SU({1023<<m["retained_bits"]})));',
+        f' const auto r=Op::Float(hn::ShiftLeft<{shift}>(key)),h=Op::RoundedSub(r,u);']
     body += scale_power_setup(0)
     body += [f' V g{n} FAST_BOYS_INDETERMINATE;' for n in range(top+1)]
     body += [f' U w{i} FAST_BOYS_INDETERMINATE;' for i in range((last+8)//8)]
-    body += [f' const auto a{j}=RoundedMul(h,S({float(1/j).hex()}));' for j in range(2,p+1)]
+    body += [f' const auto a{j}=Op::RoundedMul(h,Op::S({float(1/j).hex()}));' for j in range(2,p+1)]
     for n in range(last+1):
         body += [f' if constexpr(First<={n} && {n}<=Last) {{']
         for j in range(n,n+p+1):
-            body += [f' if constexpr(First=={n} || {j}=={n+p}) g{j}=Float(Gather<Software,M::word_count-1>(data,hn::Add(row,SU({coefficient_slot(j,last)}))));']
-        body += [f' if constexpr(First=={n} || {n%8}==0) w{n//8}=Gather<Software,M::word_count-1>(data,hn::Add(row,SU({correction_slot(n)})));',f' V q=g{n+p};']
-        body += [f' q=Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
-        body += [f' const auto hi=Bits(g{n});',
-                 f' const auto v=RoundedAdd(Float(hn::Add(hi,SU(1))),FmaSub(h,q,CorrectionFromWord<{n%8}>(hi,w{n//8})));',
-                 f' At<{n}-First>(out...)=hn::IfThenElse(active,Scale(Bits(v),scale_power),At<{n}-First>(out...));',' }',scale_power_next(n)]
+            body += [f' if constexpr(First=={n} || {j}=={n+p}) g{j}=Op::Float(Op::template Gather<Software,M::word_count-1>(data,hn::Add(row,Op::SU({coefficient_slot(j,last)}))));']
+        body += [f' if constexpr(First=={n} || {n%8}==0) w{n//8}=Op::template Gather<Software,M::word_count-1>(data,hn::Add(row,Op::SU({correction_slot(n)})));',f' V q=g{n+p};']
+        body += [f' q=Op::Fma(a{j+1},q,g{n+j});' for j in range(p-1,0,-1)]
+        body += [f' const auto hi=Op::Bits(g{n});',
+                 f' const auto v=Op::RoundedAdd(Op::Float(hn::Add(hi,Op::SU(1))),Op::FmaSub(h,q,Op::template CorrectionFromWord<{n%8}>(hi,w{n//8})));',
+                 f' Op::template At<{n}-First>(out...)=hn::IfThenElse(active,Op::Scale(Op::Bits(v),scale_power),Op::template At<{n}-First>(out...));',' }',scale_power_next(n)]
     return wrap(ident,f'fast_boys::models::m_{ident}::Model','TailKernel',body)
 
 

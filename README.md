@@ -113,7 +113,7 @@ void evaluate_packet(const double* x, double* f0, double* f1,
   const auto vx = hn::LoadU(d, x);
   auto boys = fb::make_evaluator(table.view());
   fb::V v0, v1, v2, v3, v4;
-  boys.evaluate<0, 4>(vx, v0, v1, v2, v3, v4);
+  boys.evaluate<0, 4>(d, vx, v0, v1, v2, v3, v4);
   hn::StoreU(v0, d, f0);
   hn::StoreU(v1, d, f1);
   hn::StoreU(v2, d, f2);

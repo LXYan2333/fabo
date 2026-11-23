@@ -27,9 +27,9 @@ def test_incremental_scale_powers(tmp_path, flags):
                      ' }', scale_power_next(n)]
         functions.append(f'''
 bool {name}(unsigned scalar_k) {{
- using namespace fast_boys::simd::HWY_NAMESPACE::detail;
+ namespace fb=fast_boys::simd::HWY_NAMESPACE;
  constexpr int First={first},Last={last};
- const auto k=SU(scalar_k);
+ const auto k=fb::detail::Ops<fb::D>::SU(scalar_k);
  {chr(10).join(body)}
  return true;
 }}

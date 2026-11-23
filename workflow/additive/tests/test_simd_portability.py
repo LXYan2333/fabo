@@ -38,16 +38,25 @@ using M=fast_boys::selected::Model<4>;
 #ifndef FAST_BOYS_COMBINED_TABLE
 using T=fast_boys::selected::Tail<4>;
 #endif
-void probe(const std::uint64_t* main,const std::uint64_t* tail,
-           fb::V x,fb::V& a,fb::V& b) {
+namespace hn=hwy::HWY_NAMESPACE;
+template<class D> void probe(const std::uint64_t* main,const std::uint64_t* tail,
+           hn::VFromD<D> x,hn::VFromD<D>& a,hn::VFromD<D>& b) {
 #ifdef FAST_BOYS_COMBINED_TABLE
  auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main));
 #else
  auto e=fb::make_evaluator(fast_boys::TableView<M>::from_pointer(main),
                           fast_boys::TableView<T>::from_pointer(tail));
 #endif
- e.evaluate<1,2>(x,a,b);
+ e.template evaluate<1,2>(D(), x,a,b);
 }
+template<class D> void run(const std::uint64_t* table, const double* input,double* out) {
+ hn::VFromD<D> a,b;
+ probe<D>(table,table,hn::LoadU(D(),input),a,b);
+ hn::StoreU(a,D(),out);
+ hn::StoreU(b,D(),out+hn::Lanes(D()));
+}
+void full(const std::uint64_t* t,const double* x,double* y){run<fb::D>(t,x,y);}
+void capped(const std::uint64_t* t,const double* x,double* y){run<hn::CappedTag<double,4>>(t,x,y);}
 '''
 
 
@@ -72,45 +81,6 @@ def test_compile_portability(tmp_path, compiler, flags):
     compile_source(tmp_path, PROBE+f'\nstatic_assert({condition},"test target mismatch");\n', compiler, flags)
 
 
-def test_unguarded_legacy_companion_on_sse2(tmp_path):
-    # Old companions defined Kernel even without native FMA. These calls are
-    # nondependent: name lookup must succeed even though run is never used.
-    source = '''
-#include "fast_boys/simd.h"
-#include "fast_boys/selected.h"
-#include "fast_boys/models/data_0_0.h"
-using M = fast_boys::selected::Model<0>;
-HWY_BEFORE_NAMESPACE();
-namespace fast_boys::simd::HWY_NAMESPACE {
-static_assert(HWY_TARGET == HWY_SSE2 && !HWY_NATIVE_FMA);
-template <> struct Kernel<M> {
-  template <int First, int Last, bool Software, class... Outputs>
-  static void run(const std::uint64_t*, V x, Outputs&... out) {
-    using namespace detail;
-    V q = Fma(x, x, x);
-    ((out = FmaSub(x, q, x)), ...);
-  }
-};
-}
-HWY_AFTER_NAMESPACE();
-namespace fb = fast_boys::simd::HWY_NAMESPACE;
-namespace hn = hwy::HWY_NAMESPACE;
-int main() {
-  static constexpr fast_boys::BoysTable<M> table{};
-  const double x[] = {0.125, 100.0};
-  fb::V result;
-  fb::make_evaluator(table.view()).evaluate<0,0>(hn::LoadU(fb::D(), x), result);
-  for (size_t i = 0; i < 2; ++i) {
-    const auto expected = fast_boys::scalar::evaluate<0,0>(table.view(), x[i]);
-    if (hn::ExtractLane(result, i) != expected[0]) return 1;
-  }
-}
-'''
-    exe = compile_source(tmp_path, source, 'g++',
-                         ['-DHWY_COMPILE_ONLY_STATIC', '-march=x86-64'], link=True)
-    subprocess.run([exe], check=True)
-
-
 def test_foreach_target(tmp_path):
     source = '''
 #include "fast_boys/simd_config.h"
@@ -133,13 +103,52 @@ void Probe(const std::uint64_t* main,const std::uint64_t* tail,double* out) {
                           fast_boys::TableView<T>::from_pointer(tail));
 #endif
  fb::V f;
- e.evaluate<0,0>(hwy::HWY_NAMESPACE::Zero(fb::D()),f);
+ e.evaluate<0,0>(fb::D(), hwy::HWY_NAMESPACE::Zero(fb::D()),f);
  hwy::HWY_NAMESPACE::StoreU(f,fb::D(),out);
 }
 } }
 HWY_AFTER_NAMESPACE();
 '''
     compile_source(tmp_path, source)
+
+
+@pytest.mark.parametrize('compiler', ['g++', 'clang++'])
+@pytest.mark.parametrize('arch', ['x86-64', 'haswell', 'icelake-server'])
+def test_packet_widths(tmp_path, compiler, arch):
+    source = '''
+#include "fast_boys/models/data_0_4.h"
+#include "fast_boys/selected_simd.h"
+namespace fb=fast_boys::simd::HWY_NAMESPACE;
+namespace hn=hwy::HWY_NAMESPACE;
+using M=fast_boys::selected::Model<4>;
+static constexpr fast_boys::BoysTable<M> table{};
+template<class E, class D> bool check(E e, D d) {
+ const double input[]={-0., 0.125, M::domain_end, std::nextafter(M::domain_end, INFINITY),
+                       256., 1e100, 1e200, std::numeric_limits<double>::max()};
+ for(size_t i=0;i<8;i+=hn::Lanes(d)) {
+   hn::VFromD<D> a,b;
+   e.template evaluate<3,4>(d,hn::LoadU(d,input+i),a,b);
+   for(size_t j=0;j<hn::Lanes(d);++j) {
+     const auto ref=fast_boys::scalar::evaluate<3,4>(table.view(),input[i+j]);
+     using O=fast_boys::detail::Binary64;
+     if(O::bits(hn::ExtractLane(a,j))!=O::bits(ref[0]) ||
+        O::bits(hn::ExtractLane(b,j))!=O::bits(ref[1])) return false;
+   }
+ }
+ return true;
+}
+template<bool Software> bool widths() {
+ auto e=fb::make_evaluator<Software>(table.view());
+ return check(e,hn::CappedTag<double,1>()) && check(e,hn::CappedTag<double,2>()) &&
+        check(e,hn::CappedTag<double,4>()) && check(e,fb::D());
+}
+int main(){return !(widths<true>() && widths<false>());}
+'''
+    flags = ['-DHWY_COMPILE_ONLY_STATIC', '-march='+arch]
+    if arch == 'haswell':
+        flags.append('-maes')
+    exe = compile_source(tmp_path, source, compiler, flags, link=True)
+    subprocess.run([exe], check=True)
 
 
 @pytest.mark.parametrize('isa', ['avx2','avx512'])
@@ -151,15 +160,20 @@ def test_gather_guard_page(tmp_path, isa):
 #include <cstring>
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 namespace hn=hwy::HWY_NAMESPACE;
-template<std::uint64_t Max,unsigned Last=Max> bool check(std::uint64_t* table) {
- HWY_ALIGN_MAX std::uint64_t indices[hn::MaxLanes(fb::DU())],a[hn::MaxLanes(fb::DU())],b[hn::MaxLanes(fb::DU())];
- for(unsigned i=0;i<hn::Lanes(fb::DU());++i) indices[i]=i%3 ? 0 : Last;
- auto ix=hn::Load(fb::DU(),indices);
- hn::Store(fb::detail::Gather<true,Max>(table,ix),fb::DU(),a);
- hn::Store(fb::detail::Gather<false,Max>(table,ix),fb::DU(),b);
- for(unsigned i=0;i<hn::Lanes(fb::DU());++i)
+template<class D, std::uint64_t Max,unsigned Last=Max> bool check(std::uint64_t* table) {
+ const hn::RebindToUnsigned<D> du;
+ HWY_ALIGN_MAX std::uint64_t indices[hn::MaxLanes(du)],a[hn::MaxLanes(du)],b[hn::MaxLanes(du)];
+ for(unsigned i=0;i<hn::Lanes(du);++i) indices[i]=i%3 ? 0 : Last;
+ auto ix=hn::Load(du,indices);
+ hn::Store(fb::detail::Ops<D>::template Gather<true,Max>(table,ix),du,a);
+ hn::Store(fb::detail::Ops<D>::template Gather<false,Max>(table,ix),du,b);
+ for(unsigned i=0;i<hn::Lanes(du);++i)
   if(a[i]!=table[indices[i]] || a[i]!=b[i]) return false;
  return true;
+}
+template<class D> bool all(std::uint64_t* table, size_t page) {
+ return check<D,255>(table) && check<D,1023>(table) && check<D,255>(table+2*page/8-256)
+         && check<D,UINT32_MAX,1023>(table) && check<D,(1ULL<<32),1023>(table);
 }
 int main() {
  const auto page=sysconf(_SC_PAGESIZE);
@@ -167,8 +181,7 @@ int main() {
  if(mem==MAP_FAILED || mprotect(mem+page,2*page,PROT_READ|PROT_WRITE)) return 2;
  auto* table=reinterpret_cast<std::uint64_t*>(mem+page);
  for(unsigned i=0;i<2*page/8;++i) table[i]=0x3ff0000000000000ULL+i;
- bool ok=check<255>(table) && check<1023>(table) && check<255>(table+2*page/8-256)
-         && check<UINT32_MAX,1023>(table) && check<(1ULL<<32),1023>(table);
+ bool ok=all<fb::D>(table,page) && all<hn::CappedTag<double,1>>(table,page) && all<hn::CappedTag<double,2>>(table,page) && all<hn::CappedTag<double,4>>(table,page);
  munmap(mem,4*page);
  return !ok;
 }
@@ -219,14 +232,14 @@ namespace fb=fast_boys::simd::HWY_NAMESPACE;
 namespace hn=hwy::HWY_NAMESPACE;
 template<int Byte> bool check(fb::U words,const std::uint64_t* inputs) {
  HWY_ALIGN_MAX std::uint64_t out[hn::MaxLanes(fb::DU())];
- hn::Store(fb::detail::ByteAt<Byte>(words),fb::DU(),out);
+ hn::Store(fb::detail::Ops<fb::D>::ByteAt<Byte>(words),fb::DU(),out);
  for(unsigned i=0;i<hn::Lanes(fb::DU());++i)
   if(out[i]!=((inputs[i]>>(8*Byte))&255)) return false;
  for(const auto hi : {0x3ff0000000000000ULL,0x3fefffffffffffffULL,
                       0x200abcdef0123456ULL,0x7fefffffffffffffULL}) {
-  auto before=fb::detail::Bits(fb::detail::Correction(fb::detail::SU(hi),
-      hn::And(hn::ShiftRight<8*Byte>(words),fb::detail::SU(255))));
-  auto after=fb::detail::Bits(fb::detail::CorrectionFromWord<Byte>(fb::detail::SU(hi),words));
+  auto before=fb::detail::Ops<fb::D>::Bits(fb::detail::Ops<fb::D>::Correction(fb::detail::Ops<fb::D>::SU(hi),
+      hn::And(hn::ShiftRight<8*Byte>(words),fb::detail::Ops<fb::D>::SU(255))));
+  auto after=fb::detail::Ops<fb::D>::Bits(fb::detail::Ops<fb::D>::CorrectionFromWord<Byte>(fb::detail::Ops<fb::D>::SU(hi),words));
   if(!hn::AllTrue(fb::DU(),hn::Eq(before,after))) return false;
  }
  if constexpr(Byte<7) return check<Byte+1>(words,inputs);
@@ -260,7 +273,7 @@ def test_x86_byte_shift_instruction(tmp_path,compiler,flags):
 #include "fast_boys/simd.h"
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 extern "C" fb::U extract_byte1(fb::U words) {
- return fb::detail::ByteAt<1>(words);
+ return fb::detail::Ops<fb::D>::ByteAt<1>(words);
 }
 '''
     compile_source(tmp_path,source,compiler,flags)
@@ -276,7 +289,7 @@ def test_positioned_correction_instruction(tmp_path,compiler):
 #include "fast_boys/simd.h"
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 extern "C" fb::V correction_byte1(fb::U hi,fb::U word) {
- return fb::detail::CorrectionFromWord<1>(hi,word);
+ return fb::detail::Ops<fb::D>::CorrectionFromWord<1>(hi,word);
 }
 '''
     compile_source(tmp_path,source,compiler,
@@ -298,7 +311,7 @@ def test_software_gather_has_no_calls(tmp_path,compiler,flags):
 #include "fast_boys/simd.h"
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 extern "C" fb::U gather_words(const std::uint64_t* table,fb::U index) {
- return fb::detail::Gather<true,66371>(table,index);
+ return fb::detail::Ops<fb::D>::Gather<true,66371>(table,index);
 }
 '''
     compile_source(tmp_path,source,compiler,flags)

@@ -17,10 +17,10 @@ SOURCE=r'''
 namespace fb=fast_boys::simd::HWY_NAMESPACE;
 namespace hn=hwy::HWY_NAMESPACE;
 extern "C" HWY_NOINLINE fb::U native_words(const std::uint64_t* table,fb::U indices) {
-  return fb::detail::Gather<false,16>(table,indices);
+  return fb::detail::Ops<fb::D>::Gather<false,16>(table,indices);
 }
 extern "C" HWY_NOINLINE fb::U software_words(const std::uint64_t* table,fb::U indices) {
-  return fb::detail::Gather<true,16>(table,indices);
+  return fb::detail::Ops<fb::D>::Gather<true,16>(table,indices);
 }
 int main() {
   // Arbitrary bit patterns, including NaNs as doubles: gather is bitwise.

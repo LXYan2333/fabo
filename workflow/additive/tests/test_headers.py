@@ -211,6 +211,15 @@ def tail_oracle(x,last=24):
     return out
 
 
+def test_compact_tail_simd_header_warning_clean(fixture, legacy_archive, tmp_path):
+    from workflow.additive.simd_headers import tail_kernel
+    from workflow.additive.tests.test_simd_portability import compile_source
+    directory, _, _, _, manifest = fixture
+    text = tail_kernel(manifest['tail'], json.loads(legacy_archive.read_text())['metadata'])
+    compile_source(tmp_path, text, 'g++', ['-march=haswell', '-maes',
+                   '-DHWY_COMPILE_ONLY_STATIC', '-Wall', '-Werror', '-I'+str(directory)])
+
+
 def test_compact_tail_and_decoder(fixture,tmp_path):
     directory,_,_,_,manifest=fixture
     points=[math.nextafter(1e7,math.inf),1e8,1e50,1e100,1e300,float.fromhex('0x1.fffffffffffffp+1023')]
@@ -468,16 +477,16 @@ int main() {{
  auto e=fb::make_evaluator(a.view(),b.view());
  for(size_t i=0;i<sizeof(inputs)/sizeof(*inputs);i+=2) {{
    fb::V p,q;
-   e.evaluate<2,3>(hn::BitCast(fb::D(),hn::LoadU(fb::DU(),inputs+i)),p,q);
+   e.evaluate<2,3>(fb::D(), hn::BitCast(fb::D(),hn::LoadU(fb::DU(),inputs+i)),p,q);
    for(size_t lane=0;lane<2;++lane) {{
      const auto x=O::value(inputs[i+lane]);
      if(std::isfinite(x) && x>=0) {{
        const auto [f2,f3]=fast_boys::scalar::evaluate<2,3>(a.view(),b.view(),x);
-       if(O::bits(f2)!=hn::ExtractLane(fb::detail::Bits(p),lane) ||
-          O::bits(f3)!=hn::ExtractLane(fb::detail::Bits(q),lane)) return 1;
+       if(O::bits(f2)!=hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(p),lane) ||
+          O::bits(f3)!=hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(q),lane)) return 1;
      }}
-     printf("%llu %llu\\n",(unsigned long long)hn::ExtractLane(fb::detail::Bits(p),lane),
-                          (unsigned long long)hn::ExtractLane(fb::detail::Bits(q),lane));
+     printf("%llu %llu\\n",(unsigned long long)hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(p),lane),
+                          (unsigned long long)hn::ExtractLane(fb::detail::Ops<fb::D>::Bits(q),lane));
    }}
  }}
 }}

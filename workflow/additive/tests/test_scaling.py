@@ -37,8 +37,8 @@ int main() {
       words[lane]=(std::uint64_t(e)<<52)|mantissa;
       powers[lane]=lane%2?0:p; // Mixed normal and underflow lanes.
     }
-    const auto value=fb::detail::Scale(hn::Load(fb::DU(),words),hn::Load(fb::DU(),powers));
-    hn::Store(fb::detail::Bits(value),fb::DU(),out);
+    const auto value=fb::detail::Ops<fb::D>::Scale(hn::Load(fb::DU(),words),hn::Load(fb::DU(),powers));
+    hn::Store(fb::detail::Ops<fb::D>::Bits(value),fb::DU(),out);
     for(unsigned lane=0;lane<hn::Lanes(fb::DU());++lane) {
       const auto expected=oracle(words[lane],unsigned(powers[lane]));
       if(out[lane]!=expected) return 1;
