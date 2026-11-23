@@ -8,7 +8,8 @@ import pytest
 WESTMERE = frozenset('sse2 ssse3 sse41 sse42 popcnt aes pclmulqdq'.split())
 HASWELL = WESTMERE | frozenset('avx avx2 fma f16c bmi1 bmi2'.split())
 ICELAKE = HASWELL | frozenset('avx512f avx512dq avx512cd avx512bw avx512vl avx512ifma avx512vbmi avx512vbmi2 avx512vnni avx512bitalg avx512vpopcntdq gfni vaes vpclmulqdq'.split())
-REQUIRED = {'westmere': WESTMERE, 'haswell': HASWELL, 'icelake-server': ICELAKE}
+REQUIRED = {'x86-64': frozenset({'sse2'}), 'westmere': WESTMERE,
+            'haswell': HASWELL, 'icelake-server': ICELAKE}
 
 
 def require_host_isa(flags, *, execute):

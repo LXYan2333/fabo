@@ -8,6 +8,7 @@
 #endif
 #include "fast_boys/simd.h"
 #include "fast_boys/models/41a497700bc2bb5c52e5fc778c756b20c37f5bc124a53334decdcd266c33f5a0/model.h"
+#if HWY_NATIVE_FMA
 HWY_BEFORE_NAMESPACE();
 namespace fast_boys {
 namespace simd {
@@ -793,4 +794,5 @@ struct Kernel<
 } // namespace simd
 } // namespace fast_boys
 HWY_AFTER_NAMESPACE();
+#endif // HWY_NATIVE_FMA
 #endif

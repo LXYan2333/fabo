@@ -1,5 +1,8 @@
 # Distributed headers, including generated payloads. Keep this list explicit.
 set(FABO_PUBLIC_HEADERS
+    include/fast_boys/scalar.h
+    include/fast_boys/detail/binary64.h
+    include/fast_boys/detail/scalar_tail.h
     include/fast_boys/boys_types.h
     include/fast_boys/cuda.cuh
     include/fast_boys/cuda/upload.cuh

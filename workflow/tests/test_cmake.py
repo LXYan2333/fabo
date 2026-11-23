@@ -39,9 +39,19 @@ def highway(tmp_path_factory):
 
 
 CORE = '''#include "fast_boys/selected.h"
-#include "fast_boys/models/data_0_0.h"
-static constexpr fast_boys::BoysTable<fast_boys::selected::Model<0>> table{};
-int main() { return table.data() == nullptr; }
+#include "fast_boys/models/data_0_4.h"
+#include "fast_boys/scalar.h"
+static constexpr fast_boys::BoysTable<fast_boys::selected::Model<4>> table{};
+int main() {
+  auto full = fast_boys::scalar::evaluate<0,4>(table.view(), 0.);
+  auto subset = fast_boys::scalar::evaluate<2,3>(table.view(), 0.);
+  static_assert(std::is_same_v<decltype(full), std::array<double,5>>);
+  static_assert(std::is_same_v<decltype(subset), std::array<double,2>>);
+  if (full[0] != 1. || subset[0] != 1./5 || subset[1] != 1./7 ||
+      subset[0] != full[2] || subset[1] != full[3]) return 1;
+  volatile double x = 1. + 0x1p-27, y = 1. - 0x1p-27;
+  return fast_boys::detail::Binary64::fma(x, y, -1.) != -0x1p-54;
+}
 '''
 SIMD = '''#include "fast_boys/simd_config.h"
 #include "fast_boys/selected_simd.h"
@@ -143,6 +153,56 @@ endif()
         out.write(f'find_package(fabo CONFIG REQUIRED COMPONENTS {component})\n')
     result = run('cmake', '-S', source, '-B', source / 'build', ok=False)
     assert f'FABO {component} requires' in result
+
+
+def test_dispatch_with_scalar_fallback(tmp_path, highway):
+    _, prefix = highway
+    consumer(tmp_path / 'dispatch', f'''find_package(hwy 1.4 CONFIG REQUIRED)
+add_subdirectory("{ROOT}" fabo)
+include_directories("${{CMAKE_CURRENT_SOURCE_DIR}}")
+''', 'fabo::simd', r'''
+#include "fast_boys/simd_config.h"
+#undef HWY_TARGET_INCLUDE
+#define HWY_TARGET_INCLUDE "main.cc"
+#include "hwy/foreach_target.h"
+#include "fast_boys/selected_simd.h"
+#include "fast_boys/models/data_0_4.h"
+HWY_BEFORE_NAMESPACE();
+namespace app { namespace HWY_NAMESPACE {
+namespace fb = fast_boys::simd::HWY_NAMESPACE;
+namespace hn = hwy::HWY_NAMESPACE;
+int64_t Run(double x, double* result) {
+  using M = fast_boys::selected::Model<4>;
+  static constexpr fast_boys::BoysTable<M> table{};
+  fb::V a, b;
+  fb::make_evaluator(table.view()).evaluate<2,3>(hn::Set(fb::D(), x), a, b);
+  result[0] = hn::GetLane(a);
+  result[1] = hn::GetLane(b);
+  return HWY_TARGET;
+}
+} }
+HWY_AFTER_NAMESPACE();
+#if HWY_ONCE
+namespace app {
+HWY_EXPORT(Run);
+int Check() {
+  const auto targets = hwy::SupportedAndGeneratedTargets();
+  for (auto target : targets) {
+    hwy::SetSupportedTargetsForTest(target);
+    for (double x : {0., 0.125, 50., 1e100}) {
+      double actual[2];
+      if (HWY_DYNAMIC_DISPATCH(Run)(x, actual) != target) return 1;
+      static constexpr fast_boys::BoysTable<fast_boys::selected::Model<4>> table{};
+      const auto expected = fast_boys::scalar::evaluate<2,3>(table.view(), x);
+      if (std::memcmp(actual, expected.data(), sizeof(actual))) return 2;
+    }
+  }
+  return 0;
+}
+}
+int main() { return app::Check(); }
+#endif
+''', prefixes=[prefix])
 
 
 def test_missing_dependency(tmp_path):

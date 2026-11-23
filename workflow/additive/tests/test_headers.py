@@ -426,7 +426,8 @@ def test_bundled_catalog_coverage():
         assert canonical.hexdigest()==record['payload_sha256']
 
 
-def test_special_inputs_and_nonzero_model_first(tmp_path):
+@pytest.mark.parametrize('packet', [False, True], ids=['scalar-index', 'legacy-simd-adapter'])
+def test_special_inputs_and_nonzero_model_first(tmp_path, packet):
     grid=Grid(3,-3,4,1e7)
     record=dict(first=2,last=3,degrees=[2,3],grid=grid.metadata(),status='qualified',
                 minimum_order_prebiased=True,qualification=[{'status':'qualified','scope':'fixture only'}]*2)
@@ -445,13 +446,46 @@ int main(){{auto e=fast_boys::cuda::make_evaluator(a.view(),b.view());
 double out[4];
 '''
     expected=[]
-    for x in (-0.,0.,0.125,1e7,math.nextafter(1e7,math.inf),1e100,math.inf,-1.,math.nan,-math.inf):
+    points=(-0.,0.,0.125,1e7,math.nextafter(1e7,math.inf),1e100,math.inf,-1.,math.nan,-math.inf)
+    for x in points:
         source+=f'e.evaluate<2,3>(O::value({bits64(x)}ULL),3,out,2); printf("%llu %llu\\n",(unsigned long long)O::bits(out[0]),(unsigned long long)O::bits(out[2]));\n'
         if x>=0 and math.isfinite(x):
             expected.extend(bits64(v) for v in (tail_oracle(x)[2:4] if x>1e7 else [evaluate_order(grid,x,n,record['degrees'][n-2]) for n in (2,3)]))
         else:
             expected.extend([0 if x==math.inf else 0x7ff8000000000000]*2)
     source+='}\n'
+    if packet:
+        from workflow.additive.tests.test_simd_portability import compile_source
+        # Supply both table views; this tests the old compact-tail interface,
+        # including its defined infinity/NaN results, without a scalar target.
+        source=source.split('int main()')[0]+f'''
+#include "fast_boys/simd.h"
+namespace fb=fast_boys::simd::HWY_NAMESPACE;
+namespace hn=hwy::HWY_NAMESPACE;
+static_assert(HWY_TARGET==HWY_SSE2);
+int main() {{
+ const uint64_t inputs[]={{{','.join(str(bits64(x))+'ULL' for x in points)}}};
+ auto e=fb::make_evaluator(a.view(),b.view());
+ for(size_t i=0;i<sizeof(inputs)/sizeof(*inputs);i+=2) {{
+   fb::V p,q;
+   e.evaluate<2,3>(hn::BitCast(fb::D(),hn::LoadU(fb::DU(),inputs+i)),p,q);
+   for(size_t lane=0;lane<2;++lane) {{
+     const auto x=O::value(inputs[i+lane]);
+     if(std::isfinite(x) && x>=0) {{
+       const auto [f2,f3]=fast_boys::scalar::evaluate<2,3>(a.view(),b.view(),x);
+       if(O::bits(f2)!=hn::ExtractLane(fb::detail::Bits(p),lane) ||
+          O::bits(f3)!=hn::ExtractLane(fb::detail::Bits(q),lane)) return 1;
+     }}
+     printf("%llu %llu\\n",(unsigned long long)hn::ExtractLane(fb::detail::Bits(p),lane),
+                          (unsigned long long)hn::ExtractLane(fb::detail::Bits(q),lane));
+   }}
+ }}
+}}
+'''
+        exe=compile_source(tmp_path,source,'g++',['-DHWY_COMPILE_ONLY_STATIC','-march=x86-64',
+                                                  '-I'+str(directory)],link=True)
+        assert list(map(int,subprocess.check_output([exe]).split()))==expected
+        return
     for flags in ([],['-ffast-math'],['-std=c++2c']):
         actual=list(map(int,compile_run(tmp_path,source,[directory],flags).split()))
         if '-ffast-math' in flags:

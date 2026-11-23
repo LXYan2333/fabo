@@ -9,6 +9,7 @@
 #include "fast_boys/simd_config.h"
 #include "hwy/highway.h"
 
+#include "fast_boys/detail/binary64.h"
 #include "fast_boys/table.h"
 #include <cmath>
 #include <type_traits>
@@ -65,7 +66,7 @@ HWY_INLINE V ArithmeticFence(V x) {
     !(HWY_COMPILER_GCC_ACTUAL && HWY_TARGET_IS_NEON)
   x.raw = __builtin_assoc_barrier(x.raw);
   return x;
-#elif __has_builtin(__arithmetic_fence) &&                                     \
+#elif defined(__FAST_MATH__) && __has_builtin(__arithmetic_fence) &&           \
     (HWY_ARCH_X86 || (HWY_ARCH_ARM_A64 && HWY_COMPILER_CLANG >= 1700))
   x.raw = __arithmetic_fence(x.raw);
   return x;
@@ -88,38 +89,21 @@ HWY_INLINE V ArithmeticFence(V x) {
 #else
   HWY_ALIGN_MAX double lanes[hn::MaxLanes(D())];
   hn::Store(x, D(), lanes);
-  for (std::size_t i = 0; i < hn::Lanes(D()); ++i) {
-    volatile double rounded = lanes[i];
-    lanes[i] = rounded;
-  }
+  for (std::size_t i = 0; i < hn::Lanes(D()); ++i)
+    lanes[i] = fast_boys::detail::ArithmeticFence(lanes[i]);
   return hn::Load(D(), lanes);
 #endif
 }
-HWY_INLINE V Fma(V a, V b, V c) {
 #if HWY_NATIVE_FMA
-  return hn::MulAdd(a, b, c);
-#else
-  // Portability/testing convenience, not a performance-tuned implementation.
-  // Patches require fused rounding even when this ISA has no native FMA.
-  HWY_ALIGN_MAX double aa[hn::MaxLanes(D())], bb[hn::MaxLanes(D())],
-      cc[hn::MaxLanes(D())];
-  hn::Store(a, D(), aa);
-  hn::Store(b, D(), bb);
-  hn::Store(c, D(), cc);
-  for (std::size_t i = 0; i < hn::Lanes(D()); ++i)
-    cc[i] = std::fma(aa[i], bb[i], cc[i]);
-  return hn::Load(D(), cc);
-#endif
-}
+HWY_INLINE V Fma(V a, V b, V c) { return hn::MulAdd(a, b, c); }
 
-HWY_INLINE V FmaSub(V a, V b, V c) {
-#if HWY_NATIVE_FMA
-  return hn::MulSub(a, b, c);
+HWY_INLINE V FmaSub(V a, V b, V c) { return hn::MulSub(a, b, c); }
 #else
-  // Highway's non-FMA MulSub is not fused; retain the std::fma fallback.
-  return Fma(a, b, hn::Neg(c));
+// Older generated kernel templates look up these names at definition time.
+// They need declarations, not implementations: EvaluateLanes bypasses them.
+V Fma(V a, V b, V c);
+V FmaSub(V a, V b, V c);
 #endif
-}
 
 // Reference packs only: never create a container of (possibly sizeless) V.
 template <int N, class Head, class... Rest>
@@ -267,6 +251,10 @@ HWY_INLINE V Scale(U bits, U scale) {
   return hn::MulByPow2(Float(bits), hn::Neg(hn::BitCast(DI(), scale)));
 }
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma float_control(precise, on, push)
+#pragma fp_contract(off)
+#endif
 HWY_INLINE V RoundedAdd(V a, V b) {
   return detail::ArithmeticFence(hn::Add(a, b));
 }
@@ -276,6 +264,9 @@ HWY_INLINE V RoundedSub(V a, V b) {
 HWY_INLINE V RoundedMul(V a, V b) {
   return detail::ArithmeticFence(hn::Mul(a, b));
 }
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma float_control(pop)
+#endif
 // Vector-length agnostic: no aggregate or array of potentially sizeless
 // vectors.
 template <class M>

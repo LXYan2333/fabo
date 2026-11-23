@@ -24,12 +24,12 @@ def wrap(ident,model,kind,body):
         f'#if defined({guard}) == defined(HWY_TARGET_TOGGLE)',
         f'#ifdef {guard}',f'#undef {guard}','#else',f'#define {guard}','#endif',
         '#include "fast_boys/simd.h"',f'#include "fast_boys/models/{ident}/model.h"',
-        'HWY_BEFORE_NAMESPACE();','namespace fast_boys { namespace simd { namespace HWY_NAMESPACE {',
+        '#if HWY_NATIVE_FMA','HWY_BEFORE_NAMESPACE();','namespace fast_boys { namespace simd { namespace HWY_NAMESPACE {',
         f'template<> struct {kind}<{model}> {{',f' using M={model};',
         ' template<int First,int Last,bool Software,class... Outputs>',
         ' static HWY_INLINE void run(const std::uint64_t* data,const V x,'+
         ('Mask active,' if kind=='TailKernel' else '')+'Outputs& HWY_RESTRICT ...out) {',
-        ' using namespace detail;',*body,' }','};','} } }','HWY_AFTER_NAMESPACE();','#endif',''])
+        ' using namespace detail;',*body,' }','};','} } }','HWY_AFTER_NAMESPACE();','#endif // HWY_NATIVE_FMA','#endif',''])
 
 
 def main_kernel(entry,combined=False):
@@ -175,7 +175,8 @@ def generate(include):
     hashes={name:hashlib.sha256(text.encode()).hexdigest() for name,text in files.items()}
     root=Path(__file__).resolve().parents[2]
     sources=['workflow/additive/simd_headers.py','include/fast_boys/simd.h',
-             'include/fast_boys/simd_config.h','include/fast_boys/detail/simd/ops-inl.h']
+             'include/fast_boys/simd_config.h','include/fast_boys/detail/simd/ops-inl.h',
+             'include/fast_boys/scalar.h','include/fast_boys/detail/binary64.h','include/fast_boys/detail/scalar_tail.h']
     source_hashes={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in sources}
     (include/'simd-manifest.json').write_text(json.dumps(dict(
         numerical_identity=manifest['numerical_identity'],

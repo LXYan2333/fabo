@@ -72,6 +72,45 @@ def test_compile_portability(tmp_path, compiler, flags):
     compile_source(tmp_path, PROBE+f'\nstatic_assert({condition},"test target mismatch");\n', compiler, flags)
 
 
+def test_unguarded_legacy_companion_on_sse2(tmp_path):
+    # Old companions defined Kernel even without native FMA. These calls are
+    # nondependent: name lookup must succeed even though run is never used.
+    source = '''
+#include "fast_boys/simd.h"
+#include "fast_boys/selected.h"
+#include "fast_boys/models/data_0_0.h"
+using M = fast_boys::selected::Model<0>;
+HWY_BEFORE_NAMESPACE();
+namespace fast_boys::simd::HWY_NAMESPACE {
+static_assert(HWY_TARGET == HWY_SSE2 && !HWY_NATIVE_FMA);
+template <> struct Kernel<M> {
+  template <int First, int Last, bool Software, class... Outputs>
+  static void run(const std::uint64_t*, V x, Outputs&... out) {
+    using namespace detail;
+    V q = Fma(x, x, x);
+    ((out = FmaSub(x, q, x)), ...);
+  }
+};
+}
+HWY_AFTER_NAMESPACE();
+namespace fb = fast_boys::simd::HWY_NAMESPACE;
+namespace hn = hwy::HWY_NAMESPACE;
+int main() {
+  static constexpr fast_boys::BoysTable<M> table{};
+  const double x[] = {0.125, 100.0};
+  fb::V result;
+  fb::make_evaluator(table.view()).evaluate<0,0>(hn::LoadU(fb::D(), x), result);
+  for (size_t i = 0; i < 2; ++i) {
+    const auto expected = fast_boys::scalar::evaluate<0,0>(table.view(), x[i]);
+    if (hn::ExtractLane(result, i) != expected[0]) return 1;
+  }
+}
+'''
+    exe = compile_source(tmp_path, source, 'g++',
+                         ['-DHWY_COMPILE_ONLY_STATIC', '-march=x86-64'], link=True)
+    subprocess.run([exe], check=True)
+
+
 def test_foreach_target(tmp_path):
     source = '''
 #include "fast_boys/simd_config.h"

@@ -6,6 +6,7 @@
 #define FAST_BOYS_SIMD_H_
 #endif
 #include "fast_boys/simd_config.h"
+#include "fast_boys/scalar.h"
 
 #include "hwy/highway.h"
 
@@ -14,6 +15,51 @@ HWY_BEFORE_NAMESPACE();
 namespace fast_boys {
 namespace simd {
 namespace HWY_NAMESPACE {
+#if !HWY_NATIVE_FMA
+namespace detail {
+// Cross the vector/scalar boundary only at the edges of a complete evaluation.
+template <int First, int Last, class Model, class TailView, class... Outputs>
+HWY_INLINE void EvaluateLanes(TableView<Model> table, TailView tail, V x,
+                              Outputs &...out) {
+  constexpr size_t count = Last - First + 1;
+  constexpr size_t capacity = hn::MaxLanes(D());
+  const size_t lanes = hn::Lanes(D());
+  double values[count * capacity];
+  double inputs[capacity];
+  if constexpr (capacity == 1)
+    inputs[0] = hn::GetLane(x);
+  else
+    hn::StoreU(x, D(), inputs);
+  for (size_t lane = 0; lane < lanes; ++lane) {
+    if constexpr (!std::is_same_v<TailView, std::nullptr_t>) {
+      // Preserve the two-table interface's infinity/invalid-input results.
+      const auto bits = fast_boys::detail::Binary64::bits(inputs[lane]);
+      if (bits > 0x7ff0000000000000ULL && bits != 0x8000000000000000ULL) {
+        for (size_t i = 0; i < count; ++i)
+          values[i * lanes + lane] =
+              fast_boys::detail::Binary64::value(0x7ff8000000000000ULL);
+        continue;
+      }
+      if (bits == 0x7ff0000000000000ULL) {
+        for (size_t i = 0; i < count; ++i)
+          values[i * lanes + lane] = 0.0;
+        continue;
+      }
+      scalar::detail::EvaluateTwoTables<First, Last>(table, tail, inputs[lane],
+                                                     values + lane, lanes);
+    } else {
+      scalar::detail::EvaluateCombined<First, Last>(table, inputs[lane], Last,
+                                                    values + lane, lanes);
+    }
+  }
+  size_t order = 0;
+  if constexpr (capacity == 1)
+    ((out = hn::Set(D(), values[order++])), ...);
+  else
+    ((out = hn::LoadU(D(), values + lanes * order++)), ...);
+}
+} // namespace detail
+#endif
 template <class Model, bool Software = kDefaultUseSoftwareGather>
 class CombinedEvaluator {
 public:
@@ -30,8 +76,12 @@ public:
     static_assert((std::is_same<V, Outputs>::value && ...),
                   "outputs must be binary64 vectors");
     // Finite x >= -0 is a caller precondition; do not inspect lanes at runtime.
+#if HWY_NATIVE_FMA
     Kernel<Model>::template run<First, Last, Software>(table_.data(), x,
                                                        out...);
+#else
+    detail::EvaluateLanes<First, Last>(table_, nullptr, x, out...);
+#endif
   }
 
 private:
@@ -64,6 +114,7 @@ public:
                   "one distinct output reference per order required");
     static_assert((std::is_same<V, Outputs>::value && ...),
                   "outputs must be binary64 vectors");
+#if HWY_NATIVE_FMA
     const auto bits = detail::Bits(x);
     const auto absolute = hn::And(bits, detail::SU(0x7fffffffffffffffULL));
     const auto negative =
@@ -91,6 +142,9 @@ public:
             hn::IfThenZeroElse(hn::RebindMask(D(), infinity), out))),
        ...);
     }
+#else
+    detail::EvaluateLanes<First, Last>(main_, tail_, x, out...);
+#endif
   }
 
 private:
