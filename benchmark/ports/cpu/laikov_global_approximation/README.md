@@ -4,8 +4,7 @@ This target integrates Dimitri N. Laikov, "Global approximation to the Boys
 functions for vectorized computation," *J. Chem. Phys.* **163**, 024104
 (2025), <https://doi.org/10.1063/5.0275063>.
 
-The publisher's supplementary C source and a saved copy of Table I are kept
-unchanged under `source/`. The supplied program is a scalar test implementation;
+Dimitri N. Laikov's [Computer Codes supplement](https://doi.org/10.60893/figshare.jcp.29287937.v1) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The nine files retained in `source/` match their entries in the published `c.tar` (MD5 `511dd70ae7f3168d01c21c143b399ade`); the Highway translation and adapter are FABO adaptations. For Table I, see the cited article. The supplied program is a scalar test implementation;
 the paper states that the dataset can generate fully unwound code that can be
 vectorized. This target translates the author's double-precision root-factor
 algorithm (`t:2 z:2 c:-2`) from `t_fpn.c` to Highway. The adapter retains the

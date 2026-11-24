@@ -3,13 +3,12 @@
   "origin_directory": "benchmark/third_party_boys_impl",
   "files": {
     "laikov_global_approximation/CMakeLists.txt": "c18ba6267b6f725cbb50061f744a41dd92bbe936e7ae750759cc9166b4a9d671",
-    "laikov_global_approximation/README.md": "343bfd0a97b8e8c60e5e808b5227ae974da0de1f956a1ef1382c49f84849807b",
+    "laikov_global_approximation/README.md": "3b0fec5c0277ee1a4ba58f215ac01c778123aaa5867e67a19697d3356dba4a0e",
     "laikov_global_approximation/adapter.c": "0f82f3abb89cc54da6273f8136c491bc1dccf2f52365c1f0adc53bc8761562a1",
     "laikov_global_approximation/adapter.h": "33ba4093d3422578dec619664522ef6b021b6991b13780b73605e33391226132",
     "laikov_global_approximation/benchmark_adapter.cc": "06a254d222cf19c83b0d54e7f35657449d6c1b2d0263d9e0979731eee4de5a17",
     "laikov_global_approximation/boys.h": "322acff7aa15c85b6a2704f6cdf308e566fffd7ae0fd6de31ea19c62972b5086",
     "laikov_global_approximation/source/README": "4ddf5d10d4304f5a22033bc93689d6c8817c2f757eacd500ac084de4d78c3274",
-    "laikov_global_approximation/source/TABLE I.Approximation accuracy and rounding errors.a.html": "75802586d327cbe2d31041c42fdcf8b1e26cfd4fd86e35d742886f292063bec2",
     "laikov_global_approximation/source/c0n4.c": "4b75424de0cf83d2b7e5f43423ff5c9e5ccb627ddddbc6f25642d2aa2a21b46e",
     "laikov_global_approximation/source/cnm4.c": "039700fd10d619f69cc2a6c179709becdf8ae7e49db58fef885db728045c5602",
     "laikov_global_approximation/source/makefile": "30484b0c587bffb39ee97377399695e09df244f6833fea134feb780ac53b52c9",
@@ -19,12 +18,11 @@
     "laikov_global_approximation/source/z1nm4.c": "b8829939c2e8ad9a152602cfbc1b82348bfff5b3cae3403bc937c8254399b0d8",
     "laikov_global_approximation/source/zcnm4.c": "b08007fc8afa313de6bf29fe061a184b377b13a62951ca1a6000e171b5c6458f",
     "vikhamar_sandberg_repisky_minimax/CMakeLists.txt": "b11b70fd9241f3f34f378b3a98bd9362cccf3cdb588593bf7deafda91834bfb6",
-    "vikhamar_sandberg_repisky_minimax/README.md": "481d6a8a7fb9f04b9b93d85f03160b048f14e25ae5ff324ae2ebc78ebd506540",
+    "vikhamar_sandberg_repisky_minimax/README.md": "182be8421de54e29332098c2b4ef188994e9bfcf3cc5869957bf474b70e54ba1",
     "vikhamar_sandberg_repisky_minimax/benchmark_adapter.cc": "b78b8250810664a160cee5706370dab5d2fbcecafa10661e1b25615c33e6d7ba",
-    "vikhamar_sandberg_repisky_minimax/source/APPENDIX D: COEFFICIENTS OF MINIMAX APPROXIMATIONS OF BOYS FUNCTIONS.html": "2d9cc4009ccdc4c099e8c0cb478d7a4fe01e337f57c1aa943c4c477f16607091",
     "vikhamar_sandberg_repisky_minimax/source/boys.h": "83c29db32fec9b0244c6cbb072afa4974ef16ddeb32b951304d9f2048bdf48f6",
-    "vikhamar_sandberg_repisky_minimax/source/coefficients.h": "e5491bdf5301b9d324dff9c2294e7868966eff93acb0ddaecac14ae81491db62",
-    "vikhamar_sandberg_repisky_minimax/source/generate_coefficients.py": "71ad0a7e4053479265da6ba3b0d03120c25464c0e5b42421c7e8b9d7f42ed359"
+    "vikhamar_sandberg_repisky_minimax/source/coefficients.h": "4c7d4ad7c786ffc0ecb9da7f4709a0262fc4d5bf33d8251d952e78309757873f",
+    "vikhamar_sandberg_repisky_minimax/source/generate_coefficients.py": "096246cf0177c5a79b367f8706ab9f526d26f8ab9fade2e87612286033da7251"
   },
   "omitted_submodules": [
     {

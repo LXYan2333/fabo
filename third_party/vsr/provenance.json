@@ -4,7 +4,7 @@
   "doi": "10.1063/5.0316073",
   "source_doi": "10.60893/figshare.jcp.c.8390929",
   "source_url": "https://doi.org/10.60893/figshare.jcp.c.8390929",
-  "source_attribution": "User identified this supplementary-material collection as the source of the supplied local coefficients.txt and benchmark.zip files; no independent download/hash comparison was performed.",
+  "source_attribution": "The local coefficients.txt and benchmark.zip match the file MD5s published on the respective Figshare item records; supplied/ file SHA-256 hashes are listed below.",
   "archive_sha256": "8c5f8c63739ad42fe3cc859d7a73f96955873d731a366dec9bf573bca0b37b0b",
   "archive_local_copy": ".work/third-party-vsr/benchmark.zip",
   "files": {
@@ -15,5 +15,24 @@
     "supplied/minimax.c": "15ef8eb30285ac4f4de765a3353c6bdb69f0eea62c3e6b37dd24f5f30681722c"
   },
   "source_correction": "Table II confirms that the last number under F0 numerator, 4.59649054199579770E+11, belongs at the beginning of F0 denominator. The importer moves this one value; supplied files are unchanged.",
-  "license_status": "No license statement was included in the supplied files or archive. Confirm redistribution terms before public redistribution; no license is inferred from other dependencies."
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "authors": [
+      "Rasmus Vikhamar-Sandberg",
+      "Michal Repisky"
+    ],
+    "items": [
+      {
+        "name": "benchmark.zip",
+        "doi": "10.60893/figshare.jcp.31890538.v1",
+        "md5": "d72fb2d6e68c89f675ec3561b751112f"
+      },
+      {
+        "name": "coefficients.txt",
+        "doi": "10.60893/figshare.jcp.31890535.v1",
+        "md5": "74595fd38c7f875c069b6642bf668037"
+      }
+    ]
+  }
 }

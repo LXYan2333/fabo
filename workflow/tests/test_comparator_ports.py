@@ -2,6 +2,8 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 
 import pytest
 
@@ -14,7 +16,8 @@ def test_retained_snapshot_and_plain_directory_copy(tmp_path):
     shutil.copytree(CPU_PORTS, source)
     manifest = json.loads((source / 'manifest.json').read_text())
     assert manifest['origin_revision'] == PORT_REVISION
-    assert len(manifest['files']) == 23
+    assert len(manifest['files']) == 21
+    assert not any(name.endswith('.html') or ':' in name for name in manifest['files'])
     for name in ('laikov_global_approximation/boys.h',
                  'vikhamar_sandberg_repisky_minimax/source/boys.h',
                  'vikhamar_sandberg_repisky_minimax/source/coefficients.h'):
@@ -48,6 +51,15 @@ def test_reject_damaged_snapshot_before_copy(tmp_path, damage):
     with pytest.raises(ValueError, match='CPU port source'):
         copy_cpu_ports(tmp_path / 'copy', source=source)
     assert not (tmp_path / 'copy').exists()
+
+
+def test_vsr_coefficients_from_supplements(tmp_path):
+    root = CPU_PORTS.parents[2]
+    src = CPU_PORTS / 'vikhamar_sandberg_repisky_minimax/source'
+    output = tmp_path / 'coefficients.h'
+    subprocess.run([sys.executable, src / 'generate_coefficients.py',
+                    root / 'third_party/vsr/supplied', output], check=True)
+    assert output.read_bytes() == (src / 'coefficients.h').read_bytes()
 
 
 def test_runtime_driver_contains_snapshot_helper():

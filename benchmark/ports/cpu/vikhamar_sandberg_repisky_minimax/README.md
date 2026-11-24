@@ -38,25 +38,17 @@ recurrence. The common library benchmark covers `x` through 60, so this is also
 the method used beyond the `x` range emphasized by the authors' performance
 experiments; no external large-`x` method is substituted.
 
-`source/coefficients.h` is generated from the checked-in publisher Appendix D
-HTML beside the generator:
+The port uses the authors' [minimax coefficients](https://doi.org/10.60893/figshare.jcp.31890535.v1) for region A and their [benchmark source](https://doi.org/10.60893/figshare.jcp.31890538.v1) for region B and the switching points. Both supplements are by Rasmus Vikhamar-Sandberg and Michal Repisky and are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). FABO reformats the tables for C++ and moves the misplaced F0 denominator entry as documented in [the source provenance](../../../../third_party/vsr/README.md). For the published tables see Appendix D of the cited article.
 
-```text
-benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax/source/
-APPENDIX D: COEFFICIENTS OF MINIMAX APPROXIMATIONS OF BOYS FUNCTIONS.html
-```
-
-Regenerate it from the repository root with:
+Regenerate the header from the repository root (Python standard library only):
 
 ```sh
-python3 \
-  benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax/source/generate_coefficients.py \
-  'benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax/source/APPENDIX D: COEFFICIENTS OF MINIMAX APPROXIMATIONS OF BOYS FUNCTIONS.html' \
-  benchmark/third_party_boys_impl/vikhamar_sandberg_repisky_minimax/source/coefficients.h
+python3 benchmark/ports/cpu/vikhamar_sandberg_repisky_minimax/source/generate_coefficients.py \
+  third_party/vsr/supplied \
+  benchmark/ports/cpu/vikhamar_sandberg_repisky_minimax/source/coefficients.h
 ```
 
-The article and its tabulated coefficients are published under CC BY 4.0. The
-authors' ancillary build uses `-O3 -fast -acc` with nvc and
+The authors' ancillary build uses `-O3 -fast -acc` with nvc and
 `-O3 -ffast-math -fopenacc` with GCC. This explicit Highway implementation
 does not use OpenACC; its private flags retain the documented GCC optimization
 and fast-math policy and select the benchmark host ISA:
