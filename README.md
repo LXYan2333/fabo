@@ -136,7 +136,7 @@ This produces an object file, not a complete executable. Call `example::HWY_NAME
 
 `fb::make_evaluator<false>(table.view())` selects native gather; `<true>` selects software gather. For most situations, omit the parameter: `fb::make_evaluator(table.view())` uses a suitable default. The default is software gather on Highway's AVX2, AVX3, and AVX3_DL targets and native gather elsewhere. Explicitly set this parameter to `false` only when your CPU is affected by Gather Data Sampling (GDS) and the related mitigation is not enabled. This is a conservative target policy, not runtime CPU vulnerability detection. Both policies use the same numerical model.
 
-On binary64 Highway targets with `HWY_NATIVE_FMA == 0`, the SIMD API is provided for convenience: FABO evaluates the full requested range once per lane with the same scalar arithmetic, without vector gathers. In Highway 1.4.0 the complete fallback list is:
+On binary64 Highway targets with `HWY_NATIVE_FMA == 0`, the SIMD API is provided for convenience: FABO evaluates the full requested range once per lane with the same scalar arithmetic. In Highway 1.4.0 the complete fallback list is:
 
 | Target family | Highway targets that use scalar FABO |
 | --- | --- |
