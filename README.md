@@ -2,7 +2,7 @@
   <img src="assets/fabo-logo.svg" alt="FABO logo" width="200">
 </p>
 
-# FABO — Fast and Accurate Boys
+# FABO — Fast and Accurate BOys
 
 FABO is a header-only C++ library for evaluating Boys functions on CUDA GPUs and SIMD CPUs:
 
@@ -25,7 +25,7 @@ The project name is **Fast and Accurate Boys**; the C++ namespace and include pa
 
 No numerical search, Python environment, MPFR installation, or quantum-chemistry package is needed to use the bundled library.
 
-The CPU and CUDA comparator ports used in the paper, including their coefficient sources and application bindings, are indexed in [benchmark/ports/README.md](benchmark/ports/README.md). They are separate from the library API and have their own upstream dependencies and licensing notices.
+The CPU and CUDA comparator ports used in the [paper](https://arxiv.org/abs/2611.32943), including their coefficient sources and application bindings, are indexed in [benchmark/ports/README.md](benchmark/ports/README.md). They are separate from the library API and have their own upstream dependencies and licensing notices.
 
 ## Getting started
 
@@ -35,7 +35,7 @@ Choose a model with `fast_boys::selected::Model<N>` and include its matching `fa
 
 ### CMake
 
-CMake integration requires CMake 3.23 or newer. `fabo::fabo` provides the common headers and tables. `fabo::simd` also links Highway, while `fabo::cuda` also links the CUDA runtime and requires CUDA C++17.
+CMake integration requires CMake 3.23 or newer. `fabo::fabo` provides the scalar evaluator, common headers, and precomputed tables. `fabo::simd` also links Highway, while `fabo::cuda` also links the CUDA runtime and requires CUDA C++17.
 
 For a source-tree dependency:
 
