@@ -32,7 +32,9 @@ Each output is a separate `HWY_RESTRICT` vector reference, in increasing order, 
 
 ## Gather policy
 
-`make_evaluator<true>` selects software gather; `<false>` selects Highway's native/fallback gather. The default is software on AVX2, AVX3, and AVX3_DL, native elsewhere. This is an ISA-based conservative GDS policy, not CPU vulnerability detection. The specialized software loader requires x86-64; on other architectures, including 32-bit x86, the software choice delegates to Highway's gather implementation.
+On Intel processors affected by [Gather Data Sampling (GDS)](https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/gather-data-sampling.html), enabling the mitigation increases hardware gather latency and can substantially slow loops that rely on gathers. FABO therefore defaults to software gather on Highway's AVX2, AVX3, and AVX3_DL targets and to native gather elsewhere. This conservative default is based on the compilation target; it does not detect whether the running CPU is affected or the mitigation is enabled.
+
+Most callers can omit the template argument. To override the default, use `make_evaluator<true>` for software gather or `make_evaluator<false>` for Highway's native/fallback gather. The specialized software loader requires x86-64; on other architectures, including 32-bit x86, the software choice delegates to Highway's gather implementation.
 
 On GCC x86 AVX2/AVX-512 targets, native word gathers use the zero-merge, opaque-all-active-mask workaround from [Highway PR #3519](https://github.com/google/highway/pull/3519), preventing GCC PR #127946's false destination dependency. The empty register-only asm hides the mask, not table values or arithmetic, and has no memory clobber. AVX2 uses the double-mask representation required by Highway's 64-bit masked-gather helper. This also supports Highway releases predating the PR; defining `HWY_DISABLE_GCC_GATHER_WORKAROUND` disables it consistently with the PR. Clang and other targets retain ordinary Highway gathers. No numerical table or loading policy changes are involved.
 

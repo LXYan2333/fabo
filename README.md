@@ -16,7 +16,7 @@ The project name is **Fast and Accurate Boys**; the C++ namespace and include pa
 
 ## What is included?
 
-- Ready-to-use numerical models for every output range `[0,N]`, `N = 0,…,24`.
+- A ready-to-use evaluator for Boys functions through order 24. For requested orders through 12, the largest error observed in the dense scan was about 1.07 ULPs.
 - A CUDA evaluator with compile-time ranges or a per-thread runtime final order.
 - A [Google Highway](https://github.com/google/highway) CPU evaluator with compile-time ranges and separate vector-reference outputs.
 - A plain binary64 CPU evaluator requiring only C++17, also used lane by lane for Highway targets without native SIMD FMA.
@@ -35,7 +35,7 @@ Choose a model with `fast_boys::selected::Model<N>` and include its matching `fa
 
 ### CMake
 
-CMake 3.23 or newer provides header-only interface targets. `fabo::fabo` supplies common headers, tables, and C++17; `fabo::simd` additionally links Highway; `fabo::cuda` additionally links the CUDA runtime and requires CUDA C++17. All distributed headers, including generated payloads, are registered with `target_sources(FILE_SET HEADERS)` and installed without compiling them separately.
+CMake integration requires CMake 3.23 or newer. `fabo::fabo` provides the common headers and tables. `fabo::simd` also links Highway, while `fabo::cuda` also links the CUDA runtime and requires CUDA C++17.
 
 For a source-tree dependency:
 
@@ -55,10 +55,10 @@ Installation rules are enabled by default for a standalone build and disabled un
 To install the default SIMD-enabled package:
 
 ```sh
-cmake -S . -B build-codex/cmake -DCMAKE_BUILD_TYPE=Release \
+cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_PREFIX_PATH=/path/to/highway/install \
   -DCMAKE_INSTALL_PREFIX=/path/to/fabo/install
-cmake --install build-codex/cmake
+cmake --install build/cmake
 ```
 
 Then consume it with:
@@ -204,6 +204,22 @@ The [validation records](data/benchmarks/function-accuracy-20261107/README.md) d
 - [NWChem–Simint fixed-density benchmarks](workflow/NWCHEM_FIXED_DENSITY.md)
 
 The construction and benchmarking workflows are optional research tools, not installation steps for library users.
+
+## Citation
+
+If you use FABO in your research, please cite the [FABO paper (arXiv:2611.32943)](https://arxiv.org/abs/2611.32943):
+
+```bibtex
+@misc{yan2026fastaccurateboysfunction,
+  title         = {Fast and Accurate {Boys} Function Evaluation Using Nonuniform Gridded {Taylor} Expansions},
+  author        = {Longxiang Yan and Wei Wu and Peifeng Su},
+  year          = {2026},
+  eprint        = {2611.32943},
+  archivePrefix = {arXiv},
+  primaryClass  = {physics.chem-ph},
+  url           = {https://arxiv.org/abs/2611.32943},
+}
+```
 
 ## License
 
