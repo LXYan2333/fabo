@@ -16,7 +16,7 @@ The project name is **Fast and Accurate Boys**; the C++ namespace and include pa
 
 ## What is included?
 
-- A ready-to-use evaluator for Boys functions through order 24. For requested orders through 12, the largest error observed in the dense scan was about 1.07 ULPs.
+- A ready-to-use evaluator for Boys functions through order 24. Sampled CPU errors: 1.17 ULPs maximum, 0.25 ULPs on average.
 - A CUDA evaluator with compile-time ranges or a per-thread runtime final order.
 - A [Google Highway](https://github.com/google/highway) CPU evaluator with compile-time ranges and separate vector-reference outputs.
 - A plain binary64 CPU evaluator requiring only C++17, also used lane by lane for Highway targets without native SIMD FMA.
@@ -190,10 +190,18 @@ Each thread may independently request `0 <= last_order[i] <= 4`. Only its reques
 - Inputs must be finite and nonnegative; `-0.0` is accepted. NaNs, infinity, and negative arguments are outside the API contract.
 - Use binary64 round-to-nearest, ties-to-even, with gradual underflow. Users should not enable floating-point traps. FABO does not change the floating-point environment.
 - Host `double` intermediates must also have binary64 precision. On x86, x87 extended-precision evaluation is not supported. Most users do not need to care about this.
-- The bundled models target one-ULP accuracy under sampled construction checks, **not guaranteed correct rounding or a proven one-ULP bound for every input**. Independent scans over `[0,1000]` at spacing `10^-6` for ranges `[0,N]`, `N <= 12`, observed a maximum of approximately **1.067 ULP**.
+- The bundled models target one-ULP accuracy in sampled construction checks. This is **not a guarantee of correct rounding or a one-ULP bound for every input**.
 - Strict and fast-math validation are recorded separately. Fast-math compiler settings do not establish the required rounding/underflow environment or guarantee identical behavior in another application.
 
-The [validation records](data/benchmarks/function-accuracy-20261107/README.md) document the tested builds and reference method. Other architectures and compiler versions should be validated for your application; Highway portability is not evidence that every target has been tested.
+An independent CPU SIMD scan (native gather, GCC 14.4.0, Intel Xeon Gold 6526Y) tested every dedicated `[0,N]` model from `N = 0` through `24`. Each model was evaluated at 1,000,000,001 inputs on `[0,1000]`, formed by rounding each `i / 1,000,000` to binary64. The table gives the sampled error upper bounds against the unrounded mathematical reference, rounded for display. Each returned value has equal weight in the pooled mean. The strict and fast-math builds gave the same figures at the precision shown.
+
+| Error measure | Sampled maximum | Pooled mean |
+| --- | ---: | ---: |
+| Absolute | 7.94264 × 10⁻¹⁷ | 1.76895 × 10⁻¹⁹ |
+| Relative | 1.89812 × 10⁻¹⁶ | 4.01081 × 10⁻¹⁷ |
+| ULPs | 1.168304 | 0.250049 |
+
+The largest ULP error occurred for `F_23` in the `[0,23]` model at `x = 0x1.5ee617c1bda51p+6` (approximately 87.7247). See the [accuracy workflow](workflow/library_accuracy/README.md) for the reference method and the [published validation records](data/benchmarks/function-accuracy-20261107/README.md) for the separate paper comparison.
 
 ## Further information
 

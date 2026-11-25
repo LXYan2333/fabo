@@ -25,7 +25,8 @@ def run(a):
         if not 0<total<=1000000001:raise ValueError('grid exceeds [0,1000]')
         records=[]
         for item in config['adapters']:
-            if not 0<=item['N']<=12 or item['mode'] not in ('strict','fast'):raise ValueError('invalid adapter')
+            limit=24 if item.get('backend') in ('fabo','fabo_software') else 12
+            if not 0<=item['N']<=limit or item['mode'] not in ('strict','fast'):raise ValueError('invalid adapter')
             path=Path(item['path']).resolve()
             records.append(dict(item,path=str(path),sha256=sha(path)))
         ids=[r['id'] for r in records]

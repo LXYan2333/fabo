@@ -34,7 +34,7 @@ def test_storage_matches_headers():
         assert r['total_bytes']==sum(r[k] for k in ('coefficient_bytes','correction_bytes','padding_bytes'))
         assert r['total_bytes']<=2**20
 
-@pytest.mark.parametrize('n',range(13))
+@pytest.mark.parametrize('n',range(25))
 @pytest.mark.parametrize('cuda',[False,True])
 def test_dedicated_adapter(n,cuda):
     from workflow.library_accuracy.adapters import source

@@ -75,14 +75,20 @@ extern "C" void boys_accuracy(size_t count,const double* x,double* out){{
 }}
 '''
 
-def build(config,out):
-    out=out.resolve();out.mkdir(parents=True,exist_ok=True)
-    if (out/'built.json').exists():raise ValueError('already built; use a new output directory')
+def validated_coverage(config):
     platform=config['platform'];backends=list(config.get('backends',BACKENDS[platform]));orders=config.get('orders',list(range(13)))
     if platform=='cpu' and config.get('software_gather',False):backends.append('fabo_software')
     allowed=set(BACKENDS[platform])|({'fabo_software'} if platform=='cpu' else set())
-    if not backends or not orders or set(backends)-allowed or any(type(n)!=int or not 0<=n<=12 for n in orders):raise ValueError('invalid coverage')
+    limit=24 if set(backends)<={'fabo','fabo_software'} else 12
+    if not backends or not orders or set(backends)-allowed or any(type(n)!=int or not 0<=n<=limit for n in orders):raise ValueError('invalid coverage')
     if len(set(backends))!=len(backends) or len(set(orders))!=len(orders):raise ValueError('duplicate coverage')
+    return backends,orders
+
+def build(config,out):
+    backends,orders=validated_coverage(config)
+    platform=config['platform']
+    out=out.resolve();out.mkdir(parents=True,exist_ok=True)
+    if (out/'built.json').exists():raise ValueError('already built; use a new output directory')
     cxx=config['cxx'];cc=config.get('cc','gcc');sources=out/'sources';sources.mkdir(exist_ok=True)
     if platform=='cpu':
         if config.get('ports_snapshot'):

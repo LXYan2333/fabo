@@ -2,6 +2,8 @@
 
 This opt-in workflow does not alter numerical selections, molecular benchmarks, or manuscript results. It targets RN64(i/1000000), i=0,...,1000000000, and requested ranges [0,N], N=0,...,12. A small configuration can scan a prefix for testing. Production scans must explicitly configure the complete adapter matrix; preparation does not infer missing implementations.
 
+The published comparison uses the default order range through 12. For a FABO-only extension, set `backends` to `["fabo"]` and supply an explicit `orders` list with values from 0 through 24. The pilot builds a reference table through the largest requested order and checks every reference order at 80 inputs against direct 512-bit MPFR before scanning. Use a separate run directory for this coverage.
+
 ## Coverage
 
 The CPU suite contains original Simint, FABO, LibintX, VSR, and Laikov. The CUDA suite contains original QUICK, FABO, LibintX, VSR, and GANSU. Each is built separately for N=0,...,12 under strict and fast-math flags. FABO uses a dedicated [0,N] allocation, never QUICK's family mapping. The CPU suite defaults to native gather; `software_gather: true` additionally builds the software policy. No application or molecular calculation is run.
@@ -16,11 +18,14 @@ Use GCC with MPFR/GMP/quadmath development headers and libraries:
 
 ```sh
 python -m workflow.library_accuracy.build --output .work/accuracy/scan --cxx g++
+# Published comparison: maximum reference order 12, Taylor degree 24.
 .work/accuracy/scan --table .work/accuracy/reference.bin 12 24 0.25 1000 256 8
+# FABO-only scan through order 24: same Taylor degree, separate table.
+.work/accuracy/scan --table .work/accuracy/reference-n24.bin 24 24 0.25 1000 256 8
 python -m workflow.library_accuracy.adapters --order 4 --output .work/accuracy/fabo4.cc
 ```
 
-The reference-table command is an offline construction, not a scan; do not repeat it per shard. `build` accepts repeatable `--include` and `--lib` paths. Verify it with `scan --check-reference REFERENCE.bin`, which compares 1040 accelerated reference intervals against direct 512-bit MPFR. `adapters --cuda` emits a CUDA adapter; `--software` selects CPU software gather.
+Run only the table command for your scan and set `reference_table` in the suite config to that file. This is an offline construction; do not repeat it per shard. Verify the table with `scan --check-reference REFERENCE.bin`: it checks each order at 80 inputs against direct 512-bit MPFR (1,040 checks through order 12; 2,000 through order 24). `build` accepts repeatable `--include` and `--lib` paths. `adapters --cuda` emits a CUDA adapter; `--software` selects CPU software gather.
 
 For the complete matrix, copy and edit `profiles/cpu.json` or `profiles/cuda.json`, then run:
 

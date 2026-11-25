@@ -2,6 +2,21 @@ import json
 import pytest
 from workflow.library_accuracy.suite import cpu_source,cuda_source,BACKENDS
 from workflow.library_accuracy import environment
+from workflow.library_accuracy import pilot_job
+
+@pytest.mark.parametrize('backends,orders',[
+    (['fabo'],[-1]), (['fabo'],[240]), (['fabo'],[]),
+    (['fabo','simint'],[24]),
+])
+def test_invalid_pilot_coverage_stops_before_build(tmp_path,monkeypatch,backends,orders):
+    config=tmp_path/'config.json'
+    config.write_text(json.dumps(dict(platform='cpu',backends=backends,orders=orders)))
+    out=tmp_path/'pilot'
+    monkeypatch.setattr(pilot_job.sys,'argv',['pilot','--config',str(config),'--output',str(out)])
+    monkeypatch.setattr(pilot_job.subprocess,'run',lambda *a,**kw:pytest.fail('unexpected subprocess'))
+    with pytest.raises(ValueError,match='invalid coverage'):
+        pilot_job.main()
+    assert not out.exists()
 
 @pytest.mark.parametrize('n',range(13))
 @pytest.mark.parametrize('backend',BACKENDS['cpu'])

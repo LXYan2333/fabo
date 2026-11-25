@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 def source(n, cuda=False, software=False):
-    if not 0<=n<=12:raise ValueError('order must be 0..12')
+    if not 0<=n<=24:raise ValueError('order must be 0..24')
     common=f'''#include <cstddef>
 #include "fast_boys/models/data_0_{n}.h"
 #include "fast_boys/selected.h"
